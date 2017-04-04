@@ -24,6 +24,11 @@
       <name>Kevin's Public Releases</name>
       <url>http://dl.bintray.com/kevinlee/maven</url>
     </repository>
+    <repository>
+      <id>kevin-public-releases2</id>
+      <name>Kevin's Public Releases 2</name>
+      <url>http://blah.blah.blah/maven</url>
+    </repository>
   </repositories>
 
   <scm>
