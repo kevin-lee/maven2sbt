@@ -81,9 +81,9 @@ object Maven2Sbt extends App {
       s"""resolvers += "${x.name}" at "${x.url}""""
     case x :: xs =>
       s"""resolvers ++= Seq(
-         |  "${x.name}" at "${x.url}",
-         |  ${xs.map(x => s""""${x.name}" at "${x.url}"""").mkString(",\n  ")}
-         |)
+         |    "${x.name}" at "${x.url}"
+         |  , ${xs.map(x => s""""${x.name}" at "${x.url}"""").mkString("\n  , ")}
+         |  )
          |""".stripMargin
   }
 
@@ -94,9 +94,9 @@ object Maven2Sbt extends App {
       s"""libraryDependencies += "${x.toDependencyString}"""
     case x :: xs =>
       s"""libraryDependencies ++= Seq(
-         |  ${x.toDependencyString},
-         |  ${xs.map(_.toDependencyString).mkString(",\n  ")}
-         |)
+         |    ${x.toDependencyString}
+         |  , ${xs.map(_.toDependencyString).mkString("\n  , ")}
+         |  )
          |""".stripMargin
   }
 
@@ -115,8 +115,7 @@ object Maven2Sbt extends App {
        |$resolvers
        |
        |$libraryDependencies
-       |
-     """.stripMargin
+       |""".stripMargin
 
   println(buildSbt)
 
