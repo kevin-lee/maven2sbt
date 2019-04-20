@@ -33,7 +33,6 @@ object Maven2Sbt extends App {
         names.head + names.tail.map(_.capitalize).mkString
   }
 
-
   val properties: Map[String, String] = (for {
     properties <- pom \ "properties"
     property <- properties.child
@@ -52,13 +51,25 @@ object Maven2Sbt extends App {
     name = (repository \ "name").text
   } yield Repository(id, name, url)
 
-
   case class Dependency(groupId: String,
                         artifactId: String,
                         version: String,
-                        scope: Option[String]) {
+                        scope: Option[String],
+                        exclusions: Seq[(String, String)]) {
+    def toExclusionString: String = exclusions match {
+      case Nil =>
+        ""
+      case (groupId, artifactId) :: Nil =>
+        s" exclude(${findPropertyName(groupId).fold(s""""$groupId"""")(dotSeparatedToCamelCase)}, ${findPropertyName(artifactId).fold(s""""$artifactId"""")(dotSeparatedToCamelCase)})"
+      case x :: xs =>
+        s""" excludeAll(
+           |  ${exclusions.map { case(groupId, artifactId) =>  s"ExclusionRule(organization = ${findPropertyName(groupId).fold(s""""$groupId"""")(dotSeparatedToCamelCase)}, artifact = ${findPropertyName(artifactId).fold(s""""$artifactId"""")(dotSeparatedToCamelCase)})"} mkString("    ", "\n    , ", "")}
+           |    )
+           |""".stripMargin
+    }
+
     def toDependencyString: String =
-      s""""$groupId" % "$artifactId" % ${findPropertyName(version).fold("\"" + version + "\"")(dotSeparatedToCamelCase)}${scope.fold("")(x => s""" % "$x"""")}"""
+      s""""$groupId" % "$artifactId" % ${findPropertyName(version).fold("\"" + version + "\"")(dotSeparatedToCamelCase)}${scope.fold("")(x => s""" % "$x"""")}$toExclusionString"""
   }
 
   val dependencies: Seq[Dependency] =
@@ -68,10 +79,18 @@ object Maven2Sbt extends App {
       val version = dependency \ "version" text
       val scope = dependency \ "scope" text
 
+      val exclusions: Seq[(String, String)] = dependency \ "exclusions" \ "exclusion" map { exclusion =>
+        val groupId = exclusion \ "groupId" text
+        val artifactId = exclusion \ "artifactId" text
+
+        (groupId, artifactId)
+      }
+
       Dependency(groupId,
                  artifactId,
                  version,
-                 Option(scope).filter(_.nonEmpty))
+                 Option(scope).filter(_.nonEmpty),
+                 exclusions)
     }
 
   val resolvers = repositories match {
@@ -82,7 +101,7 @@ object Maven2Sbt extends App {
     case x :: xs =>
       s"""resolvers ++= Seq(
          |    "${x.name}" at "${x.url}"
-         |  , ${xs.map(x => s""""${x.name}" at "${x.url}"""").mkString("\n  , ")}
+         |  , ${xs.map(x => s""""${x.name}" at "${x.url}"""").mkString("\n    , ")}
          |  )
          |""".stripMargin
   }

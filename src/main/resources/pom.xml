@@ -42,14 +42,14 @@
     <repository>
       <id>kevin-public-releases</id>
       <name>Kevin's Public Releases</name>
-      <url>http://nexus.lckymn.com/content/repositories/kevin-public-releases</url>
+      <url>https://nexus.kevinlee.io/content/repositories/kevin-public-releases</url>
       <uniqueVersion>true</uniqueVersion>
       <layout>default</layout>
     </repository>
     <snapshotRepository>
       <id>kevin-public-snapshots</id>
       <name>Kevin's Public Snapshots</name>
-      <url>http://nexus.lckymn.com/content/repositories/kevin-public-snapshots</url>
+      <url>https://nexus.kevinlee.io/content/repositories/kevin-public-snapshots</url>
       <uniqueVersion>true</uniqueVersion>
       <layout>default</layout>
     </snapshotRepository>
@@ -75,7 +75,7 @@
             </executions>
             <configuration>
               <serverId>kevin-public-releases</serverId>
-              <nexusUrl>http://nexus.lckymn.com/</nexusUrl>
+              <nexusUrl>https://nexus.kevinlee.io/</nexusUrl>
               <skipStaging>true</skipStaging>
             </configuration>
           </plugin>
@@ -147,10 +147,31 @@
     </dependency>
 
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
+      <groupId>some.project</groupId>
+      <artifactId>the-project1</artifactId>
       <version>1.9.5</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>another.project</groupId>
+          <artifactId>another-project</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>some.project</groupId>
+      <artifactId>the-project2</artifactId>
+      <version>2.10.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>blah.blah</groupId>
+          <artifactId>abc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>some.test</groupId>
+          <artifactId>project-123</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>
