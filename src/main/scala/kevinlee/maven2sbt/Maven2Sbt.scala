@@ -63,9 +63,8 @@ object Maven2Sbt extends App {
         s" exclude(${findPropertyName(groupId).fold(s""""$groupId"""")(dotSeparatedToCamelCase)}, ${findPropertyName(artifactId).fold(s""""$artifactId"""")(dotSeparatedToCamelCase)})"
       case x :: xs =>
         s""" excludeAll(
-           |  ${exclusions.map { case(groupId, artifactId) =>  s"ExclusionRule(organization = ${findPropertyName(groupId).fold(s""""$groupId"""")(dotSeparatedToCamelCase)}, artifact = ${findPropertyName(artifactId).fold(s""""$artifactId"""")(dotSeparatedToCamelCase)})"} mkString("    ", "\n    , ", "")}
-           |    )
-           |""".stripMargin
+           |      ${exclusions.map { case(groupId, artifactId) =>  s"ExclusionRule(organization = ${findPropertyName(groupId).fold(s""""$groupId"""")(dotSeparatedToCamelCase)}, artifact = ${findPropertyName(artifactId).fold(s""""$artifactId"""")(dotSeparatedToCamelCase)})"} mkString("  ", "\n      , ", "")}
+           |      )""".stripMargin
     }
 
     def toDependencyString: String =
@@ -93,47 +92,52 @@ object Maven2Sbt extends App {
                  exclusions)
     }
 
-  val resolvers = repositories match {
-    case Nil =>
-      ""
-    case x :: Nil =>
-      s"""resolvers += "${x.name}" at "${x.url}""""
-    case x :: xs =>
-      s"""resolvers ++= Seq(
-         |    "${x.name}" at "${x.url}"
-         |  , ${xs.map(x => s""""${x.name}" at "${x.url}"""").mkString("\n    , ")}
-         |  )
-         |""".stripMargin
+  def indent(size: Int): String = " " * size
+
+  def resolvers(indentSize: Int): String = {
+    val idt = indent(indentSize)
+    repositories match {
+      case Nil =>
+        ""
+      case x :: Nil =>
+        s"""resolvers += "${x.name}" at "${x.url}""""
+      case x :: xs =>
+        s"""resolvers ++= Seq(
+           |$idt    "${x.name}" at "${x.url}"
+           |$idt  , ${xs.map(x => s""""${x.name}" at "${x.url}"""").mkString(s"\n$idt    , ")}
+           |$idt  )""".stripMargin
+    }
   }
 
-  val libraryDependencies = dependencies match {
-    case Nil =>
-      ""
-    case x :: Nil =>
-      s"""libraryDependencies += "${x.toDependencyString}"""
-    case x :: xs =>
-      s"""libraryDependencies ++= Seq(
-         |    ${x.toDependencyString}
-         |  , ${xs.map(_.toDependencyString).mkString("\n  , ")}
-         |  )
-         |""".stripMargin
+  def libraryDependencies(indentSize: Int): String = {
+    val idt = indent(indentSize)
+    dependencies match {
+      case Nil =>
+        ""
+      case x :: Nil =>
+        s"""libraryDependencies += "${x.toDependencyString}"""
+      case x :: xs =>
+        s"""libraryDependencies ++= Seq(
+           |$idt    ${x.toDependencyString}
+           |$idt  , ${xs.map(_.toDependencyString).mkString(s"\n$idt  , ")}
+           |$idt  )""".stripMargin
+    }
   }
 
   val buildSbt =
     s"""
-       |organization := "$groupId"
-       |
-       |name := "$artifactId"
-       |
-       |version := "$version"
-       |
-       |scalaVersion := "$scalaVersion"
-       |
        |${properties map { case (k, v) => s"""val ${dotSeparatedToCamelCase(k)} = "$v"""" } mkString "\n"}
        |
-       |$resolvers
+       |ThisBuild / organization := "$groupId"
+       |ThisBuild / version := "$version"
+       |ThisBuild / scalaVersion := "$scalaVersion"
        |
-       |$libraryDependencies
+       |lazy val root = (project in file("."))
+       |  .settings(
+       |    name := "$artifactId"
+       |  , ${resolvers(2)}
+       |  , ${libraryDependencies(2)}
+       |  )
        |""".stripMargin
 
   println(buildSbt)
