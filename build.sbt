@@ -1,5 +1,5 @@
-organization := "io.kevinlee"
 
+ThisBuild / organization := "kevinlee"
 ThisBuild / name := "maven2sbt"
 ThisBuild / version := "1.0.0"
 ThisBuild / scalaVersion := "2.11.12"
@@ -18,7 +18,7 @@ lazy val  hedgehogLibs: Seq[ModuleID] = Seq(
   , "hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
-lazy val root = (project in file("."))
+lazy val maven2sbt = (project in file("."))
   .settings(
       resolvers += hedgehogRepo
     , libraryDependencies ++= Seq(
