@@ -1,4 +1,4 @@
-package io.kevinlee.maven2sbt
+package kevinlee.maven2sbt
 
 import scala.language.postfixOps
 import scala.xml._
