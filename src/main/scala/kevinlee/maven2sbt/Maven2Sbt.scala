@@ -54,7 +54,7 @@ object Maven2Sbt extends App {
   case class Dependency(groupId: String,
                         artifactId: String,
                         version: String,
-                        scope: Option[String],
+                        scope: Scope,
                         exclusions: Seq[(String, String)]) {
     def toExclusionString: String = exclusions match {
       case Nil =>
@@ -69,7 +69,7 @@ object Maven2Sbt extends App {
     }
 
     def toDependencyString: String =
-      s""""$groupId" % "$artifactId" % ${findPropertyName(version).fold("\"" + version + "\"")(dotSeparatedToCamelCase)}${scope.fold("")(x => s""" % "$x"""")}$toExclusionString"""
+      s""""$groupId" % "$artifactId" % ${findPropertyName(version).fold("\"" + version + "\"")(dotSeparatedToCamelCase)}${Scope.renderWithPrefix(" % ", scope)}$toExclusionString"""
   }
 
   val dependencies: Seq[Dependency] =
@@ -89,7 +89,7 @@ object Maven2Sbt extends App {
       Dependency(groupId,
                  artifactId,
                  version,
-                 Option(scope).filter(_.nonEmpty),
+                 Option(scope).fold(Scope.default)(Scope.parseUnsafe),
                  exclusions)
     }
 
