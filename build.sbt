@@ -24,5 +24,6 @@ lazy val maven2sbt = (project in file("."))
     , libraryDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-xml" % "1.0.6"
       ) ++ hedgehogLibs
+    , testFrameworks := Seq(TestFramework("hedgehog.sbt.Framework"))
   )
 
