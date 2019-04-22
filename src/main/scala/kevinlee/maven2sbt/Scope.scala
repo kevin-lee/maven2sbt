@@ -44,6 +44,21 @@ object Scope {
       s"$prefix$rendered"
   }
 
+  def renderToMaven(scope: Scope): String = scope match {
+    case Compile =>
+      "compile"
+    case Test =>
+      "test"
+    case Provided =>
+      "provided"
+    case Runtime =>
+      "runtime"
+    case System =>
+      "system"
+    case Default =>
+      ""
+  }
+
   def parse(scope: String): Either[String, Scope] = scope match {
     case "compile" =>
       Right(compile)
