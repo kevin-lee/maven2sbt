@@ -1,4 +1,6 @@
 
+import org.scoverage.coveralls.Imports.CoverallsKeys._
+
 ThisBuild / organization := "kevinlee"
 ThisBuild / name := "maven2sbt"
 ThisBuild / version := "1.0.0"
@@ -25,5 +27,14 @@ lazy val maven2sbt = (project in file("."))
         "org.scala-lang.modules" %% "scala-xml" % "1.0.6"
       ) ++ hedgehogLibs
     , testFrameworks := Seq(TestFramework("hedgehog.sbt.Framework"))
+    /* Coveralls { */
+    , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, 10)) =>
+        false
+      case _ =>
+        true
+    })
+    , coverallsTokenFile := Option(s"""${Path.userHome.absolutePath}/.coveralls-credentials""")
+    /* } Coveralls */
   )
 
