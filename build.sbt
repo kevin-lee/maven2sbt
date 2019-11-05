@@ -6,18 +6,15 @@ ThisBuild / name := "maven2sbt"
 ThisBuild / version := "1.0.0"
 ThisBuild / scalaVersion := "2.11.12"
 
-lazy val  hedgehogVersion: String = "55d9828dc6bcdc85ba3ebb31efd541d0a14423bf"
+lazy val  hedgehogVersion: String = "64eccc9ca7dbe7a369208a14a97a25d7ccbbda67"
 
 lazy val  hedgehogRepo: Resolver =
-  Resolver.url(
-    "bintray-scala-hedgehog",
-    url("https://dl.bintray.com/hedgehogqa/scala-hedgehog")
-  )(Resolver.ivyStylePatterns)
+    "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
 lazy val  hedgehogLibs: Seq[ModuleID] = Seq(
-    "hedgehog" %% "hedgehog-core" % hedgehogVersion % Test
-  , "hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test
-  , "hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
+    "qa.hedgehog" %% "hedgehog-core" % hedgehogVersion % Test
+  , "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test
+  , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
 lazy val maven2sbt = (project in file("."))
