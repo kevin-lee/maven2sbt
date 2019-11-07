@@ -10,6 +10,15 @@ ThisBuild / name := "maven2sbt"
 ThisBuild / version := "0.1.0"
 ThisBuild / scalaVersion := ProjectScalaVersion
 ThisBuild / crossScalaVersions := CrossScalaVersions
+ThisBuild / developers   := List(
+  Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
+)
+ThisBuild / homepage := Some(url("https://github.com/Kevin-Lee/maven2sbt"))
+ThisBuild / scmInfo :=
+  Some(ScmInfo(
+    url("https://github.com/Kevin-Lee/maven2sbt")
+    , "https://github.com/Kevin-Lee/maven2sbt.git"
+  ))
 
 lazy val  hedgehogVersion: String = "64eccc9ca7dbe7a369208a14a97a25d7ccbbda67"
 
