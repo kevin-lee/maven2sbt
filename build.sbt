@@ -1,10 +1,15 @@
 
-import org.scoverage.coveralls.Imports.CoverallsKeys._
+import kevinlee.sbt.SbtCommon.crossVersionProps
+import kevinlee.semver.{Major, Minor, SemanticVersion}
+
+val ProjectScalaVersion = "2.13.1"
+val CrossScalaVersions = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
 
 ThisBuild / organization := "kevinlee"
 ThisBuild / name := "maven2sbt"
-ThisBuild / version := "1.0.0"
-ThisBuild / scalaVersion := "2.11.12"
+ThisBuild / version := "0.1.0"
+ThisBuild / scalaVersion := ProjectScalaVersion
+ThisBuild / crossScalaVersions := CrossScalaVersions
 
 lazy val  hedgehogVersion: String = "64eccc9ca7dbe7a369208a14a97a25d7ccbbda67"
 
@@ -20,9 +25,13 @@ lazy val  hedgehogLibs: Seq[ModuleID] = Seq(
 lazy val maven2sbt = (project in file("."))
   .settings(
       resolvers += hedgehogRepo
-    , libraryDependencies ++= Seq(
-        "org.scala-lang.modules" %% "scala-xml" % "1.0.6"
-      ) ++ hedgehogLibs
+    , libraryDependencies ++=
+        crossVersionProps(hedgehogLibs, SemanticVersion.parseUnsafe(scalaVersion.value)) {
+          case (Major(2), Minor(10)) =>
+            Seq.empty
+          case x =>
+            Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0")
+        }
     , testFrameworks := Seq(TestFramework("hedgehog.sbt.Framework"))
     /* Coveralls { */
     , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
@@ -31,7 +40,6 @@ lazy val maven2sbt = (project in file("."))
       case _ =>
         true
     })
-    , coverallsTokenFile := Option(s"""${Path.userHome.absolutePath}/.coveralls-credentials""")
     /* } Coveralls */
   )
 
