@@ -16,7 +16,7 @@ ThisBuild / developers   := List(
 ThisBuild / homepage := Some(url("https://github.com/Kevin-Lee/maven2sbt"))
 ThisBuild / scmInfo :=
   Some(ScmInfo(
-    url("https://github.com/Kevin-Lee/maven2sbt")
+      url("https://github.com/Kevin-Lee/maven2sbt")
     , "https://github.com/Kevin-Lee/maven2sbt.git"
   ))
 
