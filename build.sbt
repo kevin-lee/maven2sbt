@@ -1,6 +1,7 @@
 
 import kevinlee.sbt.SbtCommon.crossVersionProps
-import kevinlee.semver.{Major, Minor, SemanticVersion}
+import just.semver.SemVer
+import SemVer.{Major, Minor}
 
 val ProjectScalaVersion = "2.13.1"
 val CrossScalaVersions = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
@@ -35,7 +36,7 @@ lazy val maven2sbt = (project in file("."))
   .settings(
       resolvers += hedgehogRepo
     , libraryDependencies ++=
-        crossVersionProps(hedgehogLibs, SemanticVersion.parseUnsafe(scalaVersion.value)) {
+        crossVersionProps(hedgehogLibs, SemVer.parseUnsafe(scalaVersion.value)) {
           case (Major(2), Minor(10)) =>
             Seq.empty
           case x =>
