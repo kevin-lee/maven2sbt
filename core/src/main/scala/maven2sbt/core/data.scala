@@ -1,4 +1,4 @@
-package kevinlee.maven2sbt
+package maven2sbt.core
 
 /**
   * @author Kevin Lee

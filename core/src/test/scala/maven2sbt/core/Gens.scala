@@ -1,7 +1,7 @@
-package kevinlee.maven2sbt
+package maven2sbt.core
 
 import hedgehog._
-import kevinlee.maven2sbt.Repository.{RepoId, RepoName, RepoUrl}
+import maven2sbt.core.Repository.{RepoId, RepoName, RepoUrl}
 
 /**
   * @author Kevin Lee

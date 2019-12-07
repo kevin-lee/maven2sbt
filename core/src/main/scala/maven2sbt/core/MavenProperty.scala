@@ -1,4 +1,4 @@
-package kevinlee.maven2sbt
+package maven2sbt.core
 
 import scala.xml.Elem
 import Common._

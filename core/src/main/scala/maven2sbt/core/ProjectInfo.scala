@@ -1,4 +1,4 @@
-package kevinlee.maven2sbt
+package maven2sbt.core
 
 import scala.language.postfixOps
 import scala.xml.Elem
