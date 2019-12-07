@@ -5,7 +5,7 @@ import kevinlee.semver.{Major, Minor, SemanticVersion}
 val ProjectScalaVersion = "2.13.1"
 val CrossScalaVersions = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
 
-ThisBuild / organization := "kevinlee"
+ThisBuild / organization := "io.kevinlee"
 ThisBuild / name := "maven2sbt"
 ThisBuild / version := "0.1.0"
 ThisBuild / scalaVersion := ProjectScalaVersion
