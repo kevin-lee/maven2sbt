@@ -25,8 +25,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_10-
 
-      - name: Build for Scala 2.10
-        run: .github/workflows/sbt-build-simple.sh 2.10.7
+      - name: Build core for Scala 2.10
+        run: .github/workflows/sbt-build-simple.sh core 2.10.7
 
   build_scala2_11:
     runs-on: ubuntu-latest
@@ -49,8 +49,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_11-
 
-      - name: Build for Scala 2.11
-        run: .github/workflows/sbt-build-simple.sh 2.11.12
+      - name: Build core for Scala 2.11
+        run: .github/workflows/sbt-build-simple.sh core 2.11.12
+
+      - name: Build cli for Scala 2.11
+        run: .github/workflows/sbt-build-simple.sh cli 2.11.12
 
   build_scala2_12:
     runs-on: ubuntu-latest
@@ -73,8 +76,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_12-
 
-      - name: Build for Scala 2.12
-        run: .github/workflows/sbt-build-simple.sh 2.12.10
+      - name: Build core for Scala 2.12
+        run: .github/workflows/sbt-build-simple.sh core 2.12.10
+
+      - name: Build cli for Scala 2.12
+        run: .github/workflows/sbt-build-simple.sh cli 2.12.10
 
   build_scala2_13:
     runs-on: ubuntu-latest
@@ -100,4 +106,4 @@ jobs:
       - name: Build for Scala 2.13
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: .github/workflows/sbt-build.sh 2.13.0
+        run: .github/workflows/sbt-build.sh 2.13.1
