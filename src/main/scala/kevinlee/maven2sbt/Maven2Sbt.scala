@@ -1,6 +1,6 @@
 package kevinlee.maven2sbt
 
-import java.io.InputStream
+import java.io.File
 
 import scala.xml._
 
@@ -10,10 +10,7 @@ import scala.xml._
   */
 object Maven2Sbt extends App {
 
-  val pomXml: InputStream = getClass.getResourceAsStream("/pom.xml")
-  val pom: Elem = XML.load(pomXml)
-
-  def buildSbt(scalaVersion: ScalaVersion, pom: Elem): String = {
+  def buildSbt(scalaVersion: ScalaVersion, pom: => Elem): String = {
     val ProjectInfo(GroupId(groupId), ArtifactId(artifactId), Version(version)) =
       ProjectInfo.from(pom)
     s"""
@@ -32,6 +29,27 @@ object Maven2Sbt extends App {
        |""".stripMargin
   }
 
-  println(buildSbt(ScalaVersion("2.11.7"), pom))
+  def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): String =
+    buildSbt(
+      scalaVersion
+    , XML.loadFile(file)
+    )
+
+  // TODO: Remove code below once a proper CLI is done.
+  (for {
+      Array(scalaVersion, path) <- Option(args)
+      file = new File(path)
+      pomFile = if (!file.isAbsolute) file.getCanonicalFile else file
+    } yield (scalaVersion, pomFile)) match {
+    case Some((scalaVersion, file)) =>
+      println(buildSbtFromPomFile(ScalaVersion(scalaVersion), file))
+    case None =>
+      println(
+        s"""Please enter [scalaVersion] and [pom file path].
+           |e.g.)
+           |sbt "run 2.12.10 src/main/resources/pom.xml"
+           |""".stripMargin)
+  }
+
 
 }
