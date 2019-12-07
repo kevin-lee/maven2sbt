@@ -4,8 +4,8 @@ set -x
 
 if [ -z "$1" ]
   then
-    echo "Scala version is missing. Please enter the Scala version."
-    echo "sbt-build.sh 2.11.12"
+    echo "Missing parameter. Please enter the [Scala version]."
+    echo "sbt-build.sh 2.12.10"
     exit 1
 else
   scala_version=$1
@@ -16,12 +16,12 @@ else
   export CI_BRANCH="${GITHUB_REF#refs/heads/}"
   if [[ "$CI_BRANCH" == "master" || "$CI_BRANCH" == "release" ]]
   then
-    sbt -J-Xmx2048m "; ++ ${scala_version}!; clean; coverage; test; coverageReport; coverageAggregate"
-    sbt -J-Xmx2048m "; ++ ${scala_version}!; coveralls"
-    sbt -J-Xmx2048m "; ++ ${scala_version}!; clean; packagedArtifacts"
+    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; clean; coverage; test; coverageReport; coverageAggregate"
+    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; coveralls"
+    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; clean; packagedArtifacts"
   else
-    sbt -J-Xmx2048m "; ++ ${scala_version}!; clean; coverage; test; coverageReport; coverageAggregate; package"
-    sbt -J-Xmx2048m "; ++ ${scala_version}!; coveralls"
+    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; clean; coverage; test; coverageReport; coverageAggregate; package"
+    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; coveralls"
   fi
 
 
