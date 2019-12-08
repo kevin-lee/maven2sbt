@@ -21,7 +21,7 @@ object Maven2SbtApp extends PirateMain[Maven2SbtArgs] {
     ((Maven2SbtArgs |*| (
       flag[String](long("scalaVersion"), metavar("<version>")).map(ScalaVersion)
     , argument[String](metavar("<pom-path>"))
-    )) <* version(Maven2SbtBuildInfo.version)) ~ "Maven2Sbt" ~~ "A tool to convert Maven's pom.xml into sbt's build.sbt"
+    )) <* version(Maven2SbtBuildInfo.version)) ~ "Maven2Sbt" ~~ "A tool to convert Maven pom.xml into sbt build.sbt"
 
   val cmd: Command[Maven2SbtArgs] =
     Metavar.rewriteCommand(

@@ -107,3 +107,9 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: .github/workflows/sbt-build.sh 2.13.1
+
+      - name: Build cli
+        run: |
+          sbt -J-Xmx2048m "; project cli; ++2.13.1!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"
+          ls -ld cli/target/maven2sbt-cli*
+          ls -ld cli/target/universal/maven2sbt-cli*
