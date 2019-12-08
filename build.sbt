@@ -96,6 +96,9 @@ lazy val maven2sbt = (project in file("."))
       , s"cli/target/${name.value}*.deb"
       )
     /* } GitHub Release */
+    /* bintray { */
+    , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+    /* } bintray */
   )
   .aggregate(core, cli)
 
