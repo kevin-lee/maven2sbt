@@ -54,10 +54,16 @@ lazy val core = (project in file("core"))
           true
       })
     /* } Coveralls */
+    /* Build Info { */
     , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
     , buildInfoObject := "Maven2SbtBuildInfo"
     , buildInfoPackage := "maven2sbt.info"
     , buildInfoOptions += BuildInfoOption.ToJson
+    /* } Build Info */
+    /* publish { */
+    , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+    /* } publish */
+
   )
 
 lazy val pirateVersion = "65e747146a29e82dea882e4e6fece9bcc0f1658c"
@@ -96,9 +102,6 @@ lazy val maven2sbt = (project in file("."))
       , s"cli/target/${name.value}*.deb"
       )
     /* } GitHub Release */
-    /* bintray { */
-    , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
-    /* } bintray */
   )
   .aggregate(core, cli)
 
