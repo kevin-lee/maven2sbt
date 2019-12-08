@@ -19,6 +19,13 @@ jobs:
         echo "Run] sbt GitHub release"
         echo 'sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts; gitHubRelease"'
         sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts; gitHubRelease"
+    - name: sbt GitHub Release cli
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+      run: |
+        echo "Run] sbt GitHub release cli"
+        echo 'sbt -J-Xmx2048m "; project cli; ++2.13.1!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin; gitHubRelease"'
+        sbt -J-Xmx2048m "; project cli; ++2.13.1!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin; gitHubRelease"
     - name: sbt Publish core
       env:
         BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
