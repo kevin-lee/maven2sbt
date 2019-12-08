@@ -4,11 +4,12 @@ import just.semver.SemVer
 import SemVer.{Major, Minor}
 
 val ProjectNamePrefix = "maven2sbt"
+val ProjectVersion = "0.1.0"
 val ProjectScalaVersion = "2.13.1"
 val CrossScalaVersions = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
 
 ThisBuild / organization := "io.kevinlee"
-ThisBuild / version := "0.1.0"
+ThisBuild / version := ProjectVersion
 ThisBuild / scalaVersion := ProjectScalaVersion
 ThisBuild / developers   := List(
   Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
