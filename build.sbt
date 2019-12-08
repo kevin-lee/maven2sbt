@@ -34,7 +34,6 @@ lazy val  hedgehogLibs: Seq[ModuleID] = Seq(
 
 lazy val core = (project in file("core"))
   .enablePlugins(BuildInfoPlugin)
-  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
       name := s"$ProjectNamePrefix-core"
     , crossScalaVersions := CrossScalaVersions
@@ -65,38 +64,39 @@ lazy val pirateVersion = "65e747146a29e82dea882e4e6fece9bcc0f1658c"
 lazy val pirateUri = uri(s"https://github.com/Kevin-Lee/pirate.git#$pirateVersion")
 
 lazy val cli = (project in file("cli"))
-    .enablePlugins(JavaAppPackaging)
-    .enablePlugins(DevOopsGitReleasePlugin)
-    .settings(
-        name := s"$ProjectNamePrefix-cli"
-      , crossScalaVersions := CrossScalaVersionsWithout2_10
-      , resolvers += hedgehogRepo
-      , libraryDependencies ++= hedgehogLibs
-      , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-      /* Coveralls { */
-      , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 10)) =>
-          false
-        case _ =>
-          true
-      })
-      /* } Coveralls */
-      , maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
-      , packageSummary := "Maven2Sbt"
-      , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
-      /* GitHub Release { */
-      , devOopsPackagedArtifacts := List(
-          s"target/universal/${name.value}*.zip"
-        , s"target/${name.value}*.deb"
-        , s"target/universal/${name.value}*.tgz"
-        )
-      /* } GitHub Release */
-    )
-    .dependsOn(core, ProjectRef(pirateUri, "pirate"))
+  .enablePlugins(JavaAppPackaging)
+  .settings(
+      name := s"$ProjectNamePrefix-cli"
+    , crossScalaVersions := CrossScalaVersionsWithout2_10
+    , resolvers += hedgehogRepo
+    , libraryDependencies ++= hedgehogLibs
+    , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
+    /* Coveralls { */
+    , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, 10)) =>
+        false
+      case _ =>
+        true
+    })
+    /* } Coveralls */
+    , maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
+    , packageSummary := "Maven2Sbt"
+    , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
+  )
+  .dependsOn(core, ProjectRef(pirateUri, "pirate"))
 
 lazy val maven2sbt = (project in file("."))
+  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
-    name := ProjectNamePrefix
+      name := ProjectNamePrefix
+      /* GitHub Release { */
+    , devOopsPackagedArtifacts := List(
+        s"core/target/scala-*/${name.value}*.jar"
+      , s"cli/target/universal/${name.value}*.zip"
+      , s"cli/target/universal/${name.value}*.tgz"
+      , s"cli/target/${name.value}*.deb"
+      )
+    /* } GitHub Release */
   )
   .aggregate(core, cli)
 
