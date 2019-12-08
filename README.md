@@ -5,8 +5,7 @@
 
 [![Download](https://api.bintray.com/packages/kevinlee/maven/maven2sbt-core/images/download.svg)](https://bintray.com/kevinlee/maven/maven2sbt-core/_latestVersion)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/maven2sbt-core_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/maven2sbt-core_2.13)
-[![Latest version](https://index.scala-lang.org/kevin-lee/maven2sbt-core/maven2sbt-core/latest.svg)](https://index.scala-lang.org/kevin-lee/maven2sbt-core/maven2sbt-core)
-
+[![Latest version](https://index.scala-lang.org/kevin-lee/maven2sbt/maven2sbt-core/latest.svg)](https://index.scala-lang.org/kevin-lee/maven2sbt/maven2sbt-core)
 
 A tool to convert Maven `pom.xml` into sbt `build.sbt`
 
@@ -99,6 +98,10 @@ lazy val root = (project in file("."))
   )
 ```
 
+**NOTE: output file support will be added later. For now, please use `>` for redirecting stdout.**
+```shell
+maven2sbt-cli --scalaVersion 2.13.1 pom.xml > build.sbt
+```
 
 # Use As Library
 
