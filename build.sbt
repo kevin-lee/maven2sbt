@@ -33,6 +33,7 @@ lazy val  hedgehogLibs: Seq[ModuleID] = Seq(
   )
 
 lazy val core = (project in file("core"))
+  .enablePlugins(BuildInfoPlugin)
   .settings(
       name := s"$ProjectNamePrefix-core"
     , crossScalaVersions := CrossScalaVersions
@@ -53,6 +54,10 @@ lazy val core = (project in file("core"))
           true
       })
     /* } Coveralls */
+    , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+    , buildInfoObject := "Maven2SbtBuildInfo"
+    , buildInfoPackage := "maven2sbt.info"
+    , buildInfoOptions += BuildInfoOption.ToJson
   )
 
 lazy val pirateVersion = "9a26abfdcc93b8619ad7b26b33bbd6d7aa302306"
