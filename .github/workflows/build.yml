@@ -13,7 +13,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cache/coursier
-          key: ${{ runner.os }}-coursier-scala-2_10-${{ hashFiles('**/*.sbt') }}
+          key: ${{ runner.os }}-coursier-scala-2_10-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
             ${{ runner.os }}-coursier-scala-2_10-
 
@@ -21,7 +21,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy-scala-2_10-${{ hashFiles('**/*.sbt') }}
+          key: ${{ runner.os }}-ivy-scala-2_10-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_10-
 
@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cache/coursier
-          key: ${{ runner.os }}-coursier-scala-2_11-${{ hashFiles('**/*.sbt') }}
+          key: ${{ runner.os }}-coursier-scala-2_11-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
             ${{ runner.os }}-coursier-scala-2_11-
 
@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy-scala-2_11-${{ hashFiles('**/*.sbt') }}
+          key: ${{ runner.os }}-ivy-scala-2_11-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_11-
 
@@ -64,7 +64,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cache/coursier
-          key: ${{ runner.os }}-coursier-scala-2_12-${{ hashFiles('**/*.sbt') }}
+          key: ${{ runner.os }}-coursier-scala-2_12-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
             ${{ runner.os }}-coursier-scala-2_12-
 
@@ -72,7 +72,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy-scala-2_12-${{ hashFiles('**/*.sbt') }}
+          key: ${{ runner.os }}-ivy-scala-2_12-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_12-
 
@@ -91,7 +91,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cache/coursier
-          key: ${{ runner.os }}-coursier-scala-2_13-${{ hashFiles('**/*.sbt') }}
+          key: ${{ runner.os }}-coursier-scala-2_13-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
             ${{ runner.os }}-coursier-scala-2_13-
 
@@ -99,7 +99,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy-scala-2_13-${{ hashFiles('**/*.sbt') }}
+          key: ${{ runner.os }}-ivy-scala-2_13-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_13-
 
