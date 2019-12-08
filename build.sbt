@@ -60,7 +60,7 @@ lazy val core = (project in file("core"))
     , buildInfoOptions += BuildInfoOption.ToJson
   )
 
-lazy val pirateVersion = "9a26abfdcc93b8619ad7b26b33bbd6d7aa302306"
+lazy val pirateVersion = "65e747146a29e82dea882e4e6fece9bcc0f1658c"
 lazy val pirateUri = uri(s"https://github.com/Kevin-Lee/pirate.git#$pirateVersion")
 
 lazy val cli = (project in file("cli"))
