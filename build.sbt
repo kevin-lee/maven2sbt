@@ -5,8 +5,7 @@ import SemVer.{Major, Minor}
 
 val ProjectNamePrefix = "maven2sbt"
 val ProjectScalaVersion = "2.13.1"
-val CrossScalaVersionsWithout2_10 = Seq("2.11.12", "2.12.10", ProjectScalaVersion)
-val CrossScalaVersions = "2.10.7" +: CrossScalaVersionsWithout2_10
+val CrossScalaVersions = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
 
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / version := "0.1.0"
@@ -67,7 +66,6 @@ lazy val cli = (project in file("cli"))
   .enablePlugins(JavaAppPackaging)
   .settings(
       name := s"$ProjectNamePrefix-cli"
-    , crossScalaVersions := CrossScalaVersionsWithout2_10
     , resolvers += hedgehogRepo
     , libraryDependencies ++= hedgehogLibs
     , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
