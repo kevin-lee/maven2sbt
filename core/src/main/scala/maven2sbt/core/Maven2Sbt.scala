@@ -1,6 +1,6 @@
 package maven2sbt.core
 
-import java.io.File
+import java.io.{File, InputStream}
 
 import scala.xml._
 
@@ -40,5 +40,11 @@ object Maven2Sbt {
       )
     else
       Left(Maven2SbtError.pomFileNotExist(file))
+
+  def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): Either[Maven2SbtError, String] =
+    Option(pom).fold[Either[Maven2SbtError, String]](
+      Left(Maven2SbtError.noPomInputStream))(
+      inputStream => buildSbt(scalaVersion, XML.load(inputStream))
+    )
 
 }
