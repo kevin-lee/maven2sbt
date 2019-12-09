@@ -23,18 +23,20 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
 
   val rawCmd: Command[Maven2SbtArgs] =
     ((Maven2SbtArgs |*| (
-      flag[String](long("scalaVersion"), metavar("<version>"))
-        .map(ScalaVersion)
+      flag[String](
+          both('s', "scala-version"), metavar("<version>") |+| description("Scala version")
+        ).map(ScalaVersion)
     , flag[String](
           both('o', "out")
-        , metavar("<output-file>") |+| description("output sbt config file (default: build.sbt)")
+        , metavar("<file>") |+| description("output sbt config file (default: build.sbt)")
         ).default("build.sbt").map(new File(_))
     , switch(
           long("overwrite")
         , description("Overwrite if the output file already exists.")
         ).map(Overwrite.fromBoolean)
-    , argument[String](metavar("<pom-path>"))
-        .map(new File(_))
+    , argument[String](
+          metavar("<pom-path>") |+| description("Path to the pom file.")
+        ).map(new File(_))
     )) <* version(Maven2SbtBuildInfo.version)) ~ "Maven2Sbt" ~~ "A tool to convert Maven pom.xml into sbt build.sbt"
 
   val cmd: Command[Maven2SbtArgs] =
