@@ -23,12 +23,18 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
 
   val rawCmd: Command[Maven2SbtArgs] =
     ((Maven2SbtArgs |*| (
-      flag[String](long("scalaVersion"), metavar("<version>")).map(ScalaVersion)
+      flag[String](long("scalaVersion"), metavar("<version>"))
+        .map(ScalaVersion)
     , flag[String](
-        both('o', "out")
-      , metavar("<output-file>") |+| description("output sbt config file (default: build.sbt)")
-      ).default("build.sbt").map(new File(_))
-    , argument[String](metavar("<pom-path>")).map(new File(_))
+          both('o', "out")
+        , metavar("<output-file>") |+| description("output sbt config file (default: build.sbt)")
+        ).default("build.sbt").map(new File(_))
+    , switch(
+          long("overwrite")
+        , description("Overwrite if the output file already exists.")
+        ).map(Overwrite.fromBoolean)
+    , argument[String](metavar("<pom-path>"))
+        .map(new File(_))
     )) <* version(Maven2SbtBuildInfo.version)) ~ "Maven2Sbt" ~~ "A tool to convert Maven pom.xml into sbt build.sbt"
 
   val cmd: Command[Maven2SbtArgs] =
@@ -50,18 +56,20 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
       )
     result match {
       case Right(buildSbt) =>
-        if (buildSbtPath.exists) {
-          handleError(Maven2SbtError.outputFileAlreadyExist(buildSbtPath))
-        } else {
-          IO(new BufferedWriter(new FileWriter(buildSbtPath)))
-          .bracket(writer => IO(writer.close())) { writer =>
-            IO(writer.write(buildSbt)) *>
-              IO(println(
-                s"""Success] The sbt config file has been successfully written at
-                   |$buildSbtPath
-                   |""".stripMargin
-              ).right[ExitCode])
-          }
+        (buildSbtPath.exists, args.overwrite) match {
+          case (true, Overwrite.DoNotOverwrite) =>
+            handleError(Maven2SbtError.outputFileAlreadyExist(buildSbtPath))
+
+          case (false, Overwrite.DoNotOverwrite) | (_ , Overwrite.DoOverwrite) =>
+            IO(new BufferedWriter(new FileWriter(buildSbtPath)))
+            .bracket(writer => IO(writer.close())) { writer =>
+              IO(writer.write(buildSbt)) *>
+                IO(println(
+                  s"""Success] The sbt config file has been successfully written at
+                     |$buildSbtPath
+                     |""".stripMargin
+                ).right[ExitCode])
+            }
         }
       case Left(error) =>
         handleError(error)
