@@ -2,12 +2,6 @@
 
 set -eu
 
-if [[ ${1:-} == "" ]]
-then
-  echo "ERROR] maven2sbt version is missing. Please enter the maven2sbt version."
-  exit 1
-fi
-
 app_name=maven2sbt-cli
 app_version=${1:-0.1.0}
 versioned_app_name="${app_name}-${app_version}"
