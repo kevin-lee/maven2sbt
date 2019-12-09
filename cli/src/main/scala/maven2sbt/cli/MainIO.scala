@@ -1,7 +1,10 @@
 package maven2sbt.cli
 
 import pirate.{Command, DefaultPrefs, ExitCode, Prefs, Runners}
+
 import scalaz._
+import Scalaz._
+
 import scalaz.effect.IO
 
 /**
@@ -17,7 +20,8 @@ trait MainIO[A]  {
 
   def main(args: Array[String]): Unit =
     Runners.runWithExit(args.toList, command, prefs)
-      .flatMap(_.fold[IO[ExitCode \/ Unit]](ExitCode.exitWith, run))
+      .flatMap(_.fold[IO[ExitCode \/ Unit]](exitCode => IO(exitCode.left), run))
       .flatMap(_.fold[IO[Unit]](ExitCode.exitWith, IO(_)))
       .unsafePerformIO
+
 }
