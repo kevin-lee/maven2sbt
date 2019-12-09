@@ -6,16 +6,19 @@ import pirate._
 import Pirate._
 import piratex._
 
-import scalaz._, Scalaz._
+import scalaz._
+import Scalaz._
 
-import maven2sbt.core.{Maven2Sbt, ScalaVersion}
+import maven2sbt.core.{Maven2Sbt, Maven2SbtError, ScalaVersion}
 import maven2sbt.info.Maven2SbtBuildInfo
+
+import scalaz.effect.IO
 
 /**
  * @author Kevin Lee
  * @since 2019-12-08
  */
-object Maven2SbtApp extends PirateMain[Maven2SbtArgs] {
+object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
 
   val rawCmd: Command[Maven2SbtArgs] =
     ((Maven2SbtArgs |*| (
@@ -30,13 +33,18 @@ object Maven2SbtApp extends PirateMain[Maven2SbtArgs] {
 
   override def command: Command[Maven2SbtArgs] = cmd
 
-  override def run(args: Maven2SbtArgs): Unit = args match {
-    case Maven2SbtArgs(scalaVersion, pomPath) =>
-      val path = new File(pomPath)
-      val result = Maven2Sbt.buildSbtFromPomFile(
-        scalaVersion
+  override def run(args: Maven2SbtArgs): IO[ExitCode \/ Unit] = {
+    val path = new File(args.pomPath)
+    val result = Maven2Sbt.buildSbtFromPomFile(
+        args.scalaVersion
       , if (path.isAbsolute) path else path.getCanonicalFile
       )
-      println(result)
+    result match {
+      case Right(buildSbt) =>
+        IO(println(buildSbt).right)
+      case Left(error) =>
+        IO(System.err.println(s"ERROR] ${Maven2SbtError.render(error)}\n")) *>
+          IO(ExitCode.failure(1).left)
+    }
   }
 }

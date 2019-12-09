@@ -10,29 +10,35 @@ import scala.xml._
   */
 object Maven2Sbt {
 
-  def buildSbt(scalaVersion: ScalaVersion, pom: => Elem): String = {
+  def buildSbt(scalaVersion: ScalaVersion, pom: => Elem): Either[Maven2SbtError, String] = {
     val ProjectInfo(GroupId(groupId), ArtifactId(artifactId), Version(version)) =
       ProjectInfo.from(pom)
-    s"""
-       |${MavenProperty.from(pom).map(MavenProperty.render).mkString("\n")}
-       |
-       |ThisBuild / organization := "$groupId"
-       |ThisBuild / version := "$version"
-       |ThisBuild / scalaVersion := "${scalaVersion.scalaVersion}"
-       |
-       |lazy val root = (project in file("."))
-       |  .settings(
-       |    name := "$artifactId"
-       |  , ${Repository.renderToResolvers(Repository.from(pom), 4)}
-       |  , ${Dependency.renderLibraryDependencies(Dependency.from(pom), 4)}
-       |  )
-       |""".stripMargin
+
+    val buildSbt =
+      s"""
+         |${MavenProperty.from(pom).map(MavenProperty.render).mkString("\n")}
+         |
+         |ThisBuild / organization := "$groupId"
+         |ThisBuild / version := "$version"
+         |ThisBuild / scalaVersion := "${scalaVersion.scalaVersion}"
+         |
+         |lazy val root = (project in file("."))
+         |  .settings(
+         |    name := "$artifactId"
+         |  , ${Repository.renderToResolvers(Repository.from(pom), 4)}
+         |  , ${Dependency.renderLibraryDependencies(Dependency.from(pom), 4)}
+         |  )
+         |""".stripMargin
+    Right(buildSbt)
   }
 
-  def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): String =
-    buildSbt(
-      scalaVersion
-    , XML.loadFile(file)
-    )
+  def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): Either[Maven2SbtError, String] =
+    if (file.exists())
+      buildSbt(
+        scalaVersion
+      , XML.loadFile(file)
+      )
+    else
+      Left(Maven2SbtError.pomFileNotExist(file))
 
 }
