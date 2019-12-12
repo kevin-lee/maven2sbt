@@ -24,7 +24,8 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
   val rawCmd: Command[Maven2SbtArgs] =
     ((Maven2SbtArgs |*| (
       flag[String](
-          both('s', "scala-version"), metavar("<version>") |+| description("Scala version")
+          both('s', "scala-version")
+        , metavar("<version>") |+| description("Scala version")
         ).map(ScalaVersion)
     , flag[String](
           both('o', "out")
@@ -64,14 +65,16 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
 
           case (false, Overwrite.DoNotOverwrite) | (_ , Overwrite.DoOverwrite) =>
             IO(new BufferedWriter(new FileWriter(buildSbtPath)))
-            .bracket(writer => IO(writer.close())) { writer =>
-              IO(writer.write(buildSbt)) *>
-                IO(println(
-                  s"""Success] The sbt config file has been successfully written at
-                     |$buildSbtPath
-                     |""".stripMargin
-                ).right[ExitCode])
-            }
+              .bracket(writer => IO(writer.close())) { writer =>
+                for {
+                  _ <- IO(writer.write(buildSbt))
+                  _ <- IO.putStrLn(
+                      s"""Success] The sbt config file has been successfully written at
+                         |  $buildSbtPath
+                         |""".stripMargin
+                    )
+                } yield ().right[ExitCode]
+              }
         }
       case Left(error) =>
         handleError(error)
