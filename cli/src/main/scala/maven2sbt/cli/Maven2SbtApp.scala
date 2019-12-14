@@ -21,24 +21,52 @@ import maven2sbt.info.Maven2SbtBuildInfo
  */
 object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
 
-  val rawCmd: Command[Maven2SbtArgs] =
-    ((Maven2SbtArgs |*| (
-      flag[String](
-          both('s', "scala-version")
-        , metavar("<version>") |+| description("Scala version")
-        ).map(ScalaVersion)
+  def fileParser: Parse[Maven2SbtArgs] = Maven2SbtArgs.fileArgs _ |*| (
+    flag[String](
+        both('s', "scala-version")
+      , metavar("<version>") |+| description("Scala version")
+      ).map(ScalaVersion)
     , flag[String](
-          both('o', "out")
-        , metavar("<file>") |+| description("output sbt config file (default: build.sbt)")
-        ).default("build.sbt").map(new File(_))
+        both('o', "out")
+      , metavar("<file>") |+| description("output sbt config file (default: build.sbt)")
+      ).default("build.sbt").map(new File(_))
     , switch(
-          long("overwrite")
-        , description("Overwrite if the output file already exists.")
-        ).map(Overwrite.fromBoolean)
+        long("overwrite")
+      , description("Overwrite if the output file already exists.")
+      ).map(Overwrite.fromBoolean)
     , argument[String](
-          metavar("<pom-path>") |+| description("Path to the pom file.")
-        ).map(new File(_))
-    )) <* version(Maven2SbtBuildInfo.version)) ~ "Maven2Sbt" ~~ "A tool to convert Maven pom.xml into sbt build.sbt"
+        metavar("<pom-path>") |+| description("Path to the pom file.")
+      ).map(new File(_))
+  )
+
+  def printParse: Parse[Maven2SbtArgs] = Maven2SbtArgs.printArgs _ |*| (
+    flag[String](
+        both('s', "scala-version")
+    , metavar("<version>") |+| description("Scala version")
+    ).map(ScalaVersion)
+  , argument[String](
+      metavar("<pom-path>") |+| description("Path to the pom file.")
+    ).map(new File(_))
+  )
+
+  val rawCmd: Command[Maven2SbtArgs] =
+    Command(
+      "Maven2Sbt"
+    , "A tool to convert Maven pom.xml into sbt build.sbt".some
+    , (subcommand(
+        Command(
+          "file"
+        , "Convert pom.xml to sbt config and save in the file".some
+        , fileParser
+        )
+      ) ||| subcommand(
+        Command(
+          "print"
+        , "Convert pom.xml to sbt config and print it out".some
+        , printParse
+        )
+      )) <* version(Maven2SbtBuildInfo.version)
+    )
 
   val cmd: Command[Maven2SbtArgs] =
     Metavar.rewriteCommand(
@@ -50,35 +78,54 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
   def toCanonicalFile(file: File): File =
     if (file.isAbsolute) file else file.getCanonicalFile
 
-  override def run(args: Maven2SbtArgs): IO[ExitCode \/ Unit] = {
-    val pomPath = toCanonicalFile(args.pomPath)
-    val buildSbtPath = toCanonicalFile(args.out)
-    val result = Maven2Sbt.buildSbtFromPomFile(
-        args.scalaVersion
-      , pomPath
+  override def run(args: Maven2SbtArgs): IO[ExitCode \/ Unit] = args match {
+    case Maven2SbtArgs.FileArgs(scalaVersion, out, overwrite, pomPath) =>
+      val pom = toCanonicalFile(pomPath)
+      val buildSbtPath = toCanonicalFile(out)
+      val result = Maven2Sbt.buildSbtFromPomFile(
+        scalaVersion
+        , pom
       )
-    result match {
-      case Right(buildSbt) =>
-        (buildSbtPath.exists, args.overwrite) match {
-          case (true, Overwrite.DoNotOverwrite) =>
-            handleError(Maven2SbtError.outputFileAlreadyExist(buildSbtPath))
+      result match {
+        case Right(buildSbt) =>
+          (buildSbtPath.exists, overwrite) match {
+            case (true, Overwrite.DoNotOverwrite) =>
+              handleError(Maven2SbtError.outputFileAlreadyExist(buildSbtPath))
 
-          case (false, Overwrite.DoNotOverwrite) | (_ , Overwrite.DoOverwrite) =>
-            IO(new BufferedWriter(new FileWriter(buildSbtPath)))
-              .bracket(writer => IO(writer.close())) { writer =>
-                for {
-                  _ <- IO(writer.write(buildSbt))
-                  _ <- IO.putStrLn(
+            case (false, Overwrite.DoNotOverwrite) | (_, Overwrite.DoOverwrite) =>
+              IO(new BufferedWriter(new FileWriter(buildSbtPath)))
+                .bracket(writer => IO(writer.close())) { writer =>
+                  for {
+                    _ <- IO(writer.write(buildSbt))
+                    _ <- IO.putStrLn(
                       s"""Success] The sbt config file has been successfully written at
                          |  $buildSbtPath
-                         |""".stripMargin
-                    )
-                } yield ().right[ExitCode]
-              }
-        }
-      case Left(error) =>
-        handleError(error)
-    }
+
+                         |""".
+                        stripMargin
+                      )
+                  } yield ().right[ExitCode]
+                }
+          }
+        case Left(error) =>
+          handleError(error)
+      }
+
+    case Maven2SbtArgs.PrintArgs(scalaVersion, pomPath) =>
+      val pom = toCanonicalFile(pomPath)
+      val result = Maven2Sbt.buildSbtFromPomFile(
+        scalaVersion
+        , pom
+      )
+      result match {
+        case Right(buildSbt) =>
+          IO.putStrLn(
+            buildSbt
+          ) *> IO(().right[ExitCode])
+        case Left(
+        error) =>
+          handleError(error)
+      }
   }
 
   private def handleError(error: Maven2SbtError): IO[ExitCode \/ Unit] =
