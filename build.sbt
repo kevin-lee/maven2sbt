@@ -4,7 +4,7 @@ import just.semver.SemVer
 import SemVer.{Major, Minor}
 
 val ProjectNamePrefix = "maven2sbt"
-val ProjectVersion = "0.2.0"
+val ProjectVersion = "0.3.0"
 val ProjectScalaVersion = "2.13.1"
 val CrossScalaVersions = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
 
