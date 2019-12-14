@@ -3,7 +3,7 @@
 set -eu
 
 app_name=maven2sbt-cli
-app_version=${1:-0.2.0}
+app_version=${1:-0.3.0}
 versioned_app_name="${app_name}-${app_version}"
 app_zip_file="${versioned_app_name}.zip"
 download_url="https://github.com/Kevin-Lee/maven2sbt/releases/download/v${app_version}/${app_zip_file}"
