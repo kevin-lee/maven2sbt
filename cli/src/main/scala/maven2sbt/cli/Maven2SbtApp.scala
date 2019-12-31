@@ -82,7 +82,7 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
     case Maven2SbtArgs.FileArgs(scalaVersion, out, overwrite, pomPath) =>
       val pom = toCanonicalFile(pomPath)
       val buildSbtPath = toCanonicalFile(out)
-      val result = Maven2Sbt.buildSbtFromPomFile(
+      val result = Maven2Sbt[Id].buildSbtFromPomFile(
         scalaVersion
         , pom
       )
@@ -113,7 +113,7 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
 
     case Maven2SbtArgs.PrintArgs(scalaVersion, pomPath) =>
       val pom = toCanonicalFile(pomPath)
-      val result = Maven2Sbt.buildSbtFromPomFile(
+      val result = Maven2Sbt[Id].buildSbtFromPomFile(
         scalaVersion
         , pom
       )
