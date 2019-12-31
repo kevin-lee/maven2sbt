@@ -6,7 +6,7 @@ import SemVer.{Major, Minor}
 val ProjectNamePrefix = "maven2sbt"
 val ProjectVersion = "0.3.0"
 val ProjectScalaVersion = "2.13.1"
-val CrossScalaVersions = Seq("2.10.7", "2.11.12", "2.12.10", ProjectScalaVersion)
+val CrossScalaVersions = Seq("2.11.12", "2.12.10", ProjectScalaVersion)
 
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / version := ProjectVersion
@@ -41,21 +41,7 @@ lazy val core = (project in file("core"))
     , crossScalaVersions := CrossScalaVersions
     , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
     , resolvers += hedgehogRepo
-    , libraryDependencies ++=
-      crossVersionProps(hedgehogLibs, SemVer.parseUnsafe(scalaVersion.value)) {
-        case (Major(2), Minor(10)) =>
-          Seq("org.typelevel" %% "cats-core" % "1.2.0")
-        case x =>
-          Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", cats)
-      }
-    , libraryDependencies := crossVersionProps(Seq.empty, SemVer.parseUnsafe(scalaVersion.value)) {
-        case (Major(2), Minor(10)) =>
-          libraryDependencies.value.filter(
-            module => module.organization != "com.olegpy" && module.name != "better-monadic-for"
-          )
-        case _ =>
-          libraryDependencies.value
-      }
+    , libraryDependencies ++= hedgehogLibs ++ Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", cats)
     , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
     /* Coveralls { */
     , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
