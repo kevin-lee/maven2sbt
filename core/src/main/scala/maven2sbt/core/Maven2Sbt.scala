@@ -3,6 +3,7 @@ package maven2sbt.core
 import java.io.{File, InputStream}
 
 import cats._
+import cats.data._
 import cats.implicits._
 
 import scala.xml._
@@ -31,41 +32,48 @@ trait Maven2SbtF[F[_]] extends Maven2Sbt[F] {
 
   implicit def FM: Monad[F]
 
-  def buildSbt(scalaVersion: ScalaVersion, pom: => Elem): F[Either[Maven2SbtError, String]] = FM.pure {
-    val ProjectInfo(GroupId(groupId), ArtifactId(artifactId), Version(version)) =
-      ProjectInfo.from(pom)
+  def fOf[A](a: A): F[A] = FM.pure(a)
+  def eitherTFOf[A, B](e: Either[A, B]): EitherT[F, A, B] = EitherT(FM.pure(e))
 
-    val buildSbt =
-      s"""
-         |${MavenProperty.from(pom).map(MavenProperty.render).mkString("\n")}
-         |
-         |ThisBuild / organization := "$groupId"
-         |ThisBuild / version := "$version"
-         |ThisBuild / scalaVersion := "${scalaVersion.scalaVersion}"
-         |
-         |lazy val root = (project in file("."))
-         |  .settings(
-         |    name := "$artifactId"
-         |  , ${Repository.renderToResolvers(Repository.from(pom), 4)}
-         |  , ${Dependency.renderLibraryDependencies(Dependency.from(pom), 4)}
-         |  )
-         |""".stripMargin
-    Right(buildSbt)
-  }
+  def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, String]] =
+    for {
+      pom <- fOf(pomElem)
+      ProjectInfo(GroupId(groupId), ArtifactId(artifactId), Version(version)) <- fOf(ProjectInfo.from(pom))
+      mavenProperties <- fOf(MavenProperty.from(pom))
+      repositories <- fOf(Repository.from(pom))
+      dependencies <- fOf(Dependency.from(pom))
+      renderedMavenProperties <- fOf(mavenProperties.map(MavenProperty.render).mkString("\n"))
+      renderedRepositories <- fOf(Repository.renderToResolvers(repositories, 4))
+      renderedDependencies <- fOf(Dependency.renderLibraryDependencies(dependencies, 4))
+      buildSbtString <- fOf(
+        s"""
+           |$renderedMavenProperties
+           |
+           |ThisBuild / organization := "$groupId"
+           |ThisBuild / version := "$version"
+           |ThisBuild / scalaVersion := "${scalaVersion.scalaVersion}"
+           |
+           |lazy val root = (project in file("."))
+           |  .settings(
+           |    name := "$artifactId"
+           |  , $renderedRepositories
+           |  , $renderedDependencies
+           |  )
+           |""".stripMargin)
+    } yield buildSbtString.asRight
 
   def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, String]] =
-    if (file.exists())
-      buildSbt(
-        scalaVersion
-      , XML.loadFile(file)
-      )
-    else
-      FM.pure(Left(Maven2SbtError.pomFileNotExist(file)))
+    (for {
+      pomFile <- eitherTFOf(Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)))
+      pomElem <- eitherTFOf(XML.loadFile(pomFile).asRight[Maven2SbtError])
+      buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
+    } yield buildSbtString).value
 
   def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, String]] =
-    Option(pom).fold(
-      FM.pure(Maven2SbtError.noPomInputStream.asLeft[String]))(
-      inputStream => buildSbt(scalaVersion, XML.load(inputStream))
-    )
+    (for {
+      inputStream <- eitherTFOf(Option(pom).toRight(Maven2SbtError.noPomInputStream))
+      pomElem <- eitherTFOf(XML.load(inputStream).asRight[Maven2SbtError])
+      buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
+    } yield buildSbtString).value
 
 }
