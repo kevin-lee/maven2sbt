@@ -39,6 +39,7 @@ lazy val core = (project in file("core"))
   .settings(
       name := s"$ProjectNamePrefix-core"
     , crossScalaVersions := CrossScalaVersions
+    , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
     , resolvers += hedgehogRepo
     , libraryDependencies ++=
       crossVersionProps(hedgehogLibs, SemVer.parseUnsafe(scalaVersion.value)) {
@@ -46,6 +47,14 @@ lazy val core = (project in file("core"))
           Seq("org.typelevel" %% "cats-core" % "1.2.0")
         case x =>
           Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", cats)
+      }
+    , libraryDependencies := crossVersionProps(Seq.empty, SemVer.parseUnsafe(scalaVersion.value)) {
+        case (Major(2), Minor(10)) =>
+          libraryDependencies.value.filter(
+            module => module.organization != "com.olegpy" && module.name != "better-monadic-for"
+          )
+        case _ =>
+          libraryDependencies.value
       }
     , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
     /* Coveralls { */
