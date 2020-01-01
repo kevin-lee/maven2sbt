@@ -14,7 +14,7 @@ import scalaz._
  * @author Kevin Lee
  * @since 2019-12-09
  */
-trait MainIO[A]  {
+trait MainIo[A]  {
 
   type SIO[X] = scalaz.effect.IO[X]
 
