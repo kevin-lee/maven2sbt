@@ -14,13 +14,13 @@ import scalaz._
  * @author Kevin Lee
  * @since 2019-12-09
  */
-trait MainIo[A]  {
+trait MainIo[A] {
 
   type SIO[X] = scalaz.effect.IO[X]
 
   def command: Command[A]
 
-  def run(args: A): IO[Maven2SbtError \/ Unit]
+  def run(args: A): IO[Either[Maven2SbtError, Unit]]
 
   def prefs: Prefs = DefaultPrefs()
 
@@ -35,12 +35,12 @@ trait MainIo[A]  {
 
   def main(args: Array[String]): Unit = (for {
     codeOrA <- getArgs(args, command, prefs)
-    errorOrResult <- codeOrA.fold[IO[Maven2SbtError \/ Unit]](exitWithPirate, run)
+    errorOrResult <- codeOrA.fold[IO[Either[Maven2SbtError, Unit]]](exitWithPirate, run)
     _ <- errorOrResult.fold(
-      err => putStrLnF[IO](Maven2SbtError.render(err)) *>
-        exitWith(ExitCode.Error)
-      , IO(_)
-    )
+        err => putErrStrLnF[IO](Maven2SbtError.render(err)) *>
+          exitWith(ExitCode.Error)
+        , IO(_)
+      )
   } yield ())
     .unsafeRunSync()
 
