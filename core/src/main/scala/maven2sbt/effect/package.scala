@@ -9,6 +9,7 @@ import cats.Monad
 package object effect {
 
   def readLnF[F[_]: Monad]: F[String] = Monad[F].pure(scala.io.StdIn.readLine)
-  def putStrLnF[F[_]: Monad](value: String): F[Unit] = Monad[F].pure(println(value))
+  def putStrLnF[F[_]: Monad](value: String): F[Unit] = Monad[F].pure(Console.out.println(value))
+  def putErrStrLnF[F[_]: Monad](value: String): F[Unit] = Monad[F].pure(Console.err.println(value))
 
 }
