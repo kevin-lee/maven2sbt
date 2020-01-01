@@ -15,15 +15,15 @@ A tool to convert Maven `pom.xml` into sbt `build.sbt`
 It requires Java 8 or higher. So JRE should be installed and available to run `maven2sbt-cli`.
 
 ## Debian / Ubuntu Linux
-If you use Debian or Unbuntu Linux you can download [maven2sbt-cli_0.3.0_all.deb](https://github.com/Kevin-Lee/maven2sbt/releases/download/v0.3.0/maven2sbt-cli_0.3.0_all.deb) and install it.
+If you use Debian or Unbuntu Linux you can download [maven2sbt-cli_0.4.0_all.deb](https://github.com/Kevin-Lee/maven2sbt/releases/download/v0.4.0/maven2sbt-cli_0.4.0_all.deb) and install it.
 ```shell
-$ dpkg -i maven2sbt-cli_0.3.0_all.deb 
+$ dpkg -i maven2sbt-cli_0.4.0_all.deb 
 ```
-`maven2sbt-cli` should be available.
+`maven2sbt` should be available.
 e.g.)
 ```shell
-$ which maven2sbt-cli
-/usr/bin/maven2sbt-cli
+$ which maven2sbt
+/usr/bin/maven2sbt
 ```
 
 
@@ -42,19 +42,19 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/master/.
 
 ### Or do it manually (not recommended)
   
-Download [maven2sbt-cli-0.3.0.zip](https://github.com/Kevin-Lee/maven2sbt/releases/download/v0.3.0/maven2sbt-cli-0.3.0.zip) or [maven2sbt-cli-0.3.0.tgz](https://github.com/Kevin-Lee/maven2sbt/releases/download/v0.3.0/maven2sbt-cli-0.3.0.tgz) and unzip it.
+Download [maven2sbt-cli-0.4.0.zip](https://github.com/Kevin-Lee/maven2sbt/releases/download/v0.4.0/maven2sbt-cli-0.4.0.zip) or [maven2sbt-cli-0.4.0.tgz](https://github.com/Kevin-Lee/maven2sbt/releases/download/v0.4.0/maven2sbt-cli-0.4.0.tgz) and unzip it.
   
 Add an alias for convenience to `~/.zshrc` or `~/.bashrc` or `~/.bash_profile` or the run commands file for your shell. 
 ```shell
-alias maven2sbt-cli='/path/to/maven2sbt-cli-0.3.0/bin/maven2sbt-cli'
+alias maven2sbt='/path/to/maven2sbt-cli-0.4.0/bin/maven2sbt'
 ```
 
 
 ## Windows
 
-Download and unzip the maven2sbt-cli-0.3.0.zip or maven2sbt-cli-0.3.0.tgz just like Linux or macOS.
+Download and unzip the `maven2sbt-cli-0.4.0.zip` or `maven2sbt-cli-0.4.0.tgz` just like Linux or macOS.
 
-You can run `maven2sbt-cli-0.3.0/bin/maven2sbt-cli.bat` file but it hasn't been tested.
+You can run `maven2sbt-cli-0.4.0/bin/maven2sbt.bat` file but it hasn't been tested.
 
 
 # How to Use
@@ -62,7 +62,7 @@ You can run `maven2sbt-cli-0.3.0/bin/maven2sbt-cli.bat` file but it hasn't been 
 Now you can run it like
 
 ```shell
-$ maven2sbt-cli --help 
+$ maven2sbt --help 
 
 Usage:
   Maven2Sbt (file ARGS... | print ARGS...) [-v|--version VERSION] [-h|--help HELP]
@@ -82,7 +82,7 @@ Available commands:
 
 ## Save as sbt Config File
 ```shell
-$ maven2sbt-cli file --help
+$ maven2sbt file --help
 
 Usage:
   Maven2Sbt file -s|--scala-version <version> [-o|--out <file>] [--overwrite]
@@ -103,17 +103,17 @@ Positional arguments:
 
 e.g.)
 ```shell
-$ maven2sbt-cli file --scala-version 2.13.1 pom.xml
+$ maven2sbt file --scala-version 2.13.1 pom.xml
 # or
-$ maven2sbt-cli file -s 2.13.1 pom.xml
+$ maven2sbt file -s 2.13.1 pom.xml
 ```
 It will generate `build.sbt`.
 
 Save sbt config in a different file.
 ```shell
-maven2sbt-cli file --scala-version 2.13.1 --out something-else.sbt pom.xml
+maven2sbt file --scala-version 2.13.1 --out something-else.sbt pom.xml
 # or
-maven2sbt-cli file -s 2.13.1 -o something-else.sbt pom.xml
+maven2sbt file -s 2.13.1 -o something-else.sbt pom.xml
 ```
 It will generate `something-else.sbt`.
 
@@ -121,19 +121,19 @@ I may faile if the output file already eixsts. If you want to overwrite, use the
 
 ```shell
 # build.sbt already exists and want to overwrite
-maven2sbt-cli file --scala-version 2.13.1 --overwrite pom.xml
+maven2sbt file --scala-version 2.13.1 --overwrite pom.xml
 # or
-maven2sbt-cli file -s 2.13.1 --overwrite pom.xml
+maven2sbt file -s 2.13.1 --overwrite pom.xml
 
 # something-else.sbt already exists and want to overwrite
-maven2sbt-cli file --scala-version 2.13.1 --out something-else.sbt --overwrite pom.xml
+maven2sbt file --scala-version 2.13.1 --out something-else.sbt --overwrite pom.xml
 # or
-maven2sbt-cli file -s 2.13.1 -o something-else.sbt --overwrite pom.xml
+maven2sbt file -s 2.13.1 -o something-else.sbt --overwrite pom.xml
 ```
 
 ## Print Out
 ```shell
-$ maven2sbt-cli print --help
+$ maven2sbt print --help
 
 Usage:
   Maven2Sbt print -s|--scala-version <version> <pom-path> [-h|--help HELP]
@@ -150,9 +150,9 @@ Positional arguments:
 ```
 e.g.)
 ```shell
-$ maven2sbt-cli print --scala-version 2.13.1 pom.xml
+$ maven2sbt print --scala-version 2.13.1 pom.xml
 # or
-$ maven2sbt-cli print -s 2.13.1 pom.xml
+$ maven2sbt print -s 2.13.1 pom.xml
 ```
 It will print out the content of `build.sbt` generated from the given `pom.xml`
 
@@ -166,7 +166,7 @@ It will print out the content of `build.sbt` generated from the given `pom.xml`
 
 Add it to `build.sbt`.
 ```sbt
-libraryDependencies += "io.kevinlee" %% "maven2sbt-core" % "0.3.0"
+libraryDependencies += "io.kevinlee" %% "maven2sbt-core" % "0.4.0"
 ```
 
 
