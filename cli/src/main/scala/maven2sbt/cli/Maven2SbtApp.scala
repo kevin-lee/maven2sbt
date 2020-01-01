@@ -20,7 +20,7 @@ import maven2sbt.effect._
  * @author Kevin Lee
  * @since 2019-12-08
  */
-object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
+object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
   def fileParser: Parse[Maven2SbtArgs] = Maven2SbtArgs.fileArgs _ |*| (
     flag[String](
