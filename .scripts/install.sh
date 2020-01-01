@@ -2,6 +2,7 @@
 
 set -eu
 
+app_executable_name=maven2sbt
 app_name=maven2sbt-cli
 app_version=${1:-0.3.0}
 versioned_app_name="${app_name}-${app_version}"
@@ -11,10 +12,11 @@ download_url="https://github.com/Kevin-Lee/maven2sbt/releases/download/v${app_ve
 usr_local_path="/usr/local"
 opt_location="${usr_local_path}/opt"
 app_location="${opt_location}/${app_name}"
-installed_app_bin_path="${app_location}/bin/${app_name}"
+installed_app_bin_path="${app_location}/bin/${app_executable_name}"
 usr_local_bin_path="${usr_local_path}/bin"
-app_bin_path="${usr_local_bin_path}/${app_name}"
+app_bin_path="${usr_local_bin_path}/${app_executable_name}"
 
+echo "app_executable_name=${app_executable_name}"
 echo "app_name=${app_name}"
 echo "app_version=${app_version}"
 echo "versioned_app_name=${versioned_app_name}"
@@ -38,12 +40,13 @@ mkdir -p $opt_location
 rm -R $app_location || true
 mv $versioned_app_name $app_location
 
+echo "ln -s $installed_app_bin_path $app_bin_path"
 ln -s $installed_app_bin_path $app_bin_path || true
 
 rm $app_zip_file
 
 echo -e "\nmaven2sbt is ready to use. Try"
-echo -e "\n  ${app_name} --help\n"
+echo -e "\n  ${app_executable_name} --help\n"
 echo -e "\nIf it does not work, add ${usr_local_bin_path} to PATH"
 echo "e.g.)"
 echo -e "PATH=$usr_local_bin_path:\$PATH\n"

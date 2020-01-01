@@ -94,6 +94,7 @@ lazy val cli = (project in file("cli"))
     , maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
     , packageSummary := "Maven2Sbt"
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
+    , executableScriptName := ProjectNamePrefix
   )
   .dependsOn(core, ProjectRef(pirateUri, "pirate"))
 
