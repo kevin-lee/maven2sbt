@@ -1,27 +1,47 @@
 package maven2sbt.cli
 
-import pirate.{Command, DefaultPrefs, ExitCode, Prefs, Runners}
 
+import cats.effect._
+import cats.implicits._
+
+import maven2sbt.core.Maven2SbtError
+import maven2sbt.effect._
+
+import pirate.{ExitCode => PirateExitCode, _}
 import scalaz._
-import Scalaz._
-
-import scalaz.effect.IO
 
 /**
  * @author Kevin Lee
  * @since 2019-12-09
  */
 trait MainIO[A]  {
+
+  type SIO[X] = scalaz.effect.IO[X]
+
   def command: Command[A]
 
-  def run(a: A): IO[ExitCode \/ Unit]
+  def run(args: A): IO[Maven2SbtError \/ Unit]
 
   def prefs: Prefs = DefaultPrefs()
 
-  def main(args: Array[String]): Unit =
-    Runners.runWithExit(args.toList, command, prefs)
-      .flatMap(_.fold[IO[ExitCode \/ Unit]](exitCode => IO(exitCode.left), run))
-      .flatMap(_.fold[IO[Unit]](ExitCode.exitWith, IO(_)))
-      .unsafePerformIO
+  def exitWith[X](exitCode: ExitCode): IO[X] =
+    IO(sys.exit(exitCode.code))
+
+  def exitWithPirate[X](exitCode: PirateExitCode): IO[X] =
+    IO(exitCode.fold(sys.exit(0), sys.exit(_)))
+
+  def getArgs(args: Array[String], command: Command[A], prefs: Prefs): IO[PirateExitCode \/ A] =
+    IO(Runners.runWithExit[A](args.toList, command, prefs).unsafePerformIO())
+
+  def main(args: Array[String]): Unit = (for {
+    codeOrA <- getArgs(args, command, prefs)
+    errorOrResult <- codeOrA.fold[IO[Maven2SbtError \/ Unit]](exitWithPirate, run)
+    _ <- errorOrResult.fold(
+      err => putStrLnF[IO](Maven2SbtError.render(err)) *>
+        exitWith(ExitCode.Error)
+      , IO(_)
+    )
+  } yield ())
+    .unsafeRunSync()
 
 }

@@ -32,7 +32,9 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
   , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
-lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
+lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.1.0"
+lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
+val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
 lazy val core = (project in file("core"))
   .enablePlugins(BuildInfoPlugin)
@@ -41,7 +43,15 @@ lazy val core = (project in file("core"))
     , crossScalaVersions := CrossScalaVersions
     , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
     , resolvers += hedgehogRepo
-    , libraryDependencies ++= hedgehogLibs ++ Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", cats)
+    , libraryDependencies ++= crossVersionProps(
+        hedgehogLibs ++ Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0")
+      , SemVer.parseUnsafe(scalaVersion.value)
+      ) {
+          case (Major(2), Minor(11)) =>
+            Seq(cats_2_0_0)
+          case _ =>
+            Seq(cats)
+        }
     , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
     /* Coveralls { */
     , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
@@ -71,7 +81,7 @@ lazy val cli = (project in file("cli"))
   .settings(
       name := s"$ProjectNamePrefix-cli"
     , resolvers += hedgehogRepo
-    , libraryDependencies ++= hedgehogLibs
+    , libraryDependencies ++= hedgehogLibs ++ Seq(catsEffect)
     , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
     /* Coveralls { */
     , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {

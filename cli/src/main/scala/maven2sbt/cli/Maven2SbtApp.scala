@@ -9,10 +9,11 @@ import piratex._
 import scalaz._
 import Scalaz._
 
-import scalaz.effect.IO
+import cats.effect._
 
 import maven2sbt.core.{Maven2Sbt, Maven2SbtError, ScalaVersion}
 import maven2sbt.info.Maven2SbtBuildInfo
+import maven2sbt.effect._
 
 
 /**
@@ -78,58 +79,49 @@ object Maven2SbtApp extends MainIO[Maven2SbtArgs] {
   def toCanonicalFile(file: File): File =
     if (file.isAbsolute) file else file.getCanonicalFile
 
-  override def run(args: Maven2SbtArgs): IO[ExitCode \/ Unit] = args match {
+  override def run(args: Maven2SbtArgs): IO[Maven2SbtError \/ Unit] = args match {
     case Maven2SbtArgs.FileArgs(scalaVersion, out, overwrite, pomPath) =>
-      val pom = toCanonicalFile(pomPath)
-      val buildSbtPath = toCanonicalFile(out)
-      val result = Maven2Sbt[Id].buildSbtFromPomFile(
-        scalaVersion
-        , pom
-      )
-      result match {
-        case Right(buildSbt) =>
-          (buildSbtPath.exists, overwrite) match {
-            case (true, Overwrite.DoNotOverwrite) =>
-              handleError(Maven2SbtError.outputFileAlreadyExist(buildSbtPath))
+      for {
+        pom <- IO(toCanonicalFile(pomPath))
+        buildSbtPath <- IO(toCanonicalFile(out))
+        result <- Maven2Sbt[IO].buildSbtFromPomFile(scalaVersion, pom)
+        r <- result match {
+            case Right(buildSbt) =>
+              (buildSbtPath.exists, overwrite) match {
+                case (true, Overwrite.DoNotOverwrite) =>
+                  IO(Maven2SbtError.outputFileAlreadyExist(buildSbtPath).left)
 
-            case (false, Overwrite.DoNotOverwrite) | (_, Overwrite.DoOverwrite) =>
-              IO(new BufferedWriter(new FileWriter(buildSbtPath)))
-                .bracket(writer => IO(writer.close())) { writer =>
-                  for {
-                    _ <- IO(writer.write(buildSbt))
-                    _ <- IO.putStrLn(
-                      s"""Success] The sbt config file has been successfully written at
-                         |  $buildSbtPath
-
-                         |""".
-                        stripMargin
-                      )
-                  } yield ().right[ExitCode]
-                }
+                case (false, Overwrite.DoNotOverwrite) | (_, Overwrite.DoOverwrite) =>
+                  IO(new BufferedWriter(new FileWriter(buildSbtPath)))
+                    .bracket { writer =>
+                      for {
+                        _ <- IO(writer.write(buildSbt))
+                        _ <- putStrLnF[IO](
+                          s"""Success] The sbt config file has been successfully written at
+                             |  $buildSbtPath
+                             |""".stripMargin
+                          )
+                      } yield ().right[Maven2SbtError]
+                    } (writer => IO(writer.close()))
+              }
+            case Left(error) =>
+              IO(error.left)
           }
-        case Left(error) =>
-          handleError(error)
-      }
+      } yield r
 
     case Maven2SbtArgs.PrintArgs(scalaVersion, pomPath) =>
-      val pom = toCanonicalFile(pomPath)
-      val result = Maven2Sbt[Id].buildSbtFromPomFile(
-        scalaVersion
-        , pom
-      )
-      result match {
-        case Right(buildSbt) =>
-          IO.putStrLn(
-            buildSbt
-          ) *> IO(().right[ExitCode])
-        case Left(
-        error) =>
-          handleError(error)
-      }
+      for {
+        pom <- IO(toCanonicalFile(pomPath))
+        result <- Maven2Sbt[IO].buildSbtFromPomFile(scalaVersion, pom)
+        r <- result match {
+            case Right(buildSbt) =>
+              putStrLnF(
+                buildSbt
+              ) *> IO(().right[Maven2SbtError])
+            case Left(error) =>
+              IO(error.left)
+          }
+      } yield r
   }
-
-  private def handleError(error: Maven2SbtError): IO[ExitCode \/ Unit] =
-    IO(System.err.println(s"ERROR] ${Maven2SbtError.render(error)}\n")) *>
-      IO(ExitCode.failure(1).left)
 
 }
