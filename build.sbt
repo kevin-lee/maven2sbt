@@ -34,7 +34,7 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
 
 lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.1.0"
 lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
-val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
+lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
 lazy val core = (project in file("core"))
   .enablePlugins(BuildInfoPlugin)
@@ -53,14 +53,6 @@ lazy val core = (project in file("core"))
             Seq(cats)
         }
     , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-    /* Coveralls { */
-    , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 10)) =>
-          false
-        case _ =>
-          true
-      })
-    /* } Coveralls */
     /* Build Info { */
     , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
     , buildInfoObject := "Maven2SbtBuildInfo"
@@ -83,14 +75,6 @@ lazy val cli = (project in file("cli"))
     , resolvers += hedgehogRepo
     , libraryDependencies ++= hedgehogLibs ++ Seq(catsEffect)
     , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-    /* Coveralls { */
-    , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 10)) =>
-        false
-      case _ =>
-        true
-    })
-    /* } Coveralls */
     , maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
     , packageSummary := "Maven2Sbt"
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
