@@ -159,9 +159,9 @@ It will print out the content of `build.sbt` generated from the given `pom.xml`
 
 # Use As Library
 
-`maven2sbt-core` supports Scala 2.10, 2.11, 2.12 and 2.13.
+`maven2sbt-core` supports Scala 2.11, 2.12 and 2.13.
 
- 
+
 ## Get maven2sbt-core lib
 
 Add it to `build.sbt`.
