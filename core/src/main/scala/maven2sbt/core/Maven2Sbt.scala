@@ -5,6 +5,7 @@ import java.io.{File, InputStream}
 import cats._
 import cats.data._
 import cats.implicits._
+import maven2sbt.effect.Lazy
 
 import scala.xml._
 
@@ -20,20 +21,22 @@ trait Maven2Sbt[F[_]] {
 
 object Maven2Sbt {
 
-  def apply[F[_]: Maven2Sbt]: Maven2Sbt[F] = implicitly[Maven2Sbt[F]]
+  def apply[F[_] : Maven2Sbt]: Maven2Sbt[F] = implicitly[Maven2Sbt[F]]
 
-  implicit def maven2SbtF[F[_]](implicit M0: Monad[F]): Maven2SbtF[F] = new Maven2SbtF[F] {
-    override implicit val FM: Monad[F] = M0
+  implicit def maven2SbtF[F[_]](implicit LF0: Lazy[F], MF0: Monad[F]): Maven2SbtF[F] = new Maven2SbtF[F] {
+    override implicit val LF: Lazy[F] = LF0
+    override implicit val MF: Monad[F] = MF0
   }
 
 }
 
 trait Maven2SbtF[F[_]] extends Maven2Sbt[F] {
 
-  implicit def FM: Monad[F]
+  implicit def LF: Lazy[F]
+  implicit def MF: Monad[F]
 
-  def fOf[A](a: A): F[A] = FM.pure(a)
-  def eitherTF[A, B](e: Either[A, B]): EitherT[F, A, B] = EitherT(FM.pure(e))
+  def fOf[A](a: A): F[A] = LF.fOf(a)
+  def eitherTF[A, B](e: Either[A, B]): EitherT[F, A, B] = EitherT(LF.fOf(e))
 
   def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, String]] =
     for {
