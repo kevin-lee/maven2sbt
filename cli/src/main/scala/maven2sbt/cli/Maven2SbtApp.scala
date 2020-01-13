@@ -8,6 +8,7 @@ import cats.effect._
 
 import maven2sbt.core.{Maven2Sbt, Maven2SbtError}
 import maven2sbt.effect._
+import maven2sbt.effect.CatsIo._
 
 import pirate._
 import piratex._
