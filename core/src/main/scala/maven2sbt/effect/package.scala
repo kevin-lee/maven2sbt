@@ -6,13 +6,13 @@ package maven2sbt
  */
 package object effect {
 
-  def readLnF[F[_] : Lazy]: F[String] =
-    Lazy[F].fOf(scala.io.StdIn.readLine)
+  def readLnF[F[_] : Effect]: F[String] =
+    Effect[F].effect(scala.io.StdIn.readLine)
 
-  def putStrLnF[F[_] : Lazy](value: String): F[Unit] =
-    Lazy[F].fOf(Console.out.println(value))
+  def putStrLnF[F[_] : Effect](value: String): F[Unit] =
+    Effect[F].effect(Console.out.println(value))
 
-  def putErrStrLnF[F[_] : Lazy](value: String): F[Unit] =
-    Lazy[F].fOf(Console.err.println(value))
+  def putErrStrLnF[F[_] : Effect](value: String): F[Unit] =
+    Effect[F].effect(Console.err.println(value))
 
 }
