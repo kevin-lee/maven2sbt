@@ -44,7 +44,7 @@ lazy val core = (project in file("core"))
     , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
     , resolvers += hedgehogRepo
     , libraryDependencies ++= crossVersionProps(
-        hedgehogLibs ++ Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0")
+        hedgehogLibs ++ Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", catsEffect)
       , SemVer.parseUnsafe(scalaVersion.value)
       ) {
           case (Major(2), Minor(11)) =>
@@ -73,7 +73,7 @@ lazy val cli = (project in file("cli"))
   .settings(
       name := s"$ProjectNamePrefix-cli"
     , resolvers += hedgehogRepo
-    , libraryDependencies ++= hedgehogLibs ++ Seq(catsEffect)
+    , libraryDependencies ++= hedgehogLibs
     , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
     , maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
     , packageSummary := "Maven2Sbt"

@@ -6,9 +6,9 @@ import cats.implicits._
 
 import maven2sbt.core.Maven2SbtError
 import maven2sbt.effect._
-import maven2sbt.effect.CatsIo._
 
 import pirate.{ExitCode => PirateExitCode, _}
+
 import scalaz._
 
 /**
