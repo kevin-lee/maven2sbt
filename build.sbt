@@ -65,7 +65,7 @@ lazy val core = (project in file("core"))
 
   )
 
-lazy val pirateVersion = "65e747146a29e82dea882e4e6fece9bcc0f1658c"
+lazy val pirateVersion = "44486bc961b52ba889f0b8f2b23f719d0ed8ba99"
 lazy val pirateUri = uri(s"https://github.com/Kevin-Lee/pirate.git#$pirateVersion")
 
 lazy val cli = (project in file("cli"))
