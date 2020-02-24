@@ -6,7 +6,7 @@ import cats._
 import cats.data._
 import cats.implicits._
 
-import maven2sbt.effect.Effect
+import maven2sbt.effect._
 
 import scala.xml._
 
@@ -24,22 +24,27 @@ object Maven2Sbt {
 
   def apply[F[_] : Maven2Sbt]: Maven2Sbt[F] = implicitly[Maven2Sbt[F]]
 
-  implicit def maven2SbtF[F[_] : Effect : Monad]: Maven2Sbt[F] = new Maven2Sbt[F] {
+  implicit def maven2SbtF[F[_] : EffectConstructor : ConsoleEffect : Monad]: Maven2Sbt[F] =
+    new Maven2SbtF[F]
 
-    def fOf[A](a: => A): F[A] = Effect[F].effect(a)
-    def eitherTF[A, B](e: => Either[A, B]): EitherT[F, A, B] = EitherT(fOf(e))
+  final class Maven2SbtF[F[_] : Monad](
+    override implicit protected val EF: EffectConstructor[F]
+  , override implicit protected val CF: ConsoleEffect[F]
+  ) extends Maven2Sbt[F] with Effectful[F] with ConsoleEffectful[F] {
+
+    def eitherTF[A, B](e: => Either[A, B]): EitherT[F, A, B] = EitherT(effect(e))
 
     def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, String]] =
       for {
-        pom <- fOf(pomElem)
-        ProjectInfo(GroupId(groupId), ArtifactId(artifactId), Version(version)) <- fOf(ProjectInfo.from(pom))
-        mavenProperties <- fOf(MavenProperty.from(pom))
-        repositories <- fOf(Repository.from(pom))
-        dependencies <- fOf(Dependency.from(pom))
-        renderedMavenProperties <- fOf(mavenProperties.map(MavenProperty.render).mkString("\n"))
-        renderedRepositories <- fOf(Repository.renderToResolvers(repositories, 4))
-        renderedDependencies <- fOf(Dependency.renderLibraryDependencies(dependencies, 4))
-        buildSbtString <- fOf(
+        pom <- effect(pomElem)
+        ProjectInfo(GroupId(groupId), ArtifactId(artifactId), Version(version)) <- effect(ProjectInfo.from(pom))
+        mavenProperties <- effect(MavenProperty.from(pom))
+        repositories <- effect(Repository.from(pom))
+        dependencies <- effect(Dependency.from(pom))
+        renderedMavenProperties <- effect(mavenProperties.map(MavenProperty.render).mkString("\n"))
+        renderedRepositories <- effect(Repository.renderToResolvers(repositories, 4))
+        renderedDependencies <- effect(Dependency.renderLibraryDependencies(dependencies, 4))
+        buildSbtString <- effect(
           s"""
              |$renderedMavenProperties
              |
