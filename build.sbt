@@ -36,15 +36,23 @@ lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.1.0"
 lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
-lazy val core = (project in file("core"))
+def subProject(projectName: String, path: File): Project =
+  Project(projectName, path)
+    .settings(
+        name := s"$ProjectNamePrefix-$projectName"
+      , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+      , addCompilerPlugin("org.augustjune" %% "context-applied" % "0.1.2")
+      , resolvers += hedgehogRepo
+      , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
+      , libraryDependencies ++= hedgehogLibs
+    )
+
+lazy val core = subProject("core", file("core"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
-      name := s"$ProjectNamePrefix-core"
-    , crossScalaVersions := CrossScalaVersions
-    , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
-    , resolvers += hedgehogRepo
+      crossScalaVersions := CrossScalaVersions
     , libraryDependencies ++= crossVersionProps(
-        hedgehogLibs ++ Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", catsEffect)
+        Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", catsEffect)
       , SemVer.parseUnsafe(scalaVersion.value)
       ) {
           case (Major(2), Minor(11)) =>
@@ -52,7 +60,6 @@ lazy val core = (project in file("core"))
           case _ =>
             Seq(cats)
         }
-    , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
     /* Build Info { */
     , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
     , buildInfoObject := "Maven2SbtBuildInfo"
@@ -68,14 +75,10 @@ lazy val core = (project in file("core"))
 lazy val pirateVersion = "44486bc961b52ba889f0b8f2b23f719d0ed8ba99"
 lazy val pirateUri = uri(s"https://github.com/Kevin-Lee/pirate.git#$pirateVersion")
 
-lazy val cli = (project in file("cli"))
+lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging)
   .settings(
-      name := s"$ProjectNamePrefix-cli"
-    , resolvers += hedgehogRepo
-    , libraryDependencies ++= hedgehogLibs
-    , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-    , maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
+      maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
     , packageSummary := "Maven2Sbt"
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
     , executableScriptName := ProjectNamePrefix
