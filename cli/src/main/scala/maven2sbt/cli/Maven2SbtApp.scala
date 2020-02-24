@@ -47,7 +47,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
                   (for {
                     buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
                     _ <- EitherT(IO(writer.write(buildSbt)) *> IO(().asRight[Maven2SbtError]))
-                    _ <- EitherT(putStrLnF[IO](
+                    _ <- EitherT(ConsoleEffect[IO].putStrLn(
                         s"""Success] The sbt config file has been successfully written at
                            |  $buildSbtPath
                            |""".stripMargin
@@ -61,7 +61,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
       (for {
         pom <- EitherT(IO(toCanonicalFile(pomPath).asRight))
         buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-        _ <- EitherT(putStrLnF[IO](buildSbt) *> IO(().asRight[Maven2SbtError]))
+        _ <- EitherT(ConsoleEffect[IO].putStrLn(buildSbt) *> IO(().asRight[Maven2SbtError]))
       } yield ()).value
   }
 

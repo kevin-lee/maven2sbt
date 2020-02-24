@@ -38,7 +38,7 @@ trait MainIo[A] {
     codeOrA <- getArgs(args, command, prefs)
     errorOrResult <- codeOrA.fold[IO[Either[Maven2SbtError, Unit]]](exitWithPirate, run)
     _ <- errorOrResult.fold(
-        err => putErrStrLnF[IO](Maven2SbtError.render(err)) *>
+        err => ConsoleEffect[IO].putErrStrLn(Maven2SbtError.render(err)) *>
           exitWith(ExitCode.Error)
         , IO(_)
       )
