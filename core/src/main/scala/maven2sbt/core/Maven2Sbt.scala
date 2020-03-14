@@ -41,34 +41,35 @@ object Maven2Sbt {
         props <- effect(mavenProperties.map(BuildSbt.Prop.fromMavenProperty))
         repositories <- effect(Repository.from(pom))
         dependencies <- effect(Dependency.from(pom))
+        globalSettings <- pureEffect(BuildSbt.GlobalSettings.empty)
+        thisBuildSettings <- pureEffect(
+            BuildSbt.ThisBuildSettings(BuildSbt.Settings(
+                groupId.some
+              , none[ArtifactId]
+              , version.some
+              , scalaVersion.some
+              , List.empty[Repository]
+              , List.empty[Dependency]
+            ))
+          )
+        projectSettings <- pureEffect(
+            BuildSbt.ProjectSettings(BuildSbt.Settings(
+                none[GroupId]
+              , artifactId.some
+              , none[Version]
+              , none[ScalaVersion]
+              , repositories.toList
+              , dependencies.toList
+            ))
+          )
         buildSbtData <- effect(
-          BuildSbt(
-            BuildSbt.GlobalSettings(BuildSbt.Settings(
-              none[GroupId]
-            , none[ArtifactId]
-            , none[Version]
-            , none[ScalaVersion]
-            , List.empty[Repository]
-            , List.empty[Dependency]
-            ))
-          , BuildSbt.ThisBuildSettings(BuildSbt.Settings(
-              groupId.some
-            , none[ArtifactId]
-            , version.some
-            , scalaVersion.some
-            , List.empty[Repository]
-            , List.empty[Dependency]
-            ))
-          , BuildSbt.ProjectSettings(BuildSbt.Settings(
-              none[GroupId]
-            , artifactId.some
-            , none[Version]
-            , none[ScalaVersion]
-            , repositories.toList
-            , dependencies.toList
-            ))
-          , props.toList
-          ))
+            BuildSbt(
+              globalSettings
+            , thisBuildSettings
+            , projectSettings
+            , props.toList
+            )
+          )
       } yield buildSbtData.asRight
 
     def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, BuildSbt]] =
@@ -88,4 +89,3 @@ object Maven2Sbt {
   }
 
 }
-
