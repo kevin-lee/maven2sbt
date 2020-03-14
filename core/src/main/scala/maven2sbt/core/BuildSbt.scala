@@ -34,12 +34,12 @@ object BuildSbt {
     as match {
       case Nil =>
         none[String]
+
       case x :: Nil =>
         s"${Named[A].name} += ${Render[A].render(x)}".some
+
       case _ :: _ =>
-        as.map(a =>
-            Render[A].render(a)
-          )
+        as.map(a => Render[A].render(a))
           .mkString(
             s"${prefix.getOrElse("")}${Named[A].name} ++= List(\n      "
           , ",\n      "
@@ -73,6 +73,18 @@ object BuildSbt {
   }
   final case class GlobalSettings(globalSettings: Settings) extends AnyVal
   object GlobalSettings {
+
+    def empty: GlobalSettings =
+      GlobalSettings(Settings(
+          none[GroupId]
+        , none[ArtifactId]
+        , none[Version]
+        , none[ScalaVersion]
+        , List.empty[Repository]
+        , List.empty[Dependency]
+        )
+      )
+
     def render(globalSettings: GlobalSettings): String =
       Settings.render(globalSettings.globalSettings, "Global / ".some, "\n")
   }

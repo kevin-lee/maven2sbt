@@ -31,6 +31,9 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
   def toCanonicalFile(file: File): File =
     if (file.isAbsolute) file else file.getCanonicalFile
 
+  def eitherTLift[A](ioa: IO[A]): EitherT[IO, Maven2SbtError, A] =
+    EitherT.liftF[IO, Maven2SbtError, A](ioa)
+
   override def run(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
     case Maven2SbtArgs.FileArgs(scalaVersion, out, overwrite, pomPath) =>
       for {
@@ -46,13 +49,15 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
                 .bracket { writer =>
                   (for {
                     buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-                    buildSbtString <- EitherT.liftF(IO(BuildSbt.render(buildSbt)))
-                    _ <- EitherT(IO(writer.write(buildSbtString)) *> IO(().asRight[Maven2SbtError]))
-                    _ <- EitherT(ConsoleEffect[IO].putStrLn(
-                        s"""Success] The sbt config file has been successfully written at
-                           |  $buildSbtPath
-                           |""".stripMargin
-                        ) *> IO(().asRight[Maven2SbtError]))
+                    buildSbtString <- eitherTLift(IO(BuildSbt.render(buildSbt)))
+                    _ <- eitherTLift(IO(writer.write(buildSbtString)))
+                    _ <- eitherTLift(
+                        ConsoleEffect[IO].putStrLn(
+                          s"""Success] The sbt config file has been successfully written at
+                             |  $buildSbtPath
+                             |""".stripMargin
+                        )
+                      )
                   } yield ()).value
                 } (writer => IO(writer.close()))
           }
@@ -60,10 +65,10 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
     case Maven2SbtArgs.PrintArgs(scalaVersion, pomPath) =>
       (for {
-        pom <- EitherT(IO(toCanonicalFile(pomPath).asRight))
+        pom <- eitherTLift(IO(toCanonicalFile(pomPath)))
         buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-        buildSbtString <- EitherT.liftF(IO(BuildSbt.render(buildSbt)))
-        _ <- EitherT(ConsoleEffect[IO].putStrLn(buildSbtString) *> IO(().asRight[Maven2SbtError]))
+        buildSbtString <- eitherTLift[String](IO(BuildSbt.render(buildSbt)))
+        _ <- eitherTLift[Unit](ConsoleEffect[IO].putStrLn(buildSbtString))
       } yield ()).value
   }
 
