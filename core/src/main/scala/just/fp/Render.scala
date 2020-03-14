@@ -10,4 +10,8 @@ trait Render[A] {
 
 object Render {
   def apply[A : Render]: Render[A] = implicitly[Render[A]]
+
+  def render[A](f: A => String): Render[A] = new Render[A] {
+    override def render(a: A): String = f(a)
+  }
 }

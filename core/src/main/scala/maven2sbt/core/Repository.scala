@@ -6,6 +6,8 @@ import scala.xml.Elem
 
 import Repository._
 
+import just.fp.{Named, Render}
+
 /**
   * @author Kevin Lee
   * @since 2019-04-21
@@ -16,6 +18,9 @@ object Repository {
   final case class RepoId(repoId: String) extends AnyVal
   final case class RepoName(repoName: String) extends AnyVal
   final case class RepoUrl(repoUrl: String) extends AnyVal
+
+  implicit val named: Named[Repository] = Named.named("resolvers")
+  implicit val render: Render[Repository] = Render.render(repository => Repository.render(repository))
 
   def from(pom: Elem): Seq[Repository] = for {
     repositories <- pom \ "repositories"
