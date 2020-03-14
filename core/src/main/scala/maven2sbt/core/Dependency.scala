@@ -2,6 +2,8 @@ package maven2sbt.core
 
 import Common._
 
+import just.fp.{Named, Render}
+
 import scala.language.postfixOps
 import scala.xml.Elem
 
@@ -18,6 +20,10 @@ final case class Dependency(
   )
 
 object Dependency {
+
+  implicit val named: Named[Dependency] = Named.named("libraryDependencies")
+  implicit val render: Render[Dependency] = Render.render(dependency => Dependency.render(dependency))
+
   def from(pom: Elem): Seq[Dependency] =
     pom \ "dependencies" \ "dependency" map { dependency =>
       val groupId = dependency \ "groupId" text
