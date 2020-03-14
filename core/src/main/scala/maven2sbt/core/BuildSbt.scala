@@ -11,9 +11,9 @@ import just.fp.{Named, Render}
  * @since 2020-01-29
  */
 final case class BuildSbt(
-    thisBuildSettings: ThisBuildSettings
+    globalSettings: GlobalSettings
+  , thisBuildSettings: ThisBuildSettings
   , projectSettings: ProjectSettings
-  , globalSettings: GlobalSettings
   , props: List[Prop]
   )
 
@@ -41,9 +41,9 @@ object BuildSbt {
             Render[A].render(a)
           )
           .mkString(
-            s"${prefix.getOrElse("")}${Named[A].name} ++= List("
+            s"${prefix.getOrElse("")}${Named[A].name} ++= List(\n      "
           , ",\n      "
-          , "    )"
+          , "\n    )"
           ).some
     }
 
@@ -82,15 +82,19 @@ object BuildSbt {
   final case class PropValue(propValue: String) extends AnyVal
 
   object Prop {
+
+    def fromMavenProperty(mavenProperty: MavenProperty): Prop =
+      Prop(PropName(mavenProperty.key), PropValue(mavenProperty.value))
+
     def render(prop: Prop): String =
       s"""val ${Common.dotSeparatedToCamelCase(prop.name.propName)} = "${prop.value.propValue}""""
   }
 
   def render(buildSbt: BuildSbt): String = buildSbt match {
     case BuildSbt(
-      thisBuildSettings
+      globalSettings
+    , thisBuildSettings
     , projectSettings
-    , globalSettings
     , props
     ) =>
 

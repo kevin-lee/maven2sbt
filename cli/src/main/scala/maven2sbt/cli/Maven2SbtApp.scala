@@ -6,7 +6,7 @@ import cats.data._
 import cats.implicits._
 import cats.effect._
 
-import maven2sbt.core.{Maven2Sbt, Maven2SbtError}
+import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError}
 import maven2sbt.effect._
 
 import pirate._
@@ -19,7 +19,7 @@ import piratex._
  */
 object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
-  val maven2SbtIo = Maven2Sbt[IO]
+  val maven2SbtIo: Maven2Sbt[IO] = Maven2Sbt[IO]
 
   val cmd: Command[Maven2SbtArgs] =
     Metavar.rewriteCommand(
@@ -46,7 +46,8 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
                 .bracket { writer =>
                   (for {
                     buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-                    _ <- EitherT(IO(writer.write(buildSbt)) *> IO(().asRight[Maven2SbtError]))
+                    buildSbtString <- EitherT.liftF(IO(BuildSbt.render(buildSbt)))
+                    _ <- EitherT(IO(writer.write(buildSbtString)) *> IO(().asRight[Maven2SbtError]))
                     _ <- EitherT(ConsoleEffect[IO].putStrLn(
                         s"""Success] The sbt config file has been successfully written at
                            |  $buildSbtPath
@@ -61,7 +62,8 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
       (for {
         pom <- EitherT(IO(toCanonicalFile(pomPath).asRight))
         buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-        _ <- EitherT(ConsoleEffect[IO].putStrLn(buildSbt) *> IO(().asRight[Maven2SbtError]))
+        buildSbtString <- EitherT.liftF(IO(BuildSbt.render(buildSbt)))
+        _ <- EitherT(ConsoleEffect[IO].putStrLn(buildSbtString) *> IO(().asRight[Maven2SbtError]))
       } yield ()).value
   }
 
