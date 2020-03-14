@@ -27,12 +27,11 @@ object Maven2Sbt {
   implicit def maven2SbtF[F[_] : EffectConstructor : ConsoleEffect : Monad]: Maven2Sbt[F] =
     new Maven2SbtF[F]
 
-  final class Maven2SbtF[F[_] : Monad](
-    override implicit protected val EF: EffectConstructor[F]
-  , override implicit protected val CF: ConsoleEffect[F]
-  ) extends Maven2Sbt[F] with Effectful[F] with ConsoleEffectful[F] {
-
-    def eitherTF[A, B](e: => Either[A, B]): EitherT[F, A, B] = EitherT(effect(e))
+  final class Maven2SbtF[F[_] : Monad : EffectConstructor : ConsoleEffect]
+    extends Maven2Sbt[F]
+    with Effectful
+    with ConsoleEffectful
+    with EitherTSupport {
 
     def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, BuildSbt]] =
       for {
@@ -75,14 +74,14 @@ object Maven2Sbt {
     def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         pomFile <- eitherTF(Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)))
-        pomElem <- eitherTF(XML.loadFile(pomFile).asRight[Maven2SbtError])
+        pomElem <- eitherTEffect[F, Maven2SbtError, Elem](XML.loadFile(pomFile))
         buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
       } yield buildSbtString).value
 
     def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         inputStream <- eitherTF(Option(pom).toRight(Maven2SbtError.noPomInputStream))
-        pomElem <- eitherTF(XML.load(inputStream).asRight[Maven2SbtError])
+        pomElem <- eitherTEffect[F, Maven2SbtError, Elem](XML.load(inputStream))
         buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
       } yield buildSbtString).value
 

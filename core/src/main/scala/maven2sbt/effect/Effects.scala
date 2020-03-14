@@ -1,6 +1,7 @@
 package maven2sbt.effect
 
 import cats._
+import cats.data.EitherT
 import cats.implicits._
 import cats.effect._
 
@@ -78,28 +79,37 @@ object ConsoleEffect {
   }
 }
 
-trait Effectful[F[_]] {
+trait Effectful {
 
-  implicit protected def EF: EffectConstructor[F]
+  def effect[F[_] : EffectConstructor, A](a: => A): F[A] = EffectConstructor[F].effect(a)
 
-  def effect[A](a: => A): F[A] = EF.effect(a)
+  def pureEffect[F[_] : EffectConstructor, A](a: A): F[A] = EffectConstructor[F].pureEffect(a)
 
-  def pureEffect[A](a: A): F[A] = EF.pureEffect(a)
-
-  def effectUnit: F[Unit] = EF.unit
+  def effectUnit[F[_] : EffectConstructor]: F[Unit] = EffectConstructor[F].unit
 
 }
 
-trait ConsoleEffectful[F[_]] {
+trait ConsoleEffectful {
 
-  implicit protected def CF: ConsoleEffect[F]
+  def readLn[F[_] : ConsoleEffect]: F[String] = ConsoleEffect[F].readLn
 
-  def readLn: F[String] = CF.readLn
+  def putStrLn[F[_] : ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putStrLn(value)
 
-  def putStrLn(value: String): F[Unit] = CF.putStrLn(value)
+  def putErrStrLn[F[_] : ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putErrStrLn(value)
 
-  def putErrStrLn(value: String): F[Unit] = CF.putErrStrLn(value)
+  def readYesNo[F[_] : ConsoleEffect](prompt: String): F[YesNo] = ConsoleEffect[F].readYesNo(prompt)
 
-  def readYesNo(prompt: String): F[YesNo] = CF.readYesNo(prompt)
+}
+
+trait EitherTSupport {
+
+  def eitherTF[F[_] : EffectConstructor, A, B](ab: => Either[A, B]): EitherT[F, A, B] =
+    EitherT(EffectConstructor[F].effect(ab))
+
+  def eitherTEffect[F[_] : EffectConstructor : Functor, A, B](b: => B): EitherT[F, A, B] =
+    EitherT.liftF[F, A, B](EffectConstructor[F].effect(b))
+
+  def eitherTLiftF[F[_] : EffectConstructor : Functor, A, B](fb: => F[B]): EitherT[F, A, B] =
+    EitherT.liftF[F, A, B](fb)
 
 }
