@@ -15,9 +15,9 @@ import scala.xml._
   * @since 2017-04-03
   */
 trait Maven2Sbt[F[_]] {
-  def buildSbt(scalaVersion: ScalaVersion, pom: => Elem): F[Either[Maven2SbtError, String]]
-  def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, String]]
-  def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, String]]
+  def buildSbt(scalaVersion: ScalaVersion, pom: => Elem): F[Either[Maven2SbtError, BuildSbt]]
+  def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, BuildSbt]]
+  def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, BuildSbt]]
 }
 
 object Maven2Sbt {
@@ -34,41 +34,52 @@ object Maven2Sbt {
 
     def eitherTF[A, B](e: => Either[A, B]): EitherT[F, A, B] = EitherT(effect(e))
 
-    def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, String]] =
+    def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, BuildSbt]] =
       for {
         pom <- effect(pomElem)
-        ProjectInfo(GroupId(groupId), ArtifactId(artifactId), Version(version)) <- effect(ProjectInfo.from(pom))
+        ProjectInfo(groupId, artifactId, version) <- effect(ProjectInfo.from(pom))
         mavenProperties <- effect(MavenProperty.from(pom))
+        props <- effect(mavenProperties.map(BuildSbt.Prop.fromMavenProperty))
         repositories <- effect(Repository.from(pom))
         dependencies <- effect(Dependency.from(pom))
-        renderedMavenProperties <- effect(mavenProperties.map(MavenProperty.render).mkString("\n"))
-        renderedRepositories <- effect(Repository.renderToResolvers(repositories, 4))
-        renderedDependencies <- effect(Dependency.renderLibraryDependencies(dependencies, 4))
-        buildSbtString <- effect(
-          s"""
-             |$renderedMavenProperties
-             |
-             |ThisBuild / organization := "$groupId"
-             |ThisBuild / version := "$version"
-             |ThisBuild / scalaVersion := "${scalaVersion.scalaVersion}"
-             |
-             |lazy val root = (project in file("."))
-             |  .settings(
-             |    name := "$artifactId"
-             |  , $renderedRepositories
-             |  , $renderedDependencies
-             |  )
-             |""".stripMargin)
-      } yield buildSbtString.asRight
+        buildSbtData <- effect(
+          BuildSbt(
+            BuildSbt.GlobalSettings(BuildSbt.Settings(
+              none[GroupId]
+            , none[ArtifactId]
+            , none[Version]
+            , none[ScalaVersion]
+            , List.empty[Repository]
+            , List.empty[Dependency]
+            ))
+          , BuildSbt.ThisBuildSettings(BuildSbt.Settings(
+              groupId.some
+            , none[ArtifactId]
+            , version.some
+            , scalaVersion.some
+            , List.empty[Repository]
+            , List.empty[Dependency]
+            ))
+          , BuildSbt.ProjectSettings(BuildSbt.Settings(
+              none[GroupId]
+            , artifactId.some
+            , none[Version]
+            , none[ScalaVersion]
+            , repositories.toList
+            , dependencies.toList
+            ))
+          , props.toList
+          ))
+      } yield buildSbtData.asRight
 
-    def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, String]] =
+    def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         pomFile <- eitherTF(Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)))
         pomElem <- eitherTF(XML.loadFile(pomFile).asRight[Maven2SbtError])
         buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
       } yield buildSbtString).value
 
-    def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, String]] =
+    def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         inputStream <- eitherTF(Option(pom).toRight(Maven2SbtError.noPomInputStream))
         pomElem <- eitherTF(XML.load(inputStream).asRight[Maven2SbtError])
