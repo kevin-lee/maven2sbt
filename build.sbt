@@ -41,7 +41,6 @@ def subProject(projectName: String, path: File): Project =
     .settings(
         name := s"$ProjectNamePrefix-$projectName"
       , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
-      , addCompilerPlugin("org.augustjune" %% "context-applied" % "0.1.2")
       , resolvers += hedgehogRepo
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
       , libraryDependencies ++= hedgehogLibs
