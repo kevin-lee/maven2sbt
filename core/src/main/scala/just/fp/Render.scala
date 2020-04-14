@@ -11,7 +11,10 @@ trait Render[A] {
 object Render {
   def apply[A : Render]: Render[A] = implicitly[Render[A]]
 
-  def render[A](f: A => String): Render[A] = new Render[A] {
+  def namedRender[A](name: String, f: A => String): Render[A] =
+    NamedRander(name, f)
+
+  final case class NamedRander[A](name: String, f: A => String) extends Render[A] {
     override def render(a: A): String = f(a)
   }
 }
