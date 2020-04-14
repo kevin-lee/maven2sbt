@@ -6,7 +6,9 @@ import cats._
 import cats.data._
 import cats.implicits._
 
-import maven2sbt.effect._
+import effectie.Effectful._
+import effectie.cats._
+import effectie.cats.EitherTSupport._
 
 import scala.xml._
 
@@ -28,21 +30,18 @@ object Maven2Sbt {
     new Maven2SbtF[F]
 
   final class Maven2SbtF[F[_] : Monad : EffectConstructor : ConsoleEffect]
-    extends Maven2Sbt[F]
-    with Effectful
-    with ConsoleEffectful
-    with EitherTSupport {
+    extends Maven2Sbt[F] {
 
     def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, BuildSbt]] =
       for {
-        pom <- effect(pomElem)
-        ProjectInfo(groupId, artifactId, version) <- effect(ProjectInfo.from(pom))
-        mavenProperties <- effect(MavenProperty.from(pom))
-        props <- effect(mavenProperties.map(BuildSbt.Prop.fromMavenProperty))
-        repositories <- effect(Repository.from(pom))
-        dependencies <- effect(Dependency.from(pom))
-        globalSettings <- pureEffect(BuildSbt.GlobalSettings.empty)
-        thisBuildSettings <- pureEffect(
+        pom <- effectOf(pomElem)
+        ProjectInfo(groupId, artifactId, version) <- effectOf(ProjectInfo.from(pom))
+        mavenProperties <- effectOf(MavenProperty.from(pom))
+        props <- effectOf(mavenProperties.map(BuildSbt.Prop.fromMavenProperty))
+        repositories <- effectOf(Repository.from(pom))
+        dependencies <- effectOf(Dependency.from(pom))
+        globalSettings <- effectOfPure(BuildSbt.GlobalSettings.empty)
+        thisBuildSettings <- effectOfPure(
             BuildSbt.ThisBuildSettings(BuildSbt.Settings(
                 groupId.some
               , none[ArtifactId]
@@ -52,7 +51,7 @@ object Maven2Sbt {
               , List.empty[Dependency]
             ))
           )
-        projectSettings <- pureEffect(
+        projectSettings <- effectOfPure(
             BuildSbt.ProjectSettings(BuildSbt.Settings(
                 none[GroupId]
               , artifactId.some
@@ -62,7 +61,7 @@ object Maven2Sbt {
               , dependencies.toList
             ))
           )
-        buildSbtData <- effect(
+        buildSbtData <- effectOf(
             BuildSbt(
               globalSettings
             , thisBuildSettings
@@ -74,15 +73,15 @@ object Maven2Sbt {
 
     def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
-        pomFile <- eitherTF(Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)))
-        pomElem <- eitherTEffect[F, Maven2SbtError, Elem](XML.loadFile(pomFile))
+        pomFile <- eitherTEffectOf(Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)))
+        pomElem <- eitherTLiftEffectOf[F, Maven2SbtError, Elem](XML.loadFile(pomFile))
         buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
       } yield buildSbtString).value
 
     def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
-        inputStream <- eitherTF(Option(pom).toRight(Maven2SbtError.noPomInputStream))
-        pomElem <- eitherTEffect[F, Maven2SbtError, Elem](XML.load(inputStream))
+        inputStream <- eitherTEffectOf(Option(pom).toRight(Maven2SbtError.noPomInputStream))
+        pomElem <- eitherTLiftEffectOf[F, Maven2SbtError, Elem](XML.load(inputStream))
         buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
       } yield buildSbtString).value
 
