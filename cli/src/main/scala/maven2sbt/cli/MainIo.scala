@@ -1,11 +1,12 @@
 package maven2sbt.cli
 
 
-import cats.effect._
 import cats.implicits._
+import cats.effect._
+
+import effectie.cats.ConsoleEffect
 
 import maven2sbt.core.Maven2SbtError
-import maven2sbt.effect._
 
 import pirate.{ExitCode => PirateExitCode, _}
 

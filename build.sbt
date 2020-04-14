@@ -35,6 +35,8 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
 lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.1.0"
 lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
+lazy val effectieCatsEffect: ModuleID = "io.kevinlee" %% "effectie-cats-effect" % "0.3.0"
+lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % "0.3.0"
 
 def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
@@ -51,7 +53,7 @@ lazy val core = subProject("core", file("core"))
   .settings(
       crossScalaVersions := CrossScalaVersions
     , libraryDependencies ++= crossVersionProps(
-        Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", catsEffect)
+        Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", catsEffect, effectieCatsEffect, effectieScalazEffect)
       , SemVer.parseUnsafe(scalaVersion.value)
       ) {
           case (Major(2), Minor(11)) =>
