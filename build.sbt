@@ -35,8 +35,10 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
 lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.1.0"
 lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
-lazy val effectieCatsEffect: ModuleID = "io.kevinlee" %% "effectie-cats-effect" % "0.3.0"
-lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % "0.3.0"
+
+val EffectieVersion = "0.4.0"
+lazy val effectieCatsEffect: ModuleID = "io.kevinlee" %% "effectie-cats-effect" % EffectieVersion
+lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % EffectieVersion
 
 def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
