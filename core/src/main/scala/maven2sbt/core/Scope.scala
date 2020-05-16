@@ -7,12 +7,12 @@ package maven2sbt.core
 sealed trait Scope
 
 object Scope {
-  final case object Compile extends Scope
-  final case object Test extends Scope
-  final case object Provided extends Scope
-  final case object Runtime extends Scope
-  final case object System extends Scope
-  final case object Default extends Scope
+  case object Compile extends Scope
+  case object Test extends Scope
+  case object Provided extends Scope
+  case object Runtime extends Scope
+  case object System extends Scope
+  case object Default extends Scope
 
   def compile: Scope = Compile
   def test: Scope = Test

@@ -23,9 +23,10 @@ object Exclusion {
     case Exclusion(GroupId(groupId), ArtifactId(artifactId)) :: Nil =>
       s""" exclude("$groupId", "$artifactId")"""
     case x :: xs =>
-      val idt = indent(6)
+      val idt = indent(8)
       s""" excludeAll(
-         |$idt${exclusions.map(renderExclusionRule).mkString("  ", s"\n$idt, ", "")}
+         |$idt  ${renderExclusionRule(x)},
+         |$idt  ${xs.map(renderExclusionRule).mkString(s",\n$idt  ")}
          |$idt)""".stripMargin
   }
 }

@@ -104,11 +104,11 @@ object BuildSbt {
 
   def render(buildSbt: BuildSbt): String = buildSbt match {
     case BuildSbt(
-      globalSettings
-    , thisBuildSettings
-    , projectSettings
-    , props
-    ) =>
+        globalSettings
+      , thisBuildSettings
+      , projectSettings
+      , props
+      ) =>
 
       val globalSettingsRendered = GlobalSettings.render(globalSettings)
       val thisBuildSettingsRendered = ThisBuildSettings.render(thisBuildSettings)

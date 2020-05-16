@@ -11,7 +11,7 @@ sealed trait Maven2SbtError
 object Maven2SbtError {
 
   final case class PomFileNotExist(pomFile: File) extends Maven2SbtError
-  final case object NoPomInputStream extends Maven2SbtError
+  case object NoPomInputStream extends Maven2SbtError
   final case class OutputFileAlreadyExist(output: File) extends Maven2SbtError
 
   def pomFileNotExist(pomFile: File): Maven2SbtError = PomFileNotExist(pomFile)

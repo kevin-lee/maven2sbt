@@ -20,7 +20,9 @@ object Repository {
   final case class RepoUrl(repoUrl: String) extends AnyVal
 
   implicit val named: Named[Repository] = Named.named("resolvers")
-  implicit val render: Render[Repository] = Render.namedRender("repository", repository => Repository.render(repository))
+
+  implicit val render: Render[Repository] =
+    Render.namedRender("repository", repository => Repository.render(repository))
 
   def from(pom: Elem): Seq[Repository] = for {
     repositories <- pom \ "repositories"
