@@ -173,6 +173,25 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>some.project</groupId>
+      <artifactId>the-project3</artifactId>
+      <version>1.0.9</version>
+      <exclusions>
+        <exclusion>
+          <groupId>blah.blah</groupId>
+          <artifactId>abc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>some.test</groupId>
+          <artifactId>project-123</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>something.else</groupId>
+          <artifactId>xyz-999</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
   </dependencies>
 </project>

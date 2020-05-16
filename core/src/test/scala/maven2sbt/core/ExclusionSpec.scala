@@ -12,7 +12,8 @@ object ExclusionSpec extends Properties {
     property("test renderExclusionRule with 1 exclusion", testRenderExclusionRule)
   , example("test renderExclusions with no exclusion", testRenderExclusions0)
   , property("test renderExclusions with 1 exclusion", testRenderExclusions1)
-  , property("test renderExclusions with many exclusions", testRenderExclusionsMany)
+  , property("test renderExclusions with two exclusions", testRenderExclusionsTwo)
+  , property("test renderExclusions with more than two exclusions", testRenderExclusionsMoreThanTwo)
   )
 
   def testRenderExclusionRule: Property = for {
@@ -37,14 +38,28 @@ object ExclusionSpec extends Properties {
     actual ==== expected
   }
 
-  def testRenderExclusionsMany: Property = for {
-    exclusions <- Gens.genExclusion.list(Range.linear(2, 10)).log("exclusions")
+  def testRenderExclusionsTwo: Property = for {
+    exclusions <- Gens.genExclusion.list(Range.linear(2, 2)).log("exclusions")
   } yield {
-        val expected =
-          s""" excludeAll(
-             |      ${exclusions.map(Exclusion.renderExclusionRule).mkString("  ", "\n      , ", "")}
-             |      )""".stripMargin
+    val indent = " " * 8
+    val expected =
+      s""" excludeAll(
+         |$indent  ${exclusions.map(Exclusion.renderExclusionRule).mkString(s",\n$indent  ")}
+         |$indent)""".stripMargin
     val actual = Exclusion.renderExclusions(exclusions)
     actual ==== expected
   }
+
+    def testRenderExclusionsMoreThanTwo: Property = for {
+    exclusions <- Gens.genExclusion.list(Range.linear(3, 10)).log("exclusions")
+  } yield {
+    val indent = " " * 8
+    val expected =
+      s""" excludeAll(
+         |$indent  ${exclusions.map(Exclusion.renderExclusionRule).mkString(s",\n$indent  ")}
+         |$indent)""".stripMargin
+    val actual = Exclusion.renderExclusions(exclusions)
+    actual ==== expected
+  }
+
 }

@@ -42,8 +42,8 @@ object Maven2SbtArgs {
 sealed trait Overwrite
 
 object Overwrite {
-  final case object DoOverwrite extends Overwrite
-  final case object DoNotOverwrite extends Overwrite
+  case object DoOverwrite extends Overwrite
+  case object DoNotOverwrite extends Overwrite
 
   def doOverwrite: Overwrite = DoOverwrite
   def doNotOverwrite: Overwrite = DoNotOverwrite
