@@ -11,7 +11,7 @@ jobs:
       matrix:
         scala:
           - { version: "2.11.12", binary-version: "2.11" }
-          - { version: "2.12.10", binary-version: "2.12" }
+          - { version: "2.12.11", binary-version: "2.12" }
 
     steps:
       - uses: actions/checkout@v1
@@ -62,10 +62,10 @@ jobs:
       - name: Build for Scala 2.13
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: .github/workflows/sbt-build.sh 2.13.1
+        run: .github/workflows/sbt-build.sh 2.13.2
 
       - name: Build cli
         run: |
-          sbt -J-Xmx2048m "; project cli; ++2.13.1!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"
+          sbt -J-Xmx2048m "; project cli; ++2.13.2!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"
           ls -ld cli/target/maven2sbt-cli*
           ls -ld cli/target/universal/maven2sbt-cli*

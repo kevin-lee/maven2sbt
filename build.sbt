@@ -5,8 +5,8 @@ import SemVer.{Major, Minor}
 
 val ProjectNamePrefix = "maven2sbt"
 val ProjectVersion = "0.4.0"
-val ProjectScalaVersion = "2.13.1"
-val CrossScalaVersions = Seq("2.11.12", "2.12.10", ProjectScalaVersion)
+val ProjectScalaVersion = "2.13.2"
+val CrossScalaVersions = Seq("2.11.12", "2.12.11", ProjectScalaVersion)
 
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / version := ProjectVersion
