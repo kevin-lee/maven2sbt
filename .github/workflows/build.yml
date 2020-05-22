@@ -10,11 +10,14 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { version: "2.11.12", binary-version: "2.11" }
-          - { version: "2.12.11", binary-version: "2.12" }
+          - { version: "2.11.12", binary-version: "2.11", java-version: "8" }
+          - { version: "2.12.11", binary-version: "2.12", java-version: "11" }
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.scala.java-version }}
 
       - name: Cache Coursier
         uses: actions/cache@v1
