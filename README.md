@@ -30,13 +30,13 @@ $ which maven2sbt
 ## Linux / macOS
 ### Use `curl`
 ```shell
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/master/.scripts/install.sh)" 
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install.sh)" 
 ```
 ***
 
 ### Or use `wget`
 ```shell
-sh -c "$(wget -O- https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/master/.scripts/install.sh)" 
+sh -c "$(wget -O- https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install.sh)" 
 ```
 ***
 
