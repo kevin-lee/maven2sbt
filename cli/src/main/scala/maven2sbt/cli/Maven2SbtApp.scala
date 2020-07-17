@@ -48,9 +48,9 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
                 .bracket { writer =>
                   (for {
                     buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-                    buildSbtString <- eitherTLiftF(IO(BuildSbt.render(buildSbt)))
-                    _ <- eitherTLiftF(IO(writer.write(buildSbtString)))
-                    _ <- eitherTLiftF[IO, Maven2SbtError, Unit](
+                    buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt)))
+                    _ <- eitherTRightF(IO(writer.write(buildSbtString)))
+                    _ <- eitherTRightF[Maven2SbtError](
                         ConsoleEffect[IO].putStrLn(
                           s"""Success] The sbt config file has been successfully written at
                              |  $buildSbtPath
@@ -64,10 +64,10 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
     case Maven2SbtArgs.PrintArgs(scalaVersion, pomPath) =>
       (for {
-        pom <- eitherTLiftF(IO(toCanonicalFile(pomPath)))
+        pom <- eitherTRightF(IO(toCanonicalFile(pomPath)))
         buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-        buildSbtString <- eitherTLiftF(IO(BuildSbt.render(buildSbt)))
-        _ <- eitherTLiftF[IO, Maven2SbtError, Unit](
+        buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt)))
+        _ <- eitherTRightF[Maven2SbtError](
               ConsoleEffect[IO].putStrLn(buildSbtString)
             )
       } yield ()).value

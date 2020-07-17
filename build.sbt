@@ -5,8 +5,8 @@ import SemVer.{Major, Minor}
 
 val ProjectNamePrefix = "maven2sbt"
 val ProjectVersion = "0.4.0"
-val ProjectScalaVersion = "2.13.2"
-val CrossScalaVersions = Seq("2.11.12", "2.12.11", ProjectScalaVersion)
+val ProjectScalaVersion = "2.13.3"
+val CrossScalaVersions = Seq("2.11.12", "2.12.12", ProjectScalaVersion)
 
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / version := ProjectVersion
@@ -32,11 +32,12 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
   , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
-lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.1.0"
+lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.1.1"
 lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
-lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
+lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.1.4"
+lazy val catsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
-val EffectieVersion = "0.4.0"
+val EffectieVersion = "1.0.0"
 lazy val effectieCatsEffect: ModuleID = "io.kevinlee" %% "effectie-cats-effect" % EffectieVersion
 lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % EffectieVersion
 
@@ -48,6 +49,12 @@ def subProject(projectName: String, path: File): Project =
       , resolvers += hedgehogRepo
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
       , libraryDependencies ++= hedgehogLibs
+      , scalacOptions := (SemVer.parseUnsafe(scalaVersion.value) match {
+          case SemVer(Major(2), Minor(13), _, _, _) =>
+            scalacOptions.value.filter(_ != "-Xlint:nullary-override")// ++ Seq("-Xlint:-multiarg-infix")
+          case _ =>
+            scalacOptions.value
+        })
     )
 
 lazy val core = subProject("core", file("core"))
@@ -55,13 +62,13 @@ lazy val core = subProject("core", file("core"))
   .settings(
       crossScalaVersions := CrossScalaVersions
     , libraryDependencies ++= crossVersionProps(
-        Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", catsEffect, effectieCatsEffect, effectieScalazEffect)
+        Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", effectieCatsEffect, effectieScalazEffect)
       , SemVer.parseUnsafe(scalaVersion.value)
       ) {
           case (Major(2), Minor(11)) =>
-            Seq(cats_2_0_0)
+            Seq(cats_2_0_0, catsEffect_2_0_0)
           case _ =>
-            Seq(cats)
+            Seq(cats, catsEffect)
         }
     /* Build Info { */
     , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
