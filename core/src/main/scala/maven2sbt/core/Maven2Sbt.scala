@@ -73,15 +73,15 @@ object Maven2Sbt {
 
     def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
-        pomFile <- eitherTEffectOf(Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)))
-        pomElem <- eitherTLiftEffectOf[F, Maven2SbtError, Elem](XML.loadFile(pomFile))
+        pomFile <- eitherTOf(Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)))
+        pomElem <- eitherTRight(XML.loadFile(pomFile))
         buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
       } yield buildSbtString).value
 
     def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
-        inputStream <- eitherTEffectOf(Option(pom).toRight(Maven2SbtError.noPomInputStream))
-        pomElem <- eitherTLiftEffectOf[F, Maven2SbtError, Elem](XML.load(inputStream))
+        inputStream <- eitherTOf(Option(pom).toRight(Maven2SbtError.noPomInputStream))
+        pomElem <- eitherTRight(XML.load(inputStream))
         buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
       } yield buildSbtString).value
 
