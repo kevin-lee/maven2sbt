@@ -17,7 +17,7 @@ import maven2sbt.info.Maven2SbtBuildInfo
  */
 object Maven2SbtArgsParser {
 
-  def fileParser: Parse[Maven2SbtArgs] = Applicative[Parse].apply4(
+  def fileParser: Parse[Maven2SbtArgs] = Maven2SbtArgs.fileArgs _ |*| ((
       flag[String](
         both('s', "scala-version")
       , metavar("<version>") |+| description("Scala version")
@@ -33,9 +33,9 @@ object Maven2SbtArgsParser {
     , argument[String](
         metavar("<pom-path>") |+| description("Path to the pom file.")
       ).map(new File(_))
-  )(Maven2SbtArgs.fileArgs _)
+  ))
 
-  def printParse: Parse[Maven2SbtArgs] = Applicative[Parse].apply2(
+  def printParse: Parse[Maven2SbtArgs] = Maven2SbtArgs.printArgs _ |*| ((
       flag[String](
         both('s', "scala-version")
       , metavar("<version>") |+| description("Scala version")
@@ -43,7 +43,7 @@ object Maven2SbtArgsParser {
     , argument[String](
       metavar("<pom-path>") |+| description("Path to the pom file.")
     ).map(new File(_))
-  )(Maven2SbtArgs.printArgs _)
+  ))
 
   val rawCmd: Command[Maven2SbtArgs] =
     Command(

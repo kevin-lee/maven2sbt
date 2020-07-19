@@ -51,7 +51,7 @@ def subProject(projectName: String, path: File): Project =
       , libraryDependencies ++= hedgehogLibs
       , scalacOptions := (SemVer.parseUnsafe(scalaVersion.value) match {
           case SemVer(Major(2), Minor(13), _, _, _) =>
-            scalacOptions.value.filter(_ != "-Xlint:nullary-override")// ++ Seq("-Xlint:-multiarg-infix")
+            scalacOptions.value.filter(_ != "-Xlint:nullary-override") ++ Seq("-Wconf:cat=lint-byname-implicit:s")// ++ Seq("-Xlint:-multiarg-infix")
           case _ =>
             scalacOptions.value
         })
@@ -82,7 +82,7 @@ lazy val core = subProject("core", file("core"))
 
   )
 
-lazy val pirateVersion = "44486bc961b52ba889f0b8f2b23f719d0ed8ba99"
+lazy val pirateVersion = "b3a0a3eff3a527dff542133aaf0fd935aa2940fc"
 lazy val pirateUri = uri(s"https://github.com/Kevin-Lee/pirate.git#$pirateVersion")
 
 lazy val cli = subProject("cli", file("cli"))
