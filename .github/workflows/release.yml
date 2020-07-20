@@ -37,8 +37,8 @@ jobs:
       matrix:
         scala:
           - { version: "2.11.12", binary-version: "2.11", java-version: "8" }
-          - { version: "2.12.11", binary-version: "2.12", java-version: "11" }
-          - { version: "2.13.2", binary-version: "2.13", java-version: "11" }
+          - { version: "2.12.12", binary-version: "2.12", java-version: "11" }
+          - { version: "2.13.3", binary-version: "2.13", java-version: "11" }
 
     steps:
       - uses: actions/checkout@v2
