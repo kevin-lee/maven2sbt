@@ -3,7 +3,9 @@ import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
 
-val ProjectNamePrefix = "maven2sbt"
+val GitHubUsername = "Kevin-Lee"
+val RepoName = "maven2sbt"
+val ExecutableScriptName = RepoName
 val ProjectVersion = "0.4.0"
 val ProjectScalaVersion = "2.13.3"
 val CrossScalaVersions = Seq("2.11.12", "2.12.12", ProjectScalaVersion)
@@ -12,14 +14,25 @@ ThisBuild / organization := "io.kevinlee"
 ThisBuild / version := ProjectVersion
 ThisBuild / scalaVersion := ProjectScalaVersion
 ThisBuild / developers   := List(
-  Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
+  Developer(GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url(s"https://github.com/$GitHubUsername"))
 )
-ThisBuild / homepage := Some(url("https://github.com/Kevin-Lee/maven2sbt"))
+ThisBuild / homepage := Some(url(s"https://github.com/$GitHubUsername/$RepoName"))
 ThisBuild / scmInfo :=
   Some(ScmInfo(
-      url("https://github.com/Kevin-Lee/maven2sbt")
-    , "https://github.com/Kevin-Lee/maven2sbt.git"
+      url(s"https://github.com/$GitHubUsername/$RepoName")
+    , s"https://github.com/$GitHubUsername/$RepoName.git"
   ))
+
+def prefixedProjectName(name: String) = s"$RepoName${if (name.isEmpty) "" else s"-$name"}"
+
+lazy val noPublish: SettingsDefinition = Seq(
+  publish := {},
+  publishLocal := {},
+  publishArtifact := false,
+  skip in sbt.Keys.`package` := true,
+  skip in packagedArtifacts := true,
+  skip in publish := true
+)
 
 lazy val  hedgehogVersion: String = "64eccc9ca7dbe7a369208a14a97a25d7ccbbda67"
 
@@ -44,7 +57,7 @@ lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effe
 def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
     .settings(
-        name := s"$ProjectNamePrefix-$projectName"
+        name := prefixedProjectName(projectName)
       , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
       , resolvers += hedgehogRepo
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
@@ -73,7 +86,7 @@ lazy val core = subProject("core", file("core"))
     /* Build Info { */
     , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
     , buildInfoObject := "Maven2SbtBuildInfo"
-    , buildInfoPackage := "maven2sbt.info"
+    , buildInfoPackage := s"$RepoName.info"
     , buildInfoOptions += BuildInfoOption.ToJson
     /* } Build Info */
     /* publish { */
@@ -83,7 +96,7 @@ lazy val core = subProject("core", file("core"))
   )
 
 lazy val pirateVersion = "b3a0a3eff3a527dff542133aaf0fd935aa2940fc"
-lazy val pirateUri = uri(s"https://github.com/Kevin-Lee/pirate.git#$pirateVersion")
+lazy val pirateUri = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
 
 lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging)
@@ -91,14 +104,15 @@ lazy val cli = subProject("cli", file("cli"))
       maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
     , packageSummary := "Maven2Sbt"
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
-    , executableScriptName := ProjectNamePrefix
+    , executableScriptName := ExecutableScriptName
   )
   .dependsOn(core, ProjectRef(pirateUri, "pirate"))
 
+
 lazy val maven2sbt = (project in file("."))
-  .enablePlugins(DevOopsGitReleasePlugin)
+  .enablePlugins(DevOopsGitReleasePlugin, DocusaurPlugin)
   .settings(
-      name := ProjectNamePrefix
+      name := RepoName
       /* GitHub Release { */
     , devOopsPackagedArtifacts := List(
         s"core/target/scala-*/${name.value}*.jar"
@@ -107,6 +121,14 @@ lazy val maven2sbt = (project in file("."))
       , s"cli/target/${name.value}*.deb"
       )
     /* } GitHub Release */
+    /* Website { */
+    , docusaurDir := (ThisBuild / baseDirectory).value / "website"
+    , docusaurBuildDir := docusaurDir.value / "build"
+
+    , gitHubPagesOrgName := GitHubUsername
+    , gitHubPagesRepoName := RepoName
+    /* } Website */
   )
+  .settings(noPublish)
   .aggregate(core, cli)
 
