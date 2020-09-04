@@ -3,7 +3,7 @@ package maven2sbt.cli
 import java.io.{BufferedWriter, File, FileWriter}
 
 import cats.data._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats.ConsoleEffect

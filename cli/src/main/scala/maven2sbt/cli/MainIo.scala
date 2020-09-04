@@ -1,7 +1,6 @@
 package maven2sbt.cli
 
-
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats.ConsoleEffect
