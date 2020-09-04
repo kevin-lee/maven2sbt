@@ -4,7 +4,7 @@ import java.io.{File, InputStream}
 
 import cats._
 import cats.data._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.Effectful._
 import effectie.cats._

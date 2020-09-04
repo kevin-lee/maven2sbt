@@ -34,9 +34,9 @@ lazy val noPublish: SettingsDefinition = Seq(
   skip in publish := true
 )
 
-lazy val  hedgehogVersion: String = "64eccc9ca7dbe7a369208a14a97a25d7ccbbda67"
+lazy val hedgehogVersion: String = "0.5.1"
 
-lazy val  hedgehogRepo: Resolver =
+lazy val hedgehogRepo: Resolver =
     "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
 lazy val hedgehogLibs: Seq[ModuleID] = Seq(
@@ -45,12 +45,12 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
   , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
-lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.1.1"
+lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.2.0"
 lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.1.4"
 lazy val catsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
-val EffectieVersion = "1.0.0"
+val EffectieVersion = "1.2.0"
 lazy val effectieCatsEffect: ModuleID = "io.kevinlee" %% "effectie-cats-effect" % EffectieVersion
 lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % EffectieVersion
 
@@ -75,7 +75,7 @@ lazy val core = subProject("core", file("core"))
   .settings(
       crossScalaVersions := CrossScalaVersions
     , libraryDependencies ++= crossVersionProps(
-        Seq("org.scala-lang.modules" %% "scala-xml" % "1.2.0", effectieCatsEffect, effectieScalazEffect)
+        Seq("org.scala-lang.modules" %% "scala-xml" % "1.3.0", effectieCatsEffect, effectieScalazEffect)
       , SemVer.parseUnsafe(scalaVersion.value)
       ) {
           case (Major(2), Minor(11)) =>
