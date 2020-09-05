@@ -77,7 +77,7 @@ object RepositorySpec extends Properties {
     val idt = " " * n
     val expected =
       s"""resolvers ++= Seq(
-         |$idt${repositories.map(Repository.render).mkString("  ", s"\n$idt, ", "")}
+         |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
          |$idt)""".stripMargin
     val actual = Repository.renderToResolvers(repositories, n)
     actual ==== expected

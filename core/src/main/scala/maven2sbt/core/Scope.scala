@@ -1,5 +1,7 @@
 package maven2sbt.core
 
+import cats.syntax.all._
+
 /**
   * @author Kevin Lee
   * @since 2019-04-21
@@ -22,18 +24,17 @@ object Scope {
   def default: Scope = Default
 
   def render(scope: Scope): String = scope match {
-    case Compile =>
-      "Compile"
-    case Test =>
-      "Test"
-    case Provided =>
-      "Provided"
-    case Runtime =>
-      "Runtime"
-    case System =>
-      "sbt.Configurations.System"
-    case Default =>
-      ""
+    case Compile => "Compile"
+
+    case Test => "Test"
+
+    case Provided => "Provided"
+
+    case Runtime => "Runtime"
+
+    case System => "sbt.Configurations.System"
+
+    case Default => ""
   }
 
   def renderWithPrefix(prefix: String, scope: Scope): String = {
@@ -45,37 +46,35 @@ object Scope {
   }
 
   def renderToMaven(scope: Scope): String = scope match {
-    case Compile =>
-      "compile"
-    case Test =>
-      "test"
-    case Provided =>
-      "provided"
-    case Runtime =>
-      "runtime"
-    case System =>
-      "system"
-    case Default =>
-      ""
+    case Compile => "compile"
+
+    case Test => "test"
+
+    case Provided => "provided"
+
+    case Runtime => "runtime"
+
+    case System => "system"
+
+    case Default => ""
   }
 
   def parse(scope: String): Either[String, Scope] = scope match {
-    case "compile" =>
-      Right(compile)
-    case "test" =>
-      Right(test)
-    case "provided" =>
-      Right(provided)
-    case "runtime" =>
-      Right(runtime)
-    case "system" =>
-      Right(system)
-    case "" =>
-      Right(default)
-    case _ =>
-      Left(s"Unsupported scope: $scope")
+    case "compile" => compile.asRight[String]
+
+    case "test" => test.asRight[String]
+
+    case "provided" => provided.asRight[String]
+
+    case "runtime" => runtime.asRight[String]
+
+    case "system" => system.asRight[String]
+
+    case "" => default.asRight[String]
+
+    case _ => s"Unsupported scope: $scope".asLeft[Scope]
   }
 
-  def parseUnsafe(scope: String): Scope =
-    parse(scope).fold(sys.error, identity)
+  def parseUnsafe(scope: String): Scope = parse(scope).fold(sys.error, identity)
+
 }

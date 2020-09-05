@@ -17,6 +17,7 @@ object MavenProperty {
     if !label.startsWith("#PCDATA")
   } yield MavenProperty(label, property.text)
 
+  // TODO: Remove it. It's no longer in use in favor of maven2sbt.core.BuildSbt.Prop.render.
   def render(property: MavenProperty): String =
     s"""val ${dotHyphenSeparatedToCamelCase(property.key)} = "${property.value}""""
 

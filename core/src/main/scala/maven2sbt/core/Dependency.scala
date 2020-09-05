@@ -22,7 +22,8 @@ final case class Dependency(
 object Dependency {
 
   implicit val named: Named[Dependency] = Named.named("libraryDependencies")
-  implicit val render: Render[Dependency] = Render.namedRender("dependency", dependency => Dependency.render(dependency))
+  implicit val render: Render[Dependency] =
+    Render.namedRender("dependency", dependency => Dependency.render(dependency))
 
   def from(pom: Elem): Seq[Dependency] =
     pom \ "dependencies" \ "dependency" map { dependency =>
@@ -55,16 +56,23 @@ object Dependency {
       s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(exclusions)}"""
   }
 
-  def renderLibraryDependencies(dependencies: Seq[Dependency], indentSize: Int): String = {
+  // TODO: Remove it. It's no longer in use in favor of maven2sbt.core.BuildSbt.toListOfFieldValue.
+  def renderLibraryDependencies(
+    dependencies: Seq[Dependency],
+    indentSize: Int
+  ): String = {
     val idt = indent(indentSize)
     dependencies match {
       case Nil =>
         ""
+
       case x :: Nil =>
         s"""libraryDependencies += "${render(x)}"""
-      case xs =>
+
+      case x :: xs =>
         s"""libraryDependencies ++= Seq(
-           |${xs.map(render).mkString(s"$idt  ", s"\n$idt, ", "")}
+           |$idt  ${render(x)},
+           |$idt  ${xs.map(render).mkString(s",\n$idt  ")}
            |$idt)""".stripMargin
     }
   }

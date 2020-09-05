@@ -24,12 +24,9 @@ trait Maven2Sbt[F[_]] {
 
 object Maven2Sbt {
 
-  def apply[F[_] : Maven2Sbt]: Maven2Sbt[F] = implicitly[Maven2Sbt[F]]
+  def apply[F[_]: Monad: EffectConstructor: ConsoleEffect]: Maven2Sbt[F] = new Maven2SbtF[F]
 
-  implicit def maven2SbtF[F[_] : EffectConstructor : ConsoleEffect : Monad]: Maven2Sbt[F] =
-    new Maven2SbtF[F]
-
-  final class Maven2SbtF[F[_] : Monad : EffectConstructor : ConsoleEffect]
+  final class Maven2SbtF[F[_]: Monad: EffectConstructor: ConsoleEffect]
     extends Maven2Sbt[F] {
 
     def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, BuildSbt]] =
