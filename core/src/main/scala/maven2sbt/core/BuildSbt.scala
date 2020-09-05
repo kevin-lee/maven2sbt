@@ -99,7 +99,7 @@ object BuildSbt {
       Prop(PropName(mavenProperty.key), PropValue(mavenProperty.value))
 
     def render(prop: Prop): String =
-      s"""val ${Common.dotSeparatedToCamelCase(prop.name.propName)} = "${prop.value.propValue}""""
+      s"""val ${Common.dotHyphenSeparatedToCamelCase(prop.name.propName)} = "${prop.value.propValue}""""
   }
 
   def render(buildSbt: BuildSbt): String = buildSbt match {

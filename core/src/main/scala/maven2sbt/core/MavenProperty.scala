@@ -18,13 +18,13 @@ object MavenProperty {
   } yield MavenProperty(label, property.text)
 
   def render(property: MavenProperty): String =
-    s"""val ${dotSeparatedToCamelCase(property.key)} = "${property.value}""""
+    s"""val ${dotHyphenSeparatedToCamelCase(property.key)} = "${property.value}""""
 
   def findPropertyName(name: String): Option[String] = name match {
-    case dotSeparatedPattern(value) => Some(value.trim)
+    case propertyUsagePattern(value) => Some(value.trim)
     case _ => None
   }
 
   def toPropertyNameOrItself(name: String): String =
-    findPropertyName(name).fold(s""""$name"""")(dotSeparatedToCamelCase)
+    findPropertyName(name).fold(s""""$name"""")(dotHyphenSeparatedToCamelCase)
 }

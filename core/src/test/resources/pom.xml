@@ -12,10 +12,14 @@
   <url>https://github.com/Kevin-Lee/j8plus</url>
 
   <properties>
+    <something>blah-blah-blah</something>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <junit.version>4.11</junit.version>
+    <exclude-project.group>dont-try-this</exclude-project.group>
+    <exclude-project.name>home</exclude-project.name>
     <test0ster1.version>0.0.6</test0ster1.version>
+    <some-test-property.version>1.2.3</some-test-property.version>
   </properties>
 
   <repositories>
@@ -145,6 +149,16 @@
       <version>1.5.0</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>my.group</groupId>
+      <artifactId>fake-app</artifactId>
+      <version>${some-test-property.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>my.group</groupId>
+      <artifactId>${ something }</artifactId>
+      <version>${some-test-property.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>some.project</groupId>
@@ -183,8 +197,8 @@
           <artifactId>abc</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>some.test</groupId>
-          <artifactId>project-123</artifactId>
+          <groupId>${exclude-project.group}</groupId>
+          <artifactId>${exclude-project.name}</artifactId>
         </exclusion>
         <exclusion>
           <groupId>something.else</groupId>
