@@ -9,7 +9,7 @@ trait Render[A] {
 }
 
 object Render {
-  def apply[A : Render]: Render[A] = implicitly[Render[A]]
+  def apply[A: Render]: Render[A] = implicitly[Render[A]]
 
   def namedRender[A](name: String, f: A => String): Render[A] =
     NamedRander(name, f)

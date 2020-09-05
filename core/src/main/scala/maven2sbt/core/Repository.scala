@@ -36,16 +36,23 @@ object Repository {
   def render(repository: Repository): String =
     s""""${repository.name.repoName}" at "${repository.url.repoUrl}""""
 
-  def renderToResolvers(repositories: Seq[Repository], indentSize: Int): String = {
+  // TODO: Remove it. It's no longer in use in favor of maven2sbt.core.BuildSbt.toListOfFieldValue.
+  def renderToResolvers(
+    repositories: Seq[Repository],
+    indentSize: Int
+  ): String = {
     val idt = indent(indentSize)
     repositories match {
       case Nil =>
         ""
+
       case x :: Nil =>
         s"""resolvers += ${render(x)}"""
-      case xs =>
+
+      case x :: xs =>
         s"""resolvers ++= Seq(
-           |${xs.map(render).mkString(s"$idt  ", s"\n$idt, ", "")}
+           |$idt  ${render(x)},
+           |${xs.map(render).mkString(s"$idt  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin
     }
   }

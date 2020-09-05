@@ -18,6 +18,8 @@ final case class BuildSbt(
   )
 
 object BuildSbt {
+  import Common._
+
   final case class Settings(
       groupId: Option[GroupId]
     , artifactId: Option[ArtifactId]
@@ -27,10 +29,14 @@ object BuildSbt {
     , dependencies: List[Dependency]
     )
 
-  def toFieldValue[A : Named : Render](prefix: Option[String], a: A): String =
+  def toFieldValue[A: Named : Render](prefix: Option[String], a: A): String =
     s"""${prefix.getOrElse("")}${Named[A].name} := "${Render[A].render(a)}""""
 
-  def toListOfFieldValue[A : Named : Render](prefix: Option[String], as: List[A]): Option[String] =
+  def toListOfFieldValue[A: Named: Render](
+    prefix: Option[String],
+    as: List[A],
+    indentSize: Int
+  ): Option[String] =
     as match {
       case Nil =>
         none[String]
@@ -38,24 +44,23 @@ object BuildSbt {
       case x :: Nil =>
         s"${Named[A].name} += ${Render[A].render(x)}".some
 
-      case _ :: _ =>
-        as.map(a => Render[A].render(a))
-          .mkString(
-            s"${prefix.getOrElse("")}${Named[A].name} ++= List(\n      "
-          , ",\n      "
-          , "\n    )"
-          ).some
+      case x :: xs =>
+        val idt = indent(indentSize)
+        s"""${prefix.getOrElse("")}${Named[A].name} ++= List(
+           |$idt  ${Render[A].render(x)},
+           |$idt  ${xs.map(Render[A].render).mkString(s",\n$idt  ")}
+           |$idt)""".stripMargin.some
     }
 
   object Settings {
-    def render(settings: Settings, prefix: Option[String], delimiter: String): String =
+    def render(settings: Settings, prefix: Option[String], delimiter: String, indentSize: Int): String =
       (
         settings.groupId.map(groupId => toFieldValue(prefix, groupId)).toList ++
         settings.version.map(version => toFieldValue(prefix, version)).toList ++
         settings.scalaVersion.map(scalaVersion => toFieldValue(prefix, scalaVersion)).toList ++
         settings.artifactId.map(artifactId => toFieldValue(prefix, artifactId)).toList ++
-        toListOfFieldValue(prefix, settings.repositories).toList ++
-        toListOfFieldValue(prefix, settings.dependencies).toList
+        toListOfFieldValue(prefix, settings.repositories, indentSize).toList ++
+        toListOfFieldValue(prefix, settings.dependencies, indentSize).toList
       )
       .mkString(delimiter)
   }
@@ -63,13 +68,13 @@ object BuildSbt {
   final case class ProjectSettings(projectSettings: Settings) extends AnyVal
   object ProjectSettings {
     def render(projectSettings: ProjectSettings): String =
-      Settings.render(projectSettings.projectSettings, none[String], s",\n${Common.indent(4)}")
+      Settings.render(projectSettings.projectSettings, none[String], s",\n${indent(4)}", 4)
 
   }
   final case class ThisBuildSettings(thisBuildSettings: Settings) extends AnyVal
   object ThisBuildSettings {
     def render(thisBuildSettings: ThisBuildSettings): String =
-      Settings.render(thisBuildSettings.thisBuildSettings, "ThisBuild / ".some, "\n")
+      Settings.render(thisBuildSettings.thisBuildSettings, "ThisBuild / ".some, "\n", 2)
   }
   final case class GlobalSettings(globalSettings: Settings) extends AnyVal
   object GlobalSettings {
@@ -86,7 +91,7 @@ object BuildSbt {
       )
 
     def render(globalSettings: GlobalSettings): String =
-      Settings.render(globalSettings.globalSettings, "Global / ".some, "\n")
+      Settings.render(globalSettings.globalSettings, "Global / ".some, "\n", 2)
   }
 
   final case class Prop(name: PropName, value: PropValue)
