@@ -39,10 +39,11 @@ object MavenPropertySpec extends Properties {
   }
 
   def testRender: Property = for {
-    mavenProperty <- Gens.genMavenProperty.log("mavenProperty")
+    (Gens.ExpectedMavenProperty(expectedProperty), mavenProperty) <- Gens.genMavenPropertyWithExpectedRendered.log("mavenProperty")
   } yield {
-    val expected = s"""val ${mavenProperty.key} = "${mavenProperty.value}""""
+    val expected = s"""val ${expectedProperty.key} = "${expectedProperty.value}""""
     val actual = MavenProperty.render(mavenProperty)
     actual ==== expected
   }
+
 }

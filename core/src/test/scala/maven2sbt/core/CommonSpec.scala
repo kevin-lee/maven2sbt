@@ -24,7 +24,7 @@ object CommonSpec extends Properties {
   def testDotSeparatedToCamelCase1: Property = for {
     name <- Gen.string(Gen.alphaNum, Range.linear(1, 10)).log("name")
   } yield {
-    val actual = Common.dotSeparatedToCamelCase(name)
+    val actual = Common.dotHyphenSeparatedToCamelCase(name)
     actual ==== name
   }
   def testDotSeparatedToCamelCaseMore: Property = for {
@@ -32,7 +32,7 @@ object CommonSpec extends Properties {
   } yield {
     val dotSeparatedName = names.mkString(".")
     val expected = (names.head :: names.drop(1).map(_.capitalize)).mkString
-    val actual = Common.dotSeparatedToCamelCase(dotSeparatedName)
+    val actual = Common.dotHyphenSeparatedToCamelCase(dotSeparatedName)
     actual ==== expected
   }
 }

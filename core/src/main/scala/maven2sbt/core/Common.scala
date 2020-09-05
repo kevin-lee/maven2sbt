@@ -8,10 +8,10 @@ import scala.util.matching.Regex
   */
 sealed trait Common {
 
-  val dotSeparatedPattern: Regex = """\$\{(.+)\}""".r
+  val propertyUsagePattern: Regex = """\$\{(.+)\}""".r
 
-  def dotSeparatedToCamelCase(dotSeparated: String): String = {
-    val names = dotSeparated.trim.split("\\.")
+  def dotHyphenSeparatedToCamelCase(dotSeparated: String): String = {
+    val names = dotSeparated.trim.split("[\\.-]+")
     if (names.length == 1)
       dotSeparated
     else
