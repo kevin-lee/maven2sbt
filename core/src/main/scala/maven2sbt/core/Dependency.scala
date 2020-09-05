@@ -57,6 +57,7 @@ object Dependency {
   }
 
   // TODO: Remove it. It's no longer in use in favor of maven2sbt.core.BuildSbt.toListOfFieldValue.
+  @deprecated(message = "Use maven2sbt.core.BuildSbt.toListOfFieldValue() instead", since = "1.0.0")
   def renderLibraryDependencies(
     dependencies: Seq[Dependency],
     indentSize: Int

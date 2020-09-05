@@ -18,6 +18,7 @@ object MavenProperty {
   } yield MavenProperty(label, property.text)
 
   // TODO: Remove it. It's no longer in use in favor of maven2sbt.core.BuildSbt.Prop.render.
+  @deprecated(message = "Use maven2sbt.core.BuildSbt.Prop.render() instead", since = "1.0.0")
   def render(property: MavenProperty): String =
     s"""val ${dotHyphenSeparatedToCamelCase(property.key)} = "${property.value}""""
 
