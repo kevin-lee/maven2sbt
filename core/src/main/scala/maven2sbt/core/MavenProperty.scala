@@ -26,5 +26,5 @@ object MavenProperty {
   }
 
   def toPropertyNameOrItself(name: String): String =
-    findPropertyName(name).fold(name)(dotSeparatedToCamelCase)
+    findPropertyName(name).fold(s""""$name"""")(dotSeparatedToCamelCase)
 }

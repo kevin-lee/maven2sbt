@@ -52,7 +52,7 @@ object Dependency {
       val groupIdStr = MavenProperty.toPropertyNameOrItself(groupId)
       val artifactIdStr = MavenProperty.toPropertyNameOrItself(artifactId)
       val versionStr = MavenProperty.toPropertyNameOrItself(version)
-      s""""$groupIdStr" % "$artifactIdStr" % "$versionStr"${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(exclusions)}"""
+      s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(exclusions)}"""
   }
 
   def renderLibraryDependencies(dependencies: Seq[Dependency], indentSize: Int): String = {
