@@ -32,7 +32,7 @@ object BuildSbt {
   def toFieldValue[A: Named : Render](prefix: Option[String], a: A): String =
     s"""${prefix.getOrElse("")}${Named[A].name} := "${Render[A].render(a)}""""
 
-  def toListOfFieldValue[A: Named: Render](
+  def renderListOfFieldValue[A: Named: Render](
     prefix: Option[String],
     as: List[A],
     indentSize: Int
@@ -59,8 +59,8 @@ object BuildSbt {
         settings.version.map(version => toFieldValue(prefix, version)).toList ++
         settings.scalaVersion.map(scalaVersion => toFieldValue(prefix, scalaVersion)).toList ++
         settings.artifactId.map(artifactId => toFieldValue(prefix, artifactId)).toList ++
-        toListOfFieldValue(prefix, settings.repositories, indentSize).toList ++
-        toListOfFieldValue(prefix, settings.dependencies, indentSize).toList
+        renderListOfFieldValue(prefix, settings.repositories, indentSize).toList ++
+        renderListOfFieldValue(prefix, settings.dependencies, indentSize).toList
       )
       .mkString(delimiter)
   }
@@ -101,10 +101,13 @@ object BuildSbt {
   object Prop {
 
     def fromMavenProperty(mavenProperty: MavenProperty): Prop =
-      Prop(PropName(mavenProperty.key), PropValue(mavenProperty.value))
+      Prop(
+        PropName(Common.dotHyphenSeparatedToCamelCase(mavenProperty.key)),
+        PropValue(mavenProperty.value)
+      )
 
     def render(prop: Prop): String =
-      s"""val ${Common.dotHyphenSeparatedToCamelCase(prop.name.propName)} = "${prop.value.propValue}""""
+      s"""val ${prop.name.propName} = "${prop.value.propValue}""""
   }
 
   def render(buildSbt: BuildSbt): String = buildSbt match {

@@ -28,7 +28,6 @@ object MavenPropertySpec extends Properties {
 
   override def tests: List[Test] = List(
     property("test from", testFrom)
-  , property("test render", testRender)
   )
 
   def testFrom: Property = for {
@@ -36,14 +35,6 @@ object MavenPropertySpec extends Properties {
   } yield {
     val actual = MavenProperty.from(generatePom(mavenProperties))
     actual ==== mavenProperties
-  }
-
-  def testRender: Property = for {
-    (Gens.ExpectedMavenProperty(expectedProperty), mavenProperty) <- Gens.genMavenPropertyWithExpectedRendered.log("mavenProperty")
-  } yield {
-    val expected = s"""val ${expectedProperty.key} = "${expectedProperty.value}""""
-    val actual = MavenProperty.render(mavenProperty)
-    actual ==== expected
   }
 
 }

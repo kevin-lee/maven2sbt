@@ -46,7 +46,6 @@ object DependencySpec extends Properties {
   override def tests: List[Test] = List(
     property("test from", testFrom)
   , property("test render", testRender)
-  , property("test renderLibraryDependencies", testRenderLibraryDependencies)
   )
 
   def testFrom: Property = for {
@@ -62,19 +61,6 @@ object DependencySpec extends Properties {
     val Dependency(GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency
     val expected = s""""$groupId" % "$artifactId" % "$version"${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(exclusions)}"""
     val actual = Dependency.render(dependency)
-    actual ==== expected
-  }
-
-  def testRenderLibraryDependencies: Property = for {
-    n <- Gen.int(Range.linear(0, 10)).log("n")
-    libraryDependencies <- Gens.genDependency.list(Range.linear(2, 10)).log("libraryDependencies")
-  } yield {
-    val idt = " " * n
-    val expected =
-      s"""libraryDependencies ++= Seq(
-         |$idt${libraryDependencies.map(Dependency.render).mkString("  ", s",\n$idt  ", "")}
-         |$idt)""".stripMargin
-    val actual = Dependency.renderLibraryDependencies(libraryDependencies, n)
     actual ==== expected
   }
 
