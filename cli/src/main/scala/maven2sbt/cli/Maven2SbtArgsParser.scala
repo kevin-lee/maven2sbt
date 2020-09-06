@@ -21,7 +21,7 @@ object Maven2SbtArgsParser {
       flag[String](
         both('s', "scala-version")
       , metavar("<version>") |+| description("Scala version")
-      ).map(ScalaVersion)
+      ).map(ScalaVersion.apply)
     , flag[String](
         both('o', "out")
       , metavar("<file>") |+| description("output sbt config file (default: build.sbt)")
@@ -39,7 +39,7 @@ object Maven2SbtArgsParser {
       flag[String](
         both('s', "scala-version")
       , metavar("<version>") |+| description("Scala version")
-      ).map(ScalaVersion)
+      ).map(ScalaVersion.apply)
     , argument[String](
       metavar("<pom-path>") |+| description("Path to the pom file.")
     ).map(new File(_))

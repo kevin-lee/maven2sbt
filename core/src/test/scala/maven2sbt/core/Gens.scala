@@ -11,9 +11,9 @@ object Gens {
 
   final case class ExpectedMavenProperty(expectedMavenProperty: MavenProperty) extends AnyVal
 
-  def genGroupId: Gen[GroupId] = Gen.string(Gen.alphaNum, Range.linear(1, 10)).map(GroupId)
-  def genArtifactId: Gen[ArtifactId] = Gen.string(Gen.alphaNum, Range.linear(1, 10)).map(ArtifactId)
-  def genVersion: Gen[Version] = Gen.string(Gen.alphaNum, Range.linear(1, 10)).map(Version)
+  def genGroupId: Gen[GroupId] = Gen.string(Gen.alphaNum, Range.linear(1, 10)).map(GroupId.apply)
+  def genArtifactId: Gen[ArtifactId] = Gen.string(Gen.alphaNum, Range.linear(1, 10)).map(ArtifactId.apply)
+  def genVersion: Gen[Version] = Gen.string(Gen.alphaNum, Range.linear(1, 10)).map(Version.apply)
 
   def genProjectInfo: Gen[ProjectInfo] = for {
     groupId <- genGroupId

@@ -53,6 +53,20 @@ val EffectieVersion = "1.2.0"
 lazy val effectieCatsEffect: ModuleID = "io.kevinlee" %% "effectie-cats-effect" % EffectieVersion
 lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % EffectieVersion
 
+lazy val newTypeLib: ModuleID = "io.estatico" %% "newtype" % "0.4.4"
+
+def paradisePlugin(
+  allLibs: Seq[ModuleID],
+  version: SemVer
+): Seq[ModuleID] = version match {
+  case SemVer(Major(2), Minor(13), _, _, _) =>
+    allLibs.filterNot { x =>
+      s"${x.organization}:${x.name}" == "org.scalamacros:paradise"
+    }
+  case _ =>
+    allLibs
+}
+
 def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
     .settings(
@@ -63,10 +77,14 @@ def subProject(projectName: String, path: File): Project =
       , libraryDependencies ++= hedgehogLibs
       , scalacOptions := (SemVer.parseUnsafe(scalaVersion.value) match {
           case SemVer(Major(2), Minor(13), _, _, _) =>
-            scalacOptions.value.filter(_ != "-Xlint:nullary-override") ++ Seq("-Wconf:cat=lint-byname-implicit:s")// ++ Seq("-Xlint:-multiarg-infix")
+            scalacOptions.value.filter(_ != "-Xlint:nullary-override") ++
+              Seq("-Wconf:cat=lint-byname-implicit:s", "-Ymacro-annotations")// ++ Seq("-Xlint:-multiarg-infix")
           case _ =>
             scalacOptions.value
         })
+    )
+    .settings(
+      Seq(addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
     )
 
 lazy val core = subProject("core", file("core"))
@@ -74,7 +92,12 @@ lazy val core = subProject("core", file("core"))
   .settings(
       crossScalaVersions := CrossScalaVersions
     , libraryDependencies ++= crossVersionProps(
-        Seq("org.scala-lang.modules" %% "scala-xml" % "1.3.0", effectieCatsEffect, effectieScalazEffect)
+        Seq(
+          "org.scala-lang.modules" %% "scala-xml" % "1.3.0",
+          effectieCatsEffect,
+          effectieScalazEffect,
+          newTypeLib
+        )
       , SemVer.parseUnsafe(scalaVersion.value)
       ) {
           case (Major(2), Minor(11)) =>
@@ -82,6 +105,7 @@ lazy val core = subProject("core", file("core"))
           case _ =>
             Seq(cats, catsEffect)
         }
+    , libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
     /* Build Info { */
     , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
     , buildInfoObject := "Maven2SbtBuildInfo"
@@ -91,7 +115,6 @@ lazy val core = subProject("core", file("core"))
     /* publish { */
     , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
     /* } publish */
-
   )
 
 lazy val pirateVersion = "b3a0a3eff3a527dff542133aaf0fd935aa2940fc"
@@ -100,7 +123,8 @@ lazy val pirateUri = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirate
 lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging)
   .settings(
-      maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
+      libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
+    , maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
     , packageSummary := "Maven2Sbt"
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
     , executableScriptName := ExecutableScriptName
@@ -113,6 +137,7 @@ lazy val maven2sbt = (project in file("."))
   .settings(
       name := RepoName
       /* GitHub Release { */
+    , libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
     , devOopsPackagedArtifacts := List(
         s"core/target/scala-*/${name.value}*.jar"
       , s"cli/target/universal/${name.value}*.zip"
