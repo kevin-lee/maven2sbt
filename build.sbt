@@ -5,7 +5,7 @@ import SemVer.{Major, Minor}
 val GitHubUsername = "Kevin-Lee"
 val RepoName = "maven2sbt"
 val ExecutableScriptName = RepoName
-val ProjectVersion = "0.4.0"
+val ProjectVersion = "1.0.0"
 val ProjectScalaVersion = "2.13.3"
 val CrossScalaVersions = Seq("2.11.12", "2.12.12", ProjectScalaVersion)
 
