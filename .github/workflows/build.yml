@@ -69,6 +69,13 @@ jobs:
 
       - name: Build cli
         run: |
-          sbt -J-Xmx2048m "; project cli; ++2.13.3!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"
+          sbt \
+            -J-Xmx2048m \
+            "project cli" \
+            ++2.13.3! \
+            clean \
+            universal:packageBin \
+            universal:packageZipTarball \
+            debian:packageBin
           ls -ld cli/target/maven2sbt-cli*
           ls -ld cli/target/universal/maven2sbt-cli*
