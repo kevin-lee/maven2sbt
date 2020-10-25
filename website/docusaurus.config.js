@@ -1,4 +1,15 @@
-module.exports = {
+const algoliaConfig = require('./algolia.config.json');
+const googleAnalyticsConfig = require('./google-analytics.config.json');
+
+const isEmptyObject = obj => {
+  for (field in obj) return false;
+  return true;
+};
+
+const isSearchable = !isEmptyObject(algoliaConfig);
+const hasGoogleAnalytics = !isEmptyObject(googleAnalyticsConfig);
+
+const websiteConfig = {
   title: 'maven2sbt',
   tagline: 'Convert Maven&apos;s <code>pom.xml</code> into <code>build.sbt</code>',
   url: 'https://maven2sbt.kevinly.dev',
@@ -88,3 +99,12 @@ module.exports = {
     require.resolve('docusaurus-lunr-search'),
   ],
 };
+
+if (isSearchable) {
+  websiteConfig['themeConfig']['algolia'] = algoliaConfig;
+}
+if (hasGoogleAnalytics) {
+  websiteConfig['themeConfig']['gtag'] = googleAnalyticsConfig;
+}
+
+module.exports = websiteConfig;
