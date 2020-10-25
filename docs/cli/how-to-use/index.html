@@ -4,17 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="generator" content="Docusaurus v2.0.0-alpha.58">
-<title data-react-helmet="true">Use maven2sbt CLI | maven2sbt</title><meta data-react-helmet="true" name="twitter:card" content="summary_large_image"><meta data-react-helmet="true" property="og:title" content="Use maven2sbt CLI | maven2sbt"><meta data-react-helmet="true" name="description" content="How to Use CLI"><meta data-react-helmet="true" property="og:description" content="How to Use CLI"><meta data-react-helmet="true" property="og:url" content="https://maven2sbt.kevinly.dev/docs/cli/how-to-use"><link data-react-helmet="true" rel="shortcut icon" href="/img/favicon.png"><link data-react-helmet="true" rel="canonical" href="https://maven2sbt.kevinly.dev/docs/cli/how-to-use"><link rel="stylesheet" href="/styles.8f7f5bf9.css">
-<link rel="preload" href="/styles.505e12a7.js" as="script">
-<link rel="preload" href="/runtime~main.bcfdc4e8.js" as="script">
-<link rel="preload" href="/main.e3cdf12e.js" as="script">
-<link rel="preload" href="/common.f51f1484.js" as="script">
-<link rel="preload" href="/2.8dd33618.js" as="script">
-<link rel="preload" href="/15.99fa0b98.js" as="script">
-<link rel="preload" href="/17.ebd9fb59.js" as="script">
-<link rel="preload" href="/20ac7829.6b1f325e.js" as="script">
-<link rel="preload" href="/17896441.f296e48f.js" as="script">
-<link rel="preload" href="/2f177023.655b267e.js" as="script">
+<link rel="preconnect" href="https://www.google-analytics.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QECQBY0E03"></script>
+<script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-QECQBY0E03",{})</script><title data-react-helmet="true">Use maven2sbt CLI | maven2sbt</title><meta data-react-helmet="true" name="twitter:card" content="summary_large_image"><meta data-react-helmet="true" property="og:title" content="Use maven2sbt CLI | maven2sbt"><meta data-react-helmet="true" name="description" content="How to Use CLI"><meta data-react-helmet="true" property="og:description" content="How to Use CLI"><meta data-react-helmet="true" property="og:url" content="https://maven2sbt.kevinly.dev/docs/cli/how-to-use"><link data-react-helmet="true" rel="shortcut icon" href="/img/favicon.png"><link data-react-helmet="true" rel="canonical" href="https://maven2sbt.kevinly.dev/docs/cli/how-to-use"><link rel="stylesheet" href="/styles.8f7f5bf9.css">
+<link rel="preload" href="/styles.705ea28c.js" as="script">
+<link rel="preload" href="/runtime~main.c86d7c51.js" as="script">
+<link rel="preload" href="/main.afcf1828.js" as="script">
+<link rel="preload" href="/common.12baa7b4.js" as="script">
+<link rel="preload" href="/2.fbe47c9a.js" as="script">
+<link rel="preload" href="/15.5bd42b38.js" as="script">
+<link rel="preload" href="/17.6ecdea73.js" as="script">
+<link rel="preload" href="/20ac7829.edcb141e.js" as="script">
+<link rel="preload" href="/17896441.72fea573.js" as="script">
+<link rel="preload" href="/2f177023.65a539a9.js" as="script">
 </head>
 <body>
 <script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=window.matchMedia("(prefers-color-scheme: dark)"),n=function(){var t=null;try{t=localStorage.getItem("theme")}catch(t){}return t}();null!==n?t(n):e.matches&&t("dark")}()</script><div id="__docusaurus">
@@ -36,15 +39,15 @@
 </span></div><div class="token-line" style="color:#d6deeb"><span class="token plain">Available options:</span></div><div class="token-line" style="color:#d6deeb"><span class="token plain">  -s</span><span class="token operator" style="color:rgb(127, 219, 202)">|</span><span class="token plain">--scala-version </span><span class="token operator" style="color:rgb(127, 219, 202)">&lt;</span><span class="token plain">version</span><span class="token operator" style="color:rgb(127, 219, 202)">&gt;</span><span class="token plain"> Scala version</span></div><div class="token-line" style="color:#d6deeb"><span class="token plain">  -h</span><span class="token operator" style="color:rgb(127, 219, 202)">|</span><span class="token plain">--help HELP          Prints the synopsis and a list of options and arguments.</span></div><div class="token-line" style="color:#d6deeb"><span class="token plain" style="display:inline-block">
 </span></div><div class="token-line" style="color:#d6deeb"><span class="token plain">Positional arguments:</span></div><div class="token-line" style="color:#d6deeb"><span class="token plain">  </span><span class="token operator" style="color:rgb(127, 219, 202)">&lt;</span><span class="token plain">pom-path</span><span class="token operator" style="color:rgb(127, 219, 202)">&gt;</span><span class="token plain">              Path to the pom file.</span></div><div class="token-line" style="color:#d6deeb"><span class="token plain" style="display:inline-block">
 </span></div></div></div></div></div><p>e.g.)</p><div class="mdxCodeBlock_iHAB"><div class="codeBlockContent_32p_"><button type="button" aria-label="Copy code to clipboard" class="copyButton_1BYj">Copy</button><div tabindex="0" class="prism-code language-shell codeBlock_19pQ"><div class="codeBlockLines_2n9r" style="color:#d6deeb;background-color:#011627"><div class="token-line" style="color:#d6deeb"><span class="token plain">$ maven2sbt print --scala-version </span><span class="token number" style="color:rgb(247, 140, 108)">2.13</span><span class="token plain">.1 pom.xml</span></div><div class="token-line" style="color:#d6deeb"><span class="token plain"></span><span class="token comment" style="color:rgb(99, 119, 119);font-style:italic"># or</span><span class="token plain"></span></div><div class="token-line" style="color:#d6deeb"><span class="token plain">$ maven2sbt print -s </span><span class="token number" style="color:rgb(247, 140, 108)">2.13</span><span class="token plain">.1 pom.xml</span></div></div></div></div></div><p>It will print out the content of <code>build.sbt</code> generated from the given <code>pom.xml</code></p></div></article><div class="margin-vert--lg"><nav class="pagination-nav" aria-label="Blog list page navigation"><div class="pagination-nav__item"><a class="pagination-nav__link" href="/docs/cli/get-cli"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">« Get maven2sbt CLI</div></a></div><div class="pagination-nav__item pagination-nav__item--next"><a class="pagination-nav__link" href="/docs/library/get-library"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Get maven2sbt Library »</div></a></div></nav></div></div></div><div class="col col--3"><div class="tableOfContents_TbNY"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#how-to-use-cli" class="table-of-contents__link">How to Use CLI</a></li><li><a href="#save-as-sbt-config-file" class="table-of-contents__link">Save as sbt Config File</a></li><li><a href="#print-out" class="table-of-contents__link">Print Out</a></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="row footer__links"><div class="col footer__col"><h4 class="footer__title">Docs</h4><ul class="footer__items"><li class="footer__item"><a class="footer__link-item" href="/docs/">Getting Started</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/cli/get-cli">Use CLI</a></li></ul></div><div class="col footer__col"><h4 class="footer__title">More</h4><ul class="footer__items"><li class="footer__item"><a href="https://github.com/Kevin-Lee/maven2sbt" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub</a></li><li class="footer__item"><a href="https://blog.kevinlee.io" target="_blank" rel="noopener noreferrer" class="footer__link-item">Blog</a></li><li class="footer__item"><a href="https://kevinlee.io" target="_blank" rel="noopener noreferrer" class="footer__link-item">Homepage</a></li></ul></div></div><div class="text--center"><div>Copyright © 2020 maven2sbt written by <a href="https://github.com/Kevin-Lee" target="_blank"><b>Kevin Lee</b></a>,.The website built with Docusaurus.<br>Some icons made by <a href="https://www.flaticon.com/free-icon/file_1126880" title="prettycons">prettycons</a> and <a href="https://www.flaticon.com/authors/smartline" title="Smartline">Smartline</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></div></div></div></footer></div>
-<script src="/styles.505e12a7.js"></script>
-<script src="/runtime~main.bcfdc4e8.js"></script>
-<script src="/main.e3cdf12e.js"></script>
-<script src="/common.f51f1484.js"></script>
-<script src="/2.8dd33618.js"></script>
-<script src="/15.99fa0b98.js"></script>
-<script src="/17.ebd9fb59.js"></script>
-<script src="/20ac7829.6b1f325e.js"></script>
-<script src="/17896441.f296e48f.js"></script>
-<script src="/2f177023.655b267e.js"></script>
+<script src="/styles.705ea28c.js"></script>
+<script src="/runtime~main.c86d7c51.js"></script>
+<script src="/main.afcf1828.js"></script>
+<script src="/common.12baa7b4.js"></script>
+<script src="/2.fbe47c9a.js"></script>
+<script src="/15.5bd42b38.js"></script>
+<script src="/17.6ecdea73.js"></script>
+<script src="/20ac7829.edcb141e.js"></script>
+<script src="/17896441.72fea573.js"></script>
+<script src="/2f177023.65a539a9.js"></script>
 </body>
 </html>
