@@ -21,8 +21,11 @@ package object core {
     implicit val render: Render[GroupId] =
       Render.namedRender("groupId", groupId => groupId.groupId)
 
-    def unapply(groupId: GroupId): Option[String] =
-      Option(groupId.coerce)
+    // The reason to have `Some[String]` as a return type here is
+    // https://github.com/scala/bug/issues/12232
+    // So sad :(
+    def unapply(groupId: GroupId): Some[String] =
+      Some(groupId.coerce)
 
   }
 
@@ -35,8 +38,11 @@ package object core {
     implicit val render: Render[ArtifactId] =
       Render.namedRender("artifactId", artifactId => artifactId.artifactId)
 
-    def unapply(artifactId: ArtifactId): Option[String] =
-      Option(artifactId.coerce)
+    // The reason to have `Some[String]` as a return type here is
+    // https://github.com/scala/bug/issues/12232
+    // So sad :(
+    def unapply(artifactId: ArtifactId): Some[String] =
+      Some(artifactId.coerce)
 
   }
 
@@ -49,8 +55,11 @@ package object core {
     implicit val render: Render[Version] =
       Render.namedRender("version", version => version.version)
 
-    def unapply(version: Version): Option[String] =
-      Option(version.coerce)
+    // The reason to have `Some[String]` as a return type here is
+    // https://github.com/scala/bug/issues/12232
+    // So sad :(
+    def unapply(version: Version): Some[String] =
+      Some(version.coerce)
 
   }
 

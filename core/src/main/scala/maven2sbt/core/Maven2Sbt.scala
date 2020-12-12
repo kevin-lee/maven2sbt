@@ -6,7 +6,7 @@ import cats._
 import cats.data._
 import cats.syntax.all._
 
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats._
 import effectie.cats.EitherTSupport._
 
@@ -37,8 +37,8 @@ object Maven2Sbt {
         props <- effectOf(mavenProperties.map(BuildSbt.Prop.fromMavenProperty))
         repositories <- effectOf(Repository.from(pom))
         dependencies <- effectOf(Dependency.from(pom))
-        globalSettings <- effectOfPure(BuildSbt.GlobalSettings.empty)
-        thisBuildSettings <- effectOfPure(
+        globalSettings <- pureOf(BuildSbt.GlobalSettings.empty)
+        thisBuildSettings <- pureOf(
             BuildSbt.ThisBuildSettings(BuildSbt.Settings(
                 groupId.some
               , none[ArtifactId]
@@ -48,7 +48,7 @@ object Maven2Sbt {
               , List.empty[Dependency]
             ))
           )
-        projectSettings <- effectOfPure(
+        projectSettings <- pureOf(
             BuildSbt.ProjectSettings(BuildSbt.Settings(
                 none[GroupId]
               , artifactId.some
