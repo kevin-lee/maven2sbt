@@ -1,6 +1,8 @@
 package maven2sbt.core
 
 import hedgehog._
+
+import cats.syntax.all._
 import maven2sbt.core.Repository.{RepoId, RepoName, RepoUrl}
 
 /**
@@ -40,7 +42,18 @@ object Gens {
     id <- genRepositoryId
     name <- genRepositoryName
     url <- genRepositoryUrl
-  } yield Repository(id, name, url)
+  } yield Repository(id, name.some, url)
+
+  def genRepositoryWithEmptyName: Gen[Repository] = for {
+    id <- genRepositoryId
+    name = Repository.RepoName("")
+    url <- genRepositoryUrl
+  } yield Repository(id, name.some, url)
+
+  def genRepositoryWithNoName: Gen[Repository] = for {
+    id <- genRepositoryId
+    url <- genRepositoryUrl
+  } yield Repository(id, none[RepoName], url)
 
   def genMavenProperty: Gen[MavenProperty] = for {
     keyFirst <- Gen.string(Gen.choice1(Gen.alpha, Gen.constant('_')), Range.singleton(1))

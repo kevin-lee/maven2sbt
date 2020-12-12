@@ -75,7 +75,7 @@ object BuildSbtSpec extends Properties {
       n <- Gen.int(Range.linear(0, 10)).log("n")
       repository <- Gens.genRepository.log("repository")
     } yield {
-      val expected = s"""resolvers += "${repository.name.repoName}" at "${repository.url.repoUrl}"""".some
+      val expected = s"""resolvers += "${repository.name.fold(repository.id.repoId)(_.repoName)}" at "${repository.url.repoUrl}"""".some
       val actual = BuildSbt.renderListOfFieldValue(none[String], List(repository), n)
       actual ==== expected
     }

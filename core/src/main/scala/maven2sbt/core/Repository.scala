@@ -6,13 +6,14 @@ import scala.xml.Elem
 
 import Repository._
 
+import cats.syntax.all._
 import just.fp.{Named, Render}
 
 /**
   * @author Kevin Lee
   * @since 2019-04-21
   */
-final case class Repository(id: RepoId, name: RepoName, url: RepoUrl)
+final case class Repository(id: RepoId, name: Option[RepoName], url: RepoUrl)
 
 object Repository {
   final case class RepoId(repoId: String) extends AnyVal
@@ -30,11 +31,20 @@ object Repository {
     url = (repository \ "url").text
     if url.nonEmpty
     id = (repository \ "id").text
-    name = (repository \ "name").text
-  } yield Repository(RepoId(id), RepoName(name), RepoUrl(url))
+    nameSeq = (repository \ "name")
+    repoName =
+      if (nameSeq.isEmpty)
+        none[RepoName]
+      else
+        Option(nameSeq.text)
+          .map(name => RepoName(name.trim))
+  } yield Repository(RepoId(id), repoName, RepoUrl(url))
 
-  def render(repository: Repository): String =
-    s""""${repository.name.repoName}" at "${repository.url.repoUrl}""""
+  def render(repository: Repository): String = {
+    val repoNameStr = repository.name.filter(_.repoName.nonEmpty).fold(repository.id.repoId)(_.repoName)
+    val repoUrlStr = repository.url.repoUrl
+    s""""$repoNameStr" at "$repoUrlStr""""
+  }
 
   // TODO: Remove it. It's no longer in use in favor of maven2sbt.core.BuildSbt.toListOfFieldValue.
   @deprecated(message = "Use maven2sbt.core.BuildSbt.toListOfFieldValue() instead", since = "1.0.0")
