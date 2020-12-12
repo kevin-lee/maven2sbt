@@ -6,7 +6,7 @@ val GitHubUsername = "Kevin-Lee"
 val RepoName = "maven2sbt"
 val ExecutableScriptName = RepoName
 val ProjectVersion = "1.0.0"
-val ProjectScalaVersion = "2.13.3"
+val ProjectScalaVersion = "2.13.4"
 val CrossScalaVersions = Seq("2.11.12", "2.12.12", ProjectScalaVersion)
 
 ThisBuild / organization := "io.kevinlee"
@@ -33,7 +33,7 @@ lazy val noPublish: SettingsDefinition = Seq(
   skip in publish := true
 )
 
-lazy val hedgehogVersion: String = "0.5.1"
+lazy val hedgehogVersion: String = "0.6.0"
 
 lazy val hedgehogRepo: Resolver =
     "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
@@ -44,12 +44,12 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
   , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
-lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.2.0"
+lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.3.0"
 lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
-lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.1.4"
+lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.3.0"
 lazy val catsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
-val EffectieVersion = "1.2.0"
+val EffectieVersion = "1.8.0"
 lazy val effectieCatsEffect: ModuleID = "io.kevinlee" %% "effectie-cats-effect" % EffectieVersion
 lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % EffectieVersion
 
@@ -71,6 +71,7 @@ def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
     .settings(
         name := prefixedProjectName(projectName)
+      , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.2" cross CrossVersion.full)
       , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
       , resolvers += hedgehogRepo
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
