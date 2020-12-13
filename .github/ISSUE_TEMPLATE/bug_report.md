@@ -9,7 +9,7 @@ assignees: Kevin-Lee
 
 # Bug
 
-# Summary 
+# Summary
 
 # Project Details
 Version:
@@ -25,16 +25,24 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+
+e.g.)
+1. With this `pom.xml` '...'
+2. Run this command with the following options. '...'
+3. See error '...'
 
 **Expected behavior**
+
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+
+**Screenshots** (**If applicable**)
+Add screenshots to help explain your problem.
+
+---
+Below this line is for the project maintainer so don't worry about it.
+
+---
 
 # Possible Cause
 # Cause
