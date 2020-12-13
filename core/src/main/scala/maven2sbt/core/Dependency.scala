@@ -1,7 +1,5 @@
 package maven2sbt.core
 
-import Common._
-
 import just.fp.{Named, Render}
 
 import scala.language.postfixOps
@@ -56,25 +54,4 @@ object Dependency {
       s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(exclusions)}"""
   }
 
-  // TODO: Remove it. It's no longer in use in favor of maven2sbt.core.BuildSbt.toListOfFieldValue.
-  @deprecated(message = "Use maven2sbt.core.BuildSbt.toListOfFieldValue() instead", since = "1.0.0")
-  def renderLibraryDependencies(
-    dependencies: Seq[Dependency],
-    indentSize: Int
-  ): String = {
-    val idt = indent(indentSize)
-    dependencies match {
-      case Nil =>
-        ""
-
-      case x :: Nil =>
-        s"""libraryDependencies += "${render(x)}"""
-
-      case x :: xs =>
-        s"""libraryDependencies ++= Seq(
-           |$idt  ${render(x)},
-           |$idt  ${xs.map(render).mkString(s",\n$idt  ")}
-           |$idt)""".stripMargin
-    }
-  }
 }

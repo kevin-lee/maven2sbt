@@ -1,13 +1,10 @@
 package maven2sbt.core
 
-import Common._
-
-import scala.xml.Elem
-
 import Repository._
-
 import cats.syntax.all._
 import just.fp.{Named, Render}
+
+import scala.xml.Elem
 
 /**
   * @author Kevin Lee
@@ -57,28 +54,6 @@ object Repository {
           repoUrlStr
       }
     s""""$repoNameStr" at "$repoUrlStr""""
-  }
-
-  // TODO: Remove it. It's no longer in use in favor of maven2sbt.core.BuildSbt.toListOfFieldValue.
-  @deprecated(message = "Use maven2sbt.core.BuildSbt.toListOfFieldValue() instead", since = "1.0.0")
-  def renderToResolvers(
-    repositories: Seq[Repository],
-    indentSize: Int
-  ): String = {
-    val idt = indent(indentSize)
-    repositories match {
-      case Nil =>
-        ""
-
-      case x :: Nil =>
-        s"""resolvers += ${render(x)}"""
-
-      case x :: xs =>
-        s"""resolvers ++= Seq(
-           |$idt  ${render(x)},
-           |${xs.map(render).mkString(s"$idt  ", s",\n$idt  ", "")}
-           |$idt)""".stripMargin
-    }
   }
 
 }
