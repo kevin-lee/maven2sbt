@@ -43,6 +43,22 @@ object BuildSbtSpec extends Properties {
       RenderRepositorySpec.testRenderToResolversMany
     ),
     property(
+      "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ... which may have empty names), n)",
+      RenderRepositorySpec.testRenderToResolversManyWithEmptyRepoNames
+    ),
+    property(
+      "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ... which may have empty id and empty names), n)",
+      RenderRepositorySpec.testRenderToResolversManyWithEmptyRepoIdEmptyRepoNames
+    ),
+    property(
+      "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ... which may have no names), n)",
+      RenderRepositorySpec.testRenderToResolversManyWithNoRepoNames
+    ),
+    property(
+      "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ... which may have no id and no names), n)",
+      RenderRepositorySpec.testRenderToResolversManyWithNoRepoIdNoRepoNames
+    ),
+    property(
       "[Render][Dependency] test BuildSbt.renderListOfFieldValue(None, List.empty[Dependency], n)",
       RenderDependencySpec.testRenderLibraryDependenciesEmpty
     ),
@@ -201,6 +217,71 @@ object BuildSbtSpec extends Properties {
       val actual = BuildSbt.renderListOfFieldValue(none[String], repositories, n)
       actual ==== expected
     }
+
+    def testRenderToResolversManyWithEmptyRepoNames: Property = for {
+      n <- Gen.int(Range.linear(0, 10)).log("n")
+      repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
+      repositoriesWithEmptyNames <- Gens.genRepositoryWithEmptyName.list(Range.linear(2, 10)).log("repositoriesWithEmptyNames")
+    } yield {
+      val idt = " " * n
+      val expected =
+        s"""resolvers ++= List(
+           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt)""".stripMargin.some
+      val input = repositories ++ repositoriesWithEmptyNames
+      val actual = BuildSbt.renderListOfFieldValue(none[String], input, n)
+      actual ==== expected
+    }
+
+    def testRenderToResolversManyWithEmptyRepoIdEmptyRepoNames: Property = for {
+      n <- Gen.int(Range.linear(0, 10)).log("n")
+      repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
+      repositoriesWithEmptyNames <- Gens.genRepositoryWithEmptyIdEmptyName.list(Range.linear(2, 10)).log("repositoriesWithEmptyNames")
+    } yield {
+      val idt = " " * n
+      val expected =
+        s"""resolvers ++= List(
+           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt)""".stripMargin.some
+      val input = repositories ++ repositoriesWithEmptyNames
+      val actual = BuildSbt.renderListOfFieldValue(none[String], input, n)
+      actual ==== expected
+    }
+
+    def testRenderToResolversManyWithNoRepoNames: Property = for {
+      n <- Gen.int(Range.linear(0, 10)).log("n")
+      repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
+      repositoriesWithEmptyNames <- Gens.genRepositoryWithNoName.list(Range.linear(2, 10)).log("repositoriesWithEmptyNames")
+    } yield {
+      val idt = " " * n
+      val expected =
+        s"""resolvers ++= List(
+           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt)""".stripMargin.some
+      val input = repositories ++ repositoriesWithEmptyNames
+      val actual = BuildSbt.renderListOfFieldValue(none[String], input, n)
+      actual ==== expected
+    }
+
+    def testRenderToResolversManyWithNoRepoIdNoRepoNames: Property = for {
+      n <- Gen.int(Range.linear(0, 10)).log("n")
+      repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
+      repositoriesWithEmptyNames <- Gens.genRepositoryWithNoIdNoName.list(Range.linear(2, 10)).log("repositoriesWithEmptyNames")
+    } yield {
+      val idt = " " * n
+      val expected =
+        s"""resolvers ++= List(
+           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt)""".stripMargin.some
+      val input = repositories ++ repositoriesWithEmptyNames
+      val actual = BuildSbt.renderListOfFieldValue(none[String], input, n)
+      actual ==== expected
+    }
+
   }
 
   object RenderDependencySpec {
