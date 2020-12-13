@@ -13,7 +13,7 @@ import just.fp.{Named, Render}
   * @author Kevin Lee
   * @since 2019-04-21
   */
-final case class Repository(id: RepoId, name: Option[RepoName], url: RepoUrl)
+final case class Repository(id: Option[RepoId], name: Option[RepoName], url: RepoUrl)
 
 object Repository {
   final case class RepoId(repoId: String) extends AnyVal
@@ -30,7 +30,13 @@ object Repository {
     repository <- repositories.child
     url = (repository \ "url").text
     if url.nonEmpty
-    id = (repository \ "id").text
+    idSeq = (repository \ "id")
+    repoId =
+      if (idSeq.isEmpty)
+        none[RepoId]
+      else
+        Option(idSeq.text)
+          .map(id => RepoId(id.trim))
     nameSeq = (repository \ "name")
     repoName =
       if (nameSeq.isEmpty)
@@ -38,11 +44,18 @@ object Repository {
       else
         Option(nameSeq.text)
           .map(name => RepoName(name.trim))
-  } yield Repository(RepoId(id), repoName, RepoUrl(url))
+  } yield Repository(repoId, repoName, RepoUrl(url))
 
   def render(repository: Repository): String = {
-    val repoNameStr = repository.name.filter(_.repoName.nonEmpty).fold(repository.id.repoId)(_.repoName)
     val repoUrlStr = repository.url.repoUrl
+    val repoNameStr = (repository.id.filter(_.repoId.nonEmpty), repository.name.filter(_.repoName.nonEmpty)) match {
+        case (_, Some(repoName)) =>
+          repoName.repoName
+        case (Some(repoId), None) =>
+          repoId.repoId
+        case (None, None) =>
+          repoUrlStr
+      }
     s""""$repoNameStr" at "$repoUrlStr""""
   }
 
