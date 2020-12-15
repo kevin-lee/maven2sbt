@@ -48,10 +48,11 @@ object Dependency {
 
   def render(dependency: Dependency): String = dependency match {
     case Dependency(GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) =>
-      val groupIdStr = MavenProperty.toPropertyNameOrItself(groupId)
-      val artifactIdStr = MavenProperty.toPropertyNameOrItself(artifactId)
-      val versionStr = MavenProperty.toPropertyNameOrItself(version)
-      s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(exclusions)}"""
+      val propsName = Props.PropsName("props")
+      val groupIdStr = MavenProperty.toPropertyNameOrItself(propsName, groupId)
+      val artifactIdStr = MavenProperty.toPropertyNameOrItself(propsName, artifactId)
+      val versionStr = MavenProperty.toPropertyNameOrItself(propsName, version)
+      s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions)}"""
   }
 
 }

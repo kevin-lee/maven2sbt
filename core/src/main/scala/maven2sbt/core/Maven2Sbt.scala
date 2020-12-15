@@ -34,7 +34,7 @@ object Maven2Sbt {
         pom <- effectOf(pomElem)
         ProjectInfo(groupId, artifactId, version) <- effectOf(ProjectInfo.from(pom))
         mavenProperties <- effectOf(MavenProperty.from(pom))
-        props <- effectOf(mavenProperties.map(BuildSbt.Prop.fromMavenProperty))
+        props <- effectOf(mavenProperties.map(Prop.fromMavenProperty))
         repositories <- effectOf(Repository.from(pom))
         dependencies <- effectOf(Dependency.from(pom))
         globalSettings <- pureOf(BuildSbt.GlobalSettings.empty)

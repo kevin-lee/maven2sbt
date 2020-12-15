@@ -1,19 +1,15 @@
 package maven2sbt.core
 
 import cats.syntax.all._
-
 import hedgehog._
 import hedgehog.runner._
-
-import maven2sbt.core.Gens.ExpectedMavenProperty
 
 /**
  * @author Kevin Lee
  * @since 2020-09-05
  */
 object BuildSbtSpec extends Properties {
-  override def tests: List[Prop] = List(
-    property("test BuildSbt.Prop.fromMavenProperty", PropSpec.testFromMavenProperty),
+  override def tests: List[Test] = List(
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List.empty[Repository], n)",
       RenderRepositorySpec.testRenderToResolvers0
@@ -72,26 +68,6 @@ object BuildSbtSpec extends Properties {
     )
   )
 
-  object PropSpec {
-
-    def testFromMavenProperty: Property = for {
-      mavenProperties <- Gens.genMavenPropertyWithExpectedRendered.list(Range.linear(0, 10))
-          .log("mavenProperties")
-    } yield {
-      val (expected, actual) = mavenProperties.map {
-        case (ExpectedMavenProperty(expectedMavenProperty), mavenProperty) =>
-          (
-            BuildSbt.Prop(
-                BuildSbt.PropName(expectedMavenProperty.key),
-                BuildSbt.PropValue(expectedMavenProperty.value)
-              ),
-            BuildSbt.Prop.fromMavenProperty(mavenProperty)
-          )
-      }.unzip
-      actual ==== expected
-    }
-
-  }
 
   object RenderRepositorySpec {
 

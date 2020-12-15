@@ -58,8 +58,9 @@ object DependencySpec extends Properties {
   def testRender: Property = for {
     dependency <- Gens.genDependency.log("dependency")
   } yield {
+    val propsName = Props.PropsName("props")
     val Dependency(GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency
-    val expected = s""""$groupId" % "$artifactId" % "$version"${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(exclusions)}"""
+    val expected = s""""$groupId" % "$artifactId" % "$version"${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions)}"""
     val actual = Dependency.render(dependency)
     actual ==== expected
   }

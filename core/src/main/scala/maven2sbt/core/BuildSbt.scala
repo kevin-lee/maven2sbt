@@ -1,9 +1,7 @@
 package maven2sbt.core
 
 import BuildSbt._
-
 import cats.syntax.all._
-
 import just.fp.{Named, Render}
 
 /**
@@ -94,22 +92,6 @@ object BuildSbt {
       Settings.render(globalSettings.globalSettings, "Global / ".some, "\n", 2)
   }
 
-  final case class Prop(name: PropName, value: PropValue)
-  final case class PropName(propName: String) extends AnyVal
-  final case class PropValue(propValue: String) extends AnyVal
-
-  object Prop {
-
-    def fromMavenProperty(mavenProperty: MavenProperty): Prop =
-      Prop(
-        PropName(Common.dotHyphenSeparatedToCamelCase(mavenProperty.key)),
-        PropValue(mavenProperty.value)
-      )
-
-    def render(prop: Prop): String =
-      s"""val ${prop.name.propName} = "${prop.value.propValue}""""
-  }
-
   def render(buildSbt: BuildSbt): String = buildSbt match {
     case BuildSbt(
         globalSettings
@@ -123,7 +105,7 @@ object BuildSbt {
       val projectSettingsRendered = ProjectSettings.render(projectSettings)
 
       s"""
-         |${props.map(Prop.render).mkString("\n")}
+         |${Props.renderProps(Props.PropsName("props"), 2, props)}
          |
          |$globalSettingsRendered
          |$thisBuildSettingsRendered
