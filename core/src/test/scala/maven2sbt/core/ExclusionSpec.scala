@@ -16,17 +16,19 @@ object ExclusionSpec extends Properties {
   , property("test renderExclusions with more than two exclusions", testRenderExclusionsMoreThanTwo)
   )
 
+  private val propsName = Props.PropsName("testProps")
+
   def testRenderExclusionRule: Property = for {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
     val expected = s"""ExclusionRule(organization = "${exclusion.groupId.groupId}", artifact = "${exclusion.artifactId.artifactId}")"""
-    val actual = Exclusion.renderExclusionRule(exclusion)
+    val actual = Exclusion.renderExclusionRule(propsName, exclusion)
     actual ==== expected
   }
 
   def testRenderExclusions0: Result = {
     val expected = ""
-    val actual = Exclusion.renderExclusions(List.empty)
+    val actual = Exclusion.renderExclusions(propsName, List.empty)
     actual ==== expected
   }
 
@@ -34,7 +36,7 @@ object ExclusionSpec extends Properties {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
     val expected = s""" exclude("${exclusion.groupId.groupId}", "${exclusion.artifactId.artifactId}")"""
-    val actual = Exclusion.renderExclusions(List(exclusion))
+    val actual = Exclusion.renderExclusions(propsName, List(exclusion))
     actual ==== expected
   }
 
@@ -44,9 +46,9 @@ object ExclusionSpec extends Properties {
     val indent = " " * 8
     val expected =
       s""" excludeAll(
-         |$indent  ${exclusions.map(Exclusion.renderExclusionRule).mkString(s",\n$indent  ")}
+         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _)).mkString(s",\n$indent  ")}
          |$indent)""".stripMargin
-    val actual = Exclusion.renderExclusions(exclusions)
+    val actual = Exclusion.renderExclusions(propsName, exclusions)
     actual ==== expected
   }
 
@@ -56,9 +58,9 @@ object ExclusionSpec extends Properties {
     val indent = " " * 8
     val expected =
       s""" excludeAll(
-         |$indent  ${exclusions.map(Exclusion.renderExclusionRule).mkString(s",\n$indent  ")}
+         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _)).mkString(s",\n$indent  ")}
          |$indent)""".stripMargin
-    val actual = Exclusion.renderExclusions(exclusions)
+    val actual = Exclusion.renderExclusions(propsName, exclusions)
     actual ==== expected
   }
 

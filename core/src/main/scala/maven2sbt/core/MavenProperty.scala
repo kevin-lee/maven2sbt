@@ -22,6 +22,9 @@ object MavenProperty {
     case _ => None
   }
 
-  def toPropertyNameOrItself(name: String): String =
-    findPropertyName(name).fold(s""""$name"""")(dotHyphenSeparatedToCamelCase)
+  def toPropertyNameOrItself(propsName: Props.PropsName, name: String): String =
+    findPropertyName(name)
+      .fold(s""""$name"""")(dotSeparated =>
+        s"${propsName.propsName}.${dotHyphenSeparatedToCamelCase(dotSeparated)}"
+      )
 }
