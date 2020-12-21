@@ -21,7 +21,7 @@ object ExclusionSpec extends Properties {
   def testRenderExclusionRule: Property = for {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
-    val expected = s"""ExclusionRule(organization = "${exclusion.groupId.groupId}", artifact = "${exclusion.artifactId.artifactId}")"""
+    val expected = s"""ExclusionRule(organization = "${exclusion.groupId.groupId}", name = "${exclusion.artifactId.artifactId}")"""
     val actual = Exclusion.renderExclusionRule(propsName, exclusion)
     actual ==== expected
   }
