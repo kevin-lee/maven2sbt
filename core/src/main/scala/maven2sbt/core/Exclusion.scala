@@ -14,7 +14,7 @@ object Exclusion {
     case Exclusion(groupId, artifactId) =>
       val groupIdStr = MavenProperty.toPropertyNameOrItself(propsName, groupId.groupId)
       val artifactIdStr = MavenProperty.toPropertyNameOrItself(propsName, artifactId.artifactId)
-      s"""ExclusionRule(organization = $groupIdStr, artifact = $artifactIdStr)"""
+      s"""ExclusionRule(organization = $groupIdStr, name = $artifactIdStr)"""
   }
 
   def renderExclusions(propsName: Props.PropsName, exclusions: Seq[Exclusion]): String = exclusions match {
