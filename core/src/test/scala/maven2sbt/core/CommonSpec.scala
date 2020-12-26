@@ -3,6 +3,8 @@ package maven2sbt.core
 import hedgehog._
 import hedgehog.runner._
 
+import cats.syntax.all._
+
 /**
   * @author Kevin Lee
   * @since 2019-04-21
@@ -22,17 +24,22 @@ object CommonSpec extends Properties {
   }
 
   def testDotSeparatedToCamelCase1: Property = for {
-    name <- Gen.string(Gen.alphaNum, Range.linear(1, 10)).log("name")
+    name <- Gen.string(Gens.genCharByRange(TestUtils.ExpectedLetters), Range.linear(1, 10)).log("name")
   } yield {
-    val actual = Common.dotHyphenSeparatedToCamelCase(name)
-    actual ==== name
+    val expected = name.headOption.map { c =>
+      if (c.isUpper || c.isLower || c === '_')
+        c.toString
+      else
+        s"_${c.toString}"
+    }.getOrElse("") + name.drop(1)
+    val actual = Common.capitalizeAfterIgnoringNonAlphaNumUnderscore(name)
+    actual ==== expected
   }
   def testDotSeparatedToCamelCaseMore: Property = for {
-    names <- Gen.string(Gen.alphaNum, Range.linear(1, 10)).list(Range.linear(2, 5)).log("names")
+    (mavenPropName, propName) <- Gens.genMavenPropertyNameWithPropNamePair.log("(mavenPropName, propName)")
   } yield {
-    val dotSeparatedName = names.mkString(".")
-    val expected = (names.head :: names.drop(1).map(_.capitalize)).mkString
-    val actual = Common.dotHyphenSeparatedToCamelCase(dotSeparatedName)
+    val actual = Common.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenPropName.name)
+    val expected = propName.propName
     actual ==== expected
   }
 }

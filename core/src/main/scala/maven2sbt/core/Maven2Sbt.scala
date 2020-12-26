@@ -29,6 +29,7 @@ object Maven2Sbt {
   final class Maven2SbtF[F[_]: Monad: EffectConstructor: ConsoleEffect]
     extends Maven2Sbt[F] {
 
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def buildSbt(scalaVersion: ScalaVersion, pomElem: => Elem): F[Either[Maven2SbtError, BuildSbt]] =
       for {
         pom <- effectOf(pomElem)
@@ -68,6 +69,7 @@ object Maven2Sbt {
           )
       } yield buildSbtData.asRight
 
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def buildSbtFromPomFile(scalaVersion: ScalaVersion, file: File): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         pomFile <- eitherTOf(Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)))
@@ -75,6 +77,7 @@ object Maven2Sbt {
         buildSbtString <- EitherT(buildSbt(scalaVersion, pomElem))
       } yield buildSbtString).value
 
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def buildSbtFromInputStream(scalaVersion: ScalaVersion, pom: InputStream): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         inputStream <- eitherTOf(Option(pom).toRight(Maven2SbtError.noPomInputStream))

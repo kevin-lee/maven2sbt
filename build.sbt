@@ -1,13 +1,14 @@
 import kevinlee.sbt.SbtCommon.crossVersionProps
+import SbtProjectInfo._
 import just.semver.SemVer
 import SemVer.{Major, Minor}
 
 val GitHubUsername = "Kevin-Lee"
 val RepoName = "maven2sbt"
 val ExecutableScriptName = RepoName
-val ProjectVersion = "1.0.0"
+
 val ProjectScalaVersion = "2.13.4"
-val CrossScalaVersions = Seq("2.11.12", "2.12.12", ProjectScalaVersion)
+val CrossScalaVersions = Seq("2.12.12", ProjectScalaVersion)
 
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / version := ProjectVersion
@@ -75,7 +76,7 @@ def subProject(projectName: String, path: File): Project =
       , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
       , resolvers += hedgehogRepo
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-      , libraryDependencies ++= hedgehogLibs
+      , libraryDependencies ++= hedgehogLibs ++ Seq(newTypeLib)
       , scalacOptions := (SemVer.parseUnsafe(scalaVersion.value) match {
           case SemVer(Major(2), Minor(13), _, _, _) =>
             scalacOptions.value.filter(_ != "-Xlint:nullary-override") ++
@@ -83,6 +84,27 @@ def subProject(projectName: String, path: File): Project =
           case _ =>
             scalacOptions.value
         })
+      /* WartRemover and scalacOptions { */
+          , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
+          , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
+//          , wartremoverErrors ++= commonWarts((scalaBinaryVersion in update).value)
+//            , wartremoverErrors ++= Warts.all
+      , Compile / console / wartremoverErrors := List.empty
+      , Compile / console / wartremoverWarnings := List.empty
+      , Compile / console / scalacOptions :=
+        (console / scalacOptions).value
+          .filterNot(option =>
+            option.contains("wartremover") || option.contains("import")
+          )
+      , Test / console / wartremoverErrors := List.empty
+      , Test / console / wartremoverWarnings := List.empty
+      , Test / console / scalacOptions :=
+        (console / scalacOptions).value
+          .filterNot( option =>
+            option.contains("wartremover") || option.contains("import")
+          )
+      , wartremoverExcluded += sourceManaged.value
+      /* } WartRemover and scalacOptions */
     )
     .settings(
       Seq(addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
@@ -97,7 +119,6 @@ lazy val core = subProject("core", file("core"))
           "org.scala-lang.modules" %% "scala-xml" % "1.3.0",
           effectieCatsEffect,
           effectieScalazEffect,
-          newTypeLib
         )
       , SemVer.parseUnsafe(scalaVersion.value)
       ) {

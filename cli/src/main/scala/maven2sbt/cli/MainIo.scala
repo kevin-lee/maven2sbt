@@ -15,6 +15,7 @@ import scalaz._
  * @author Kevin Lee
  * @since 2019-12-09
  */
+@SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
 trait MainIo[A] {
 
   type SIO[X] = scalaz.effect.IO[X]

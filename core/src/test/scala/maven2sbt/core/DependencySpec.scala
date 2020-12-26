@@ -11,6 +11,7 @@ import scala.xml.Elem
   */
 object DependencySpec extends Properties {
 
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   private def generatePom(dependencies: List[Dependency]): Elem =
     <project>
       <dependencies>

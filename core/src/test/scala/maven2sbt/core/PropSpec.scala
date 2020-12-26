@@ -2,7 +2,6 @@ package maven2sbt.core
 
 import hedgehog._
 import hedgehog.runner._
-import maven2sbt.core.Gens.ExpectedMavenProperty
 import maven2sbt.core.{Prop => M2sProp}
 
 object PropSpec extends Properties {
@@ -16,30 +15,29 @@ object PropSpec extends Properties {
       mavenProperties <- Gens.genMavenPropertyWithExpectedRendered.list(Range.linear(0, 10))
           .log("mavenProperties")
     } yield {
-      val (expected, actual) = mavenProperties.map {
-        case (ExpectedMavenProperty(expectedMavenProperty), mavenProperty) =>
+      val (input, expected) = mavenProperties.map {
+        case (mavenProperty, expectedProp) =>
           (
-            M2sProp(
-              M2sProp.PropName(expectedMavenProperty.key),
-              M2sProp.PropValue(expectedMavenProperty.value)
-            ),
-            M2sProp.fromMavenProperty(mavenProperty)
+            mavenProperty,
+            expectedProp
           )
       }.unzip
+      val actual = input.map(M2sProp.fromMavenProperty)
       actual ==== expected
     }
 
   def testRender: Property = for {
     mavenProperty <- Gens.genMavenPropertyWithExpectedRendered.log("mavenProperty")
   } yield {
-    val (expected, prop) =
+    val (input, expected) =
       mavenProperty match {
-        case (ExpectedMavenProperty(expectedMavenProperty), mavenProperty) =>
+        case (mavenProperty, expectedProp) =>
           (
-            s"""val ${expectedMavenProperty.key} = "${expectedMavenProperty.value}"""",
-            M2sProp.fromMavenProperty(mavenProperty)
+            mavenProperty,
+            s"""val ${expectedProp.name.propName} = "${expectedProp.value.propValue}""""
           )
       }
+    val prop = M2sProp.fromMavenProperty(input)
     val actual = M2sProp.render(prop)
     actual ==== expected
   }
