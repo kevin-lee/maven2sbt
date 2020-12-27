@@ -1,6 +1,6 @@
 package maven2sbt.core
 
-import Common._
+import M2SStringOps._
 
 /**
   * @author Kevin Lee
@@ -12,8 +12,8 @@ object Exclusion {
 
   def renderExclusionRule(propsName: Props.PropsName, exclusion: Exclusion): String = exclusion match {
     case Exclusion(groupId, artifactId) =>
-      val groupIdStr = Common.toPropertyNameOrItself(propsName, groupId.groupId)
-      val artifactIdStr = Common.toPropertyNameOrItself(propsName, artifactId.artifactId)
+      val groupIdStr = M2SStringOps.toPropertyNameOrItself(propsName, groupId.groupId)
+      val artifactIdStr = M2SStringOps.toPropertyNameOrItself(propsName, artifactId.artifactId)
       s"""ExclusionRule(organization = $groupIdStr, name = $artifactIdStr)"""
   }
 
@@ -21,8 +21,8 @@ object Exclusion {
     case Nil =>
       ""
     case Exclusion(groupId, artifactId) :: Nil =>
-      s""" exclude(${Common.toPropertyNameOrItself(propsName, groupId.groupId)}, """ +
-        s"""${Common.toPropertyNameOrItself(propsName, artifactId.artifactId)})"""
+      s""" exclude(${M2SStringOps.toPropertyNameOrItself(propsName, groupId.groupId)}, """ +
+        s"""${M2SStringOps.toPropertyNameOrItself(propsName, artifactId.artifactId)})"""
     case x :: xs =>
       val idt = indent(8)
       s""" excludeAll(

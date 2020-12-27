@@ -29,7 +29,7 @@ object Prop {
 
   def fromMavenProperty(mavenProperty: MavenProperty): Prop =
     Prop(
-      PropName(Common.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenProperty.key.name)),
+      PropName(M2SStringOps.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenProperty.key.name)),
       PropValue(mavenProperty.value.value)
     )
 

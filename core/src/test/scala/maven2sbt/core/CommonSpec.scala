@@ -19,7 +19,7 @@ object CommonSpec extends Properties {
   def testIndent: Property = for {
     indentSize <- Gen.int(Range.linear(0, 50)).log("indentSize")
   } yield {
-    val actual = Common.indent(indentSize)
+    val actual = M2SStringOps.indent(indentSize)
     actual.length ==== indentSize and Result.assert(actual.trim.isEmpty)
   }
 
@@ -32,13 +32,13 @@ object CommonSpec extends Properties {
       else
         s"_${c.toString}"
     }.getOrElse("") + name.drop(1)
-    val actual = Common.capitalizeAfterIgnoringNonAlphaNumUnderscore(name)
+    val actual = M2SStringOps.capitalizeAfterIgnoringNonAlphaNumUnderscore(name)
     actual ==== expected
   }
   def testDotSeparatedToCamelCaseMore: Property = for {
     (mavenPropName, propName) <- Gens.genMavenPropertyNameWithPropNamePair.log("(mavenPropName, propName)")
   } yield {
-    val actual = Common.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenPropName.name)
+    val actual = M2SStringOps.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenPropName.name)
     val expected = propName.propName
     actual ==== expected
   }

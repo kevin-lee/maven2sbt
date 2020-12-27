@@ -11,7 +11,7 @@ import cats.syntax.all._
   * @author Kevin Lee
   * @since 2019-04-21
   */
-sealed trait Common {
+sealed trait M2SStringOps {
 
   /**
    * @example
@@ -36,10 +36,10 @@ sealed trait Common {
    *   // abcDefGhi
    *
    * }}}
-   * @param dotSeparated
+   * @param value
    * @return
    */
-  def capitalizeAfterIgnoringNonAlphaNumUnderscore(dotSeparated: String): String = {
+  def capitalizeAfterIgnoringNonAlphaNumUnderscore(value: String): String = {
     def isKnownLetter(c: Char) = {
       c.isDigit || c.isUpper || c.isLower || c === '_'
     }
@@ -61,23 +61,14 @@ sealed trait Common {
         else
           toCapitalized(cs, true, acc)
     }
-    val cs = dotSeparated.headOption.map { c=>
+    val cs = value.headOption.map { c=>
         if (c.isUpper || c.isLower || c === '_')
           c.toString
         else
           s"_${c.toString}"
-      }.fold(List.empty[Char])(_.toList) ++ dotSeparated.toList.drop(1)
+      }.fold(List.empty[Char])(_.toList) ++ value.toList.drop(1)
     toCapitalized(cs, false, List.empty[Char]).reverse.mkString
   }
-
-//    dotSeparated.trim.split("[\\.-]+")  match {
-//      case Array(head, tail @ _*) => head + tail.map(_.capitalize).mkString
-//
-//      case Array(_) => dotSeparated
-//
-//      case Array() => ""
-//    }
-
 
   def toPropertyNameOrItself(propsName: Props.PropsName, name: String): String =
     findPropertyName(name)
@@ -89,4 +80,4 @@ sealed trait Common {
 
 }
 
-object Common extends Common
+object M2SStringOps extends M2SStringOps
