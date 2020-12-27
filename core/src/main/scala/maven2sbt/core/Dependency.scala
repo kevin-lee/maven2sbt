@@ -49,9 +49,9 @@ object Dependency {
   def render(dependency: Dependency): String = dependency match {
     case Dependency(GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) =>
       val propsName = Props.PropsName("props")
-      val groupIdStr = Common.toPropertyNameOrItself(propsName, groupId)
-      val artifactIdStr = Common.toPropertyNameOrItself(propsName, artifactId)
-      val versionStr = Common.toPropertyNameOrItself(propsName, version)
+      val groupIdStr = M2SStringOps.toPropertyNameOrItself(propsName, groupId)
+      val artifactIdStr = M2SStringOps.toPropertyNameOrItself(propsName, artifactId)
+      val versionStr = M2SStringOps.toPropertyNameOrItself(propsName, version)
       s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions)}"""
   }
 
