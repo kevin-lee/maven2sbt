@@ -16,7 +16,7 @@ final case class BuildSbt(
   )
 
 object BuildSbt {
-  import M2SStringOps._
+  import StringUtils._
 
   final case class Settings(
       groupId: Option[GroupId]

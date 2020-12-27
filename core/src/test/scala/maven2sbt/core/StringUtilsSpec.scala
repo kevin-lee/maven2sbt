@@ -9,7 +9,7 @@ import cats.syntax.all._
   * @author Kevin Lee
   * @since 2019-04-21
   */
-object CommonSpec extends Properties {
+object StringUtilsSpec extends Properties {
   override def tests: List[Test] = List(
     property("test indent", testIndent)
   , property("test dotSeparatedToCamelCase (a single name)", testDotSeparatedToCamelCase1)
@@ -19,7 +19,7 @@ object CommonSpec extends Properties {
   def testIndent: Property = for {
     indentSize <- Gen.int(Range.linear(0, 50)).log("indentSize")
   } yield {
-    val actual = M2SStringOps.indent(indentSize)
+    val actual = StringUtils.indent(indentSize)
     actual.length ==== indentSize and Result.assert(actual.trim.isEmpty)
   }
 
@@ -32,13 +32,13 @@ object CommonSpec extends Properties {
       else
         s"_${c.toString}"
     }.getOrElse("") + name.drop(1)
-    val actual = M2SStringOps.capitalizeAfterIgnoringNonAlphaNumUnderscore(name)
+    val actual = StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(name)
     actual ==== expected
   }
   def testDotSeparatedToCamelCaseMore: Property = for {
     (mavenPropName, propName) <- Gens.genMavenPropertyNameWithPropNamePair.log("(mavenPropName, propName)")
   } yield {
-    val actual = M2SStringOps.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenPropName.name)
+    val actual = StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenPropName.name)
     val expected = propName.propName
     actual ==== expected
   }
