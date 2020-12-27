@@ -14,7 +14,7 @@ object PropsSpec extends Properties {
   )
 
   def testPropsRender: Property = for {
-    mavenProperties <- Gens.genMavenPropertyWithExpectedRendered
+    mavenProperties <- Gens.genMavenPropertyAndPropPair
         .list(Range.linear(1, 10))
         .log("mavenProperties")
     indentSize <- Gen.int(Range.linear(0, 8)).log("indent")

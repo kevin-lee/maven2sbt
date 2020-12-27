@@ -1,9 +1,11 @@
 package maven2sbt.core
 
 import hedgehog._
-
 import cats.syntax.all._
 import maven2sbt.core.Repository.{RepoId, RepoName, RepoUrl}
+import maven2sbt.core.{Prop => M2sProp}
+
+import scala.util.Random
 
 /**
  * @author Kevin Lee
@@ -108,7 +110,7 @@ object Gens {
     value <- Gen.string(Gen.unicode, Range.linear(1, 50))
   } yield MavenProperty(MavenProperty.Name(name), MavenProperty.Value(value))
 
-  def genMavenPropertyWithExpectedRendered: Gen[(MavenProperty, Prop)] = for {
+  def genMavenPropertyAndPropPair: Gen[(MavenProperty, Prop)] = for {
     nameList <- Gen.string(Gens.genCharByRange(TestUtils.ExpectedLetters), Range.linear(1, 10)).list(Range.linear(1, 10))
 
     delimiterList <- Gen.string(
@@ -135,6 +137,61 @@ object Gens {
     MavenProperty(MavenProperty.Name(key), MavenProperty.Value(value)),
     Prop(Prop.PropName(expectedKey), Prop.PropValue(value))
   )
+
+  def genRenderedStringFromValueWithPropsAndQuoted: Gen[(RenderedString, String)] = for {
+    names <- Gens.genMavenPropertyNameWithPropNamePair
+      .list(Range.linear(1, 5))
+
+    values <- Gen
+      .string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 10))
+      .list(Range.singleton(names.length))
+
+    nameValuePairs = names.zip(values)
+    (_, valueWithExpectedProp) = Random
+      .shuffle(nameValuePairs)
+      .foldLeft(
+        List.empty[((MavenProperty.Name, String), (M2sProp.PropName, String))]
+      ) {
+        case (acc, ((mavenPropName, propName), value)) =>
+          ((mavenPropName, value), (propName, value)) :: acc
+
+      }
+      .unzip
+    valueWithProps = valueWithExpectedProp
+      .foldLeft(List.empty[String]) {
+        case (acc, (prop, value)) => s"$${${prop.propName}}$value" :: acc
+      }
+      .reverse
+      .mkString
+  } yield (
+    RenderedString.withProps(
+      valueWithProps
+    ),
+    s""""$valueWithProps""""
+  )
+
+  def genRenderedStringWithOnlyPropNameAndQuoted: Gen[(RenderedString, String)] = for {
+    (_, propName) <- Gens.genMavenPropertyNameWithPropNamePair
+  } yield (
+    RenderedString.withProps(
+      s"$${${propName.propName}}"
+    ),
+    propName.propName
+  )
+
+  def genRenderedStringWithNoPropNameAndQuoted: Gen[(RenderedString, String)] =
+    Gen.string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 10))
+      .map(value => (RenderedString.withoutProps(value), s""""$value""""))
+
+  def genRenderedStringWithQuotedString: Gen[(RenderedString, String)] =
+    Gen.frequency1(
+      30 -> genRenderedStringFromValueWithPropsAndQuoted,
+      30 -> genRenderedStringWithOnlyPropNameAndQuoted,
+      30 -> genRenderedStringWithNoPropNameAndQuoted
+    )
+
+
+
 
   def genScope: Gen[Scope] =
     Gen.element1(Scope.compile, Scope.test, Scope.provided, Scope.runtime, Scope.system, Scope.default)
