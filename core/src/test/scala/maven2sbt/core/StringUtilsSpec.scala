@@ -2,8 +2,11 @@ package maven2sbt.core
 
 import hedgehog._
 import hedgehog.runner._
-
 import cats.syntax.all._
+
+import scala.util.Random
+
+import maven2sbt.core.{Prop => M2sProp}
 
 /**
   * @author Kevin Lee
@@ -19,7 +22,9 @@ object StringUtilsSpec extends Properties {
     property(
       "test capitalizeAfterIgnoringNonAlphaNumUnderscore (two or more names)",
       testCapitalizeAfterIgnoringNonAlphaNumUnderscoreMore
-    )
+    ),
+    property("test renderWithProps", testRenderWithProps),
+    property("test quoteRenderedString", testQuoteRenderedString)
   )
 
   def testIndent: Property =
@@ -51,6 +56,7 @@ object StringUtilsSpec extends Properties {
         StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(name)
       actual ==== expected
     }
+
   def testCapitalizeAfterIgnoringNonAlphaNumUnderscoreMore: Property =
     for {
       (mavenPropName, propName) <- Gens.genMavenPropertyNameWithPropNamePair
@@ -62,4 +68,54 @@ object StringUtilsSpec extends Properties {
       val expected = propName.propName
       actual ==== expected
     }
+
+  def testRenderWithProps: Property =
+    for {
+      names <- Gens.genMavenPropertyNameWithPropNamePair
+        .list(Range.linear(1, 5))
+        .log("propNames")
+      values <- Gen
+        .string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 10))
+        .list(Range.singleton(names.length))
+        .log("values")
+      nameValuePairs = names.zip(values)
+      (valuesWithProps, valueWithExpectedProp) = Random
+        .shuffle(nameValuePairs)
+        .foldLeft(
+          List.empty[((MavenProperty.Name, String), (M2sProp.PropName, String))]
+        ) {
+          case (acc, ((mavenPropName, propName), value)) =>
+            ((mavenPropName, value), (propName, value)) :: acc
+
+        }
+        .unzip
+      input = valuesWithProps
+        .foldLeft(List.empty[String]) {
+          case (acc, (prop, value)) => s"$${${prop.name}}$value" :: acc
+        }
+        .reverse
+        .mkString
+      expected = RenderedString.withProps(
+        valueWithExpectedProp
+          .foldLeft(List.empty[String]) {
+            case (acc, (prop, value)) => s"$${${prop.propName}}$value" :: acc
+          }
+          .reverse
+          .mkString
+      )
+    } yield {
+      val actual = StringUtils.renderWithProps(input)
+      actual ==== expected
+    }
+
+  def testQuoteRenderedString: Property = for {
+    (renderedString, quoted) <- Gens.genRenderedStringWithQuotedString.log("(renderedString, quoted)")
+  } yield {
+    val actual = StringUtils.quoteRenderedString(renderedString)
+    println(
+      s"""actual: $actual
+         |""".stripMargin)
+    actual ==== quoted
+  }
+
 }

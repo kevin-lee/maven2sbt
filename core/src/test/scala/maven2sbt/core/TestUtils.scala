@@ -52,4 +52,7 @@ object TestUtils {
         .toList
     )
 
+  final val NonWhitespaceCharRange: List[(Int, Int)] =
+    List(0 -> 8, 14 -> 27, 33 -> 5759, 5761 -> 8191, 8199 -> 8199, 8203 -> 8231, 8234 -> 8286, 8288 -> 12287, 12289 -> Char.MaxValue.toInt)
+
 }

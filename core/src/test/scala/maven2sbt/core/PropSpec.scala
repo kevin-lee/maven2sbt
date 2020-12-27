@@ -12,7 +12,7 @@ object PropSpec extends Properties {
   )
 
   def testFromMavenProperty: Property = for {
-      mavenProperties <- Gens.genMavenPropertyWithExpectedRendered.list(Range.linear(0, 10))
+      mavenProperties <- Gens.genMavenPropertyAndPropPair.list(Range.linear(0, 10))
           .log("mavenProperties")
     } yield {
       val (input, expected) = mavenProperties.map {
@@ -27,7 +27,7 @@ object PropSpec extends Properties {
     }
 
   def testRender: Property = for {
-    mavenProperty <- Gens.genMavenPropertyWithExpectedRendered.log("mavenProperty")
+    mavenProperty <- Gens.genMavenPropertyAndPropPair.log("mavenProperty")
   } yield {
     val (input, expected) =
       mavenProperty match {
