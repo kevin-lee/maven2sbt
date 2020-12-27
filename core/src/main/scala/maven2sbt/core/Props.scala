@@ -8,6 +8,7 @@ import scala.language.implicitConversions
  * @author Kevin Lee
  * @since 2020-12-13
  */
+@SuppressWarnings(Array("org.wartremover.warts.ImplicitConversion", "org.wartremover.warts.ImplicitParameter"))
 object Props {
   @newtype case class PropsName(propsName: String)
 
@@ -28,8 +29,8 @@ object Prop {
 
   def fromMavenProperty(mavenProperty: MavenProperty): Prop =
     Prop(
-      PropName(Common.dotHyphenSeparatedToCamelCase(mavenProperty.key)),
-      PropValue(mavenProperty.value)
+      PropName(Common.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenProperty.key.name)),
+      PropValue(mavenProperty.value.value)
     )
 
   def render(prop: Prop): String =

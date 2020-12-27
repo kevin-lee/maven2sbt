@@ -2,6 +2,7 @@ package maven2sbt.core
 
 import hedgehog._
 import hedgehog.runner._
+import cats.syntax.all._
 
 /**
   * @author Kevin Lee
@@ -44,7 +45,7 @@ object ScopeSpec extends Properties {
   } yield {
     Result.all(
       scopeAndRendered.map { case (scope, expected) =>
-        Scope.renderWithPrefix(prefix, scope) ==== (if (scope == Scope.Default) "" else s"$prefix$expected")
+        Scope.renderWithPrefix(prefix, scope) ==== (if (scope === Scope.Default) "" else s"$prefix$expected")
       }
     )
   }
@@ -52,14 +53,14 @@ object ScopeSpec extends Properties {
   def testParseValid: Result = {
     Result.all(
       mavenScopeAndScope.map { case (mavenScope, scope) =>
-          Scope.parse(mavenScope) ==== Right(scope)
+          Scope.parse(mavenScope) ==== scope.asRight[String]
       }
     )
   }
 
   def testParseInvalid: Property = for {
     n <- Gen.int(Range.linear(1, 1000)).log("n")
-    mavenScope <- Gen.string(Gen.unicode, Range.linear(1, 50)).map(_ + n).log("mavenScope")
+    mavenScope <- Gen.string(Gen.unicode, Range.linear(1, 50)).map(_ + n.toString).log("mavenScope")
   } yield {
     Result.assert(Scope.parse(mavenScope).isLeft)
   }

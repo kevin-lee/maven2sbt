@@ -28,7 +28,7 @@ object ExclusionSpec extends Properties {
 
   def testRenderExclusions0: Result = {
     val expected = ""
-    val actual = Exclusion.renderExclusions(propsName, List.empty)
+    val actual = Exclusion.renderExclusions(propsName, List.empty[Exclusion])
     actual ==== expected
   }
 

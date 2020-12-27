@@ -11,6 +11,7 @@ import scala.xml.{Elem, Null, Text, TopScope}
   */
 object MavenPropertySpec extends Properties {
 
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   private def generatePom(properties: List[MavenProperty]): Elem =
     if (properties.isEmpty)
       <project></project>
@@ -19,7 +20,7 @@ object MavenPropertySpec extends Properties {
         <properties>
           {
             properties.map { case MavenProperty(key, value)  =>
-              Elem(null, key, Null, TopScope, true, Text(value))
+              Elem(null, key.name, Null, TopScope, true, Text(value.value))
             }
           }
         </properties>

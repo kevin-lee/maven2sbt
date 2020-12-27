@@ -12,17 +12,17 @@ object Exclusion {
 
   def renderExclusionRule(propsName: Props.PropsName, exclusion: Exclusion): String = exclusion match {
     case Exclusion(groupId, artifactId) =>
-      val groupIdStr = MavenProperty.toPropertyNameOrItself(propsName, groupId.groupId)
-      val artifactIdStr = MavenProperty.toPropertyNameOrItself(propsName, artifactId.artifactId)
+      val groupIdStr = Common.toPropertyNameOrItself(propsName, groupId.groupId)
+      val artifactIdStr = Common.toPropertyNameOrItself(propsName, artifactId.artifactId)
       s"""ExclusionRule(organization = $groupIdStr, name = $artifactIdStr)"""
   }
 
-  def renderExclusions(propsName: Props.PropsName, exclusions: Seq[Exclusion]): String = exclusions match {
+  def renderExclusions(propsName: Props.PropsName, exclusions: List[Exclusion]): String = exclusions match {
     case Nil =>
       ""
     case Exclusion(groupId, artifactId) :: Nil =>
-      s""" exclude(${MavenProperty.toPropertyNameOrItself(propsName, groupId.groupId)}, """ +
-        s"""${MavenProperty.toPropertyNameOrItself(propsName, artifactId.artifactId)})"""
+      s""" exclude(${Common.toPropertyNameOrItself(propsName, groupId.groupId)}, """ +
+        s"""${Common.toPropertyNameOrItself(propsName, artifactId.artifactId)})"""
     case x :: xs =>
       val idt = indent(8)
       s""" excludeAll(

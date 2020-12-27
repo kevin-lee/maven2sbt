@@ -13,6 +13,9 @@
 
   <properties>
     <something>blah-blah-blah</something>
+    <aaa.bbb>${something}-else</aaa.bbb>
+    <bbb.ccc>${aaa.bbb}-bbb-ccc</bbb.ccc>
+    <ccc.ddd.eee>${aaa.bbb}-blah-${bbb.ccc}-blah</ccc.ddd.eee>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <junit.version>4.11</junit.version>

@@ -1,5 +1,6 @@
 package maven2sbt.core
 
+import cats.kernel.Eq
 import cats.syntax.all._
 
 /**
@@ -22,6 +23,8 @@ object Scope {
   def runtime: Scope = Runtime
   def system: Scope = System
   def default: Scope = Default
+
+  implicit final val eq: Eq[Scope] = Eq.fromUniversalEquals[Scope]
 
   def render(scope: Scope): String = scope match {
     case Compile => "Compile"

@@ -14,13 +14,13 @@ final case class Dependency(
   , artifactId: ArtifactId
   , version: Version
   , scope: Scope
-  , exclusions: Seq[Exclusion]
+  , exclusions: List[Exclusion]
   )
 
 object Dependency {
 
-  implicit val named: Named[Dependency] = Named.named("libraryDependencies")
-  implicit val render: Render[Dependency] =
+  implicit val namedDependency: Named[Dependency] = Named.named("libraryDependencies")
+  implicit val renderDependency: Render[Dependency] =
     Render.namedRender("dependency", dependency => Dependency.render(dependency))
 
   def from(pom: Elem): Seq[Dependency] =
@@ -30,12 +30,12 @@ object Dependency {
       val version = dependency \ "version" text
       val scope = dependency \ "scope" text
 
-      val exclusions: Seq[Exclusion] = dependency \ "exclusions" \ "exclusion" map { exclusion =>
-        val groupId = exclusion \ "groupId" text
-        val artifactId = exclusion \ "artifactId" text
+      val exclusions: List[Exclusion] = (dependency \ "exclusions" \ "exclusion").map { exclusion =>
+        val groupId = (exclusion \ "groupId").text
+        val artifactId = (exclusion \ "artifactId").text
 
         Exclusion(GroupId(groupId), ArtifactId(artifactId))
-      }
+      }.toList
 
       Dependency(
           GroupId(groupId)
@@ -49,9 +49,9 @@ object Dependency {
   def render(dependency: Dependency): String = dependency match {
     case Dependency(GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) =>
       val propsName = Props.PropsName("props")
-      val groupIdStr = MavenProperty.toPropertyNameOrItself(propsName, groupId)
-      val artifactIdStr = MavenProperty.toPropertyNameOrItself(propsName, artifactId)
-      val versionStr = MavenProperty.toPropertyNameOrItself(propsName, version)
+      val groupIdStr = Common.toPropertyNameOrItself(propsName, groupId)
+      val artifactIdStr = Common.toPropertyNameOrItself(propsName, artifactId)
+      val versionStr = Common.toPropertyNameOrItself(propsName, version)
       s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions)}"""
   }
 

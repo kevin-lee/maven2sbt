@@ -1,10 +1,14 @@
 package maven2sbt.core
 
 import Repository._
+import cats.Show
 import cats.syntax.all._
+import io.estatico.newtype.macros.newtype
 import just.fp.{Named, Render}
 
 import scala.xml.Elem
+
+import scala.language.implicitConversions
 
 /**
   * @author Kevin Lee
@@ -13,13 +17,27 @@ import scala.xml.Elem
 final case class Repository(id: Option[RepoId], name: Option[RepoName], url: RepoUrl)
 
 object Repository {
-  final case class RepoId(repoId: String) extends AnyVal
-  final case class RepoName(repoName: String) extends AnyVal
-  final case class RepoUrl(repoUrl: String) extends AnyVal
+  @newtype case class RepoId(repoId: String)
+  object RepoId {
+    def unapply(repoId: RepoId): Option[String] =
+      repoId.repoId.some
 
-  implicit val named: Named[Repository] = Named.named("resolvers")
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    implicit final val show: Show[RepoId] = _.toString
+  }
+  @newtype case class RepoName(repoName: String)
+  object RepoName {
+    def unapply(repoName: RepoName): Option[String] =
+      repoName.repoName.some
 
-  implicit val render: Render[Repository] =
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    implicit final val show: Show[RepoName] = _.toString
+  }
+  @newtype case class RepoUrl(repoUrl: String)
+
+  implicit val namedRepository: Named[Repository] = Named.named("resolvers")
+
+  implicit val renderRepository: Render[Repository] =
     Render.namedRender("repository", repository => Repository.render(repository))
 
   def from(pom: Elem): Seq[Repository] = for {
@@ -56,4 +74,6 @@ object Repository {
     s""""$repoNameStr" at "$repoUrlStr""""
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+  implicit final val show: Show[Repository] = _.toString
 }

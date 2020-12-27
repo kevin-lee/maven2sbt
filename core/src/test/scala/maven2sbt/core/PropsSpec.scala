@@ -2,7 +2,6 @@ package maven2sbt.core
 
 import hedgehog._
 import hedgehog.runner._
-import maven2sbt.core.Gens.ExpectedMavenProperty
 import maven2sbt.core.{Prop => M2sProp}
 
 /**
@@ -20,16 +19,17 @@ object PropsSpec extends Properties {
         .log("mavenProperties")
     indentSize <- Gen.int(Range.linear(0, 8)).log("indent")
   } yield {
-    val (propsRendered, props) = mavenProperties.map {
-      case (ExpectedMavenProperty(MavenProperty(expectedKey, expectedValue)), mavenProperty) =>
+    val (input, propsRendered) = mavenProperties.map {
+      case (mavenProperty, expectedProp) =>
         (
-          s"""val $expectedKey = "${expectedValue}"""",
-          M2sProp.fromMavenProperty(mavenProperty)
+          mavenProperty,
+          s"""val ${expectedProp.name.propName} = "${expectedProp.value.propValue}""""
         )
     }.unzip
     val propsName = Props.PropsName("testProps")
     val indent = " " * indentSize
-    val expected = propsRendered.mkString(s"lazy val $propsName = new {\n$indent", s"\n$indent", "\n}")
+    val expected = propsRendered.mkString(s"lazy val ${propsName.propsName} = new {\n$indent", s"\n$indent", "\n}")
+    val props = input.map(M2sProp.fromMavenProperty)
     val actual = Props.renderProps(propsName, indentSize, props)
     actual ==== expected
   }

@@ -19,6 +19,7 @@ import piratex._
  * @author Kevin Lee
  * @since 2019-12-08
  */
+@SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
 object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
   val maven2SbtIo: Maven2Sbt[IO] = Maven2Sbt[IO]
@@ -53,7 +54,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
                     _ <- eitherTRightF[Maven2SbtError](
                         ConsoleEffect[IO].putStrLn(
                           s"""Success] The sbt config file has been successfully written at
-                             |  $buildSbtPath
+                             |  ${buildSbtPath.getCanonicalPath}
                              |""".stripMargin
                         )
                       )
