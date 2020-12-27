@@ -1,7 +1,7 @@
 package maven2sbt.core
 
 import scala.xml.Elem
-import M2SStringOps._
+import StringUtils._
 import io.estatico.newtype.macros.newtype
 
 import scala.language.implicitConversions

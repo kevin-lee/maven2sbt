@@ -11,7 +11,7 @@ import cats.syntax.all._
   * @author Kevin Lee
   * @since 2019-04-21
   */
-sealed trait M2SStringOps {
+sealed trait StringUtils {
 
   /**
    * @example
@@ -80,4 +80,4 @@ sealed trait M2SStringOps {
 
 }
 
-object M2SStringOps extends M2SStringOps
+object StringUtils extends StringUtils
