@@ -71,6 +71,8 @@ object StringUtilsSpec extends Properties {
 
   def testRenderWithProps: Property =
     for {
+      propsName <- Gen.string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 10)).log("propsName")
+        .map(Props.PropsName.apply)
       names <- Gens.genMavenPropertyNameWithPropNamePair
         .list(Range.linear(1, 5))
         .log("propNames")
@@ -86,25 +88,24 @@ object StringUtilsSpec extends Properties {
         ) {
           case (acc, ((mavenPropName, propName), value)) =>
             ((mavenPropName, value), (propName, value)) :: acc
-
         }
         .unzip
-      input = valuesWithProps
+    } yield {
+      val input = valuesWithProps
         .foldLeft(List.empty[String]) {
           case (acc, (prop, value)) => s"$${${prop.name}}$value" :: acc
         }
         .reverse
         .mkString
-      expected = RenderedString.withProps(
+      val expected = RenderedString.withProps(
         valueWithExpectedProp
           .foldLeft(List.empty[String]) {
-            case (acc, (prop, value)) => s"$${${prop.propName}}$value" :: acc
+            case (acc, (prop, value)) => s"$${${propsName.propsName}.${prop.propName}}$value" :: acc
           }
           .reverse
           .mkString
       )
-    } yield {
-      val actual = StringUtils.renderWithProps(input)
+      val actual = StringUtils.renderWithProps(propsName, input)
       actual ==== expected
     }
 
@@ -112,9 +113,6 @@ object StringUtilsSpec extends Properties {
     (renderedString, quoted) <- Gens.genRenderedStringWithQuotedString.log("(renderedString, quoted)")
   } yield {
     val actual = StringUtils.quoteRenderedString(renderedString)
-    println(
-      s"""actual: $actual
-         |""".stripMargin)
     actual ==== quoted
   }
 

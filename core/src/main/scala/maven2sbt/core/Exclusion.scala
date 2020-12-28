@@ -12,8 +12,8 @@ object Exclusion {
 
   def renderExclusionRule(propsName: Props.PropsName, exclusion: Exclusion): String = exclusion match {
     case Exclusion(groupId, artifactId) =>
-      val groupIdStr = StringUtils.toPropertyNameOrItself(propsName, groupId.groupId)
-      val artifactIdStr = StringUtils.toPropertyNameOrItself(propsName, artifactId.artifactId)
+      val groupIdStr = StringUtils.renderWithProps(propsName, groupId.groupId).toQuotedString
+      val artifactIdStr = StringUtils.renderWithProps(propsName, artifactId.artifactId).toQuotedString
       s"""ExclusionRule(organization = $groupIdStr, name = $artifactIdStr)"""
   }
 
@@ -21,8 +21,8 @@ object Exclusion {
     case Nil =>
       ""
     case Exclusion(groupId, artifactId) :: Nil =>
-      s""" exclude(${StringUtils.toPropertyNameOrItself(propsName, groupId.groupId)}, """ +
-        s"""${StringUtils.toPropertyNameOrItself(propsName, artifactId.artifactId)})"""
+      s""" exclude(${StringUtils.renderWithProps(propsName, groupId.groupId).toQuotedString}, """ +
+        s"""${StringUtils.renderWithProps(propsName, artifactId.artifactId).toQuotedString})"""
     case x :: xs =>
       val idt = indent(8)
       s""" excludeAll(

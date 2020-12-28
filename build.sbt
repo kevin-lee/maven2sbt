@@ -7,7 +7,7 @@ val GitHubUsername = "Kevin-Lee"
 val RepoName = "maven2sbt"
 val ExecutableScriptName = RepoName
 
-val ProjectScalaVersion = "2.13.4"
+val ProjectScalaVersion = "2.13.3"
 val CrossScalaVersions = Seq("2.12.12", ProjectScalaVersion)
 
 ThisBuild / organization := "io.kevinlee"
@@ -103,7 +103,6 @@ def subProject(projectName: String, path: File): Project =
           .filterNot( option =>
             option.contains("wartremover") || option.contains("import")
           )
-      , wartremoverExcluded += sourceManaged.value
       /* } WartRemover and scalacOptions */
     )
     .settings(
@@ -128,6 +127,7 @@ lazy val core = subProject("core", file("core"))
             Seq(cats, catsEffect)
         }
     , libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
+    , wartremoverExcluded += sourceManaged.value
     /* Build Info { */
     , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
     , buildInfoObject := "Maven2SbtBuildInfo"

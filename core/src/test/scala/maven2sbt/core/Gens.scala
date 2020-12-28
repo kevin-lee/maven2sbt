@@ -74,7 +74,6 @@ object Gens {
   def genRepositoryWithNoIdNoName: Gen[Repository] =
     genRepositoryUrl.map(url => Repository(none[RepoId], none[RepoName], url))
 
-  //TODO: finish it
   def genMavenPropertyNameWithPropNamePair: Gen[(MavenProperty.Name, Prop.PropName)] = for {
     nameList <- Gen.string(Gens.genCharByRange(TestUtils.ExpectedLetters), Range.linear(1, 10)).list(Range.linear(1, 10))
     delimiterList <- Gen.string(
@@ -132,10 +131,10 @@ object Gens {
         }.getOrElse("") + first.drop(1)
       }.toList ++ nameList.drop(1).map(_.capitalize)).mkString
 
-    value <- Gen.string(Gen.unicode, Range.linear(1, 50))
+    value <- Gen.string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 50))
   } yield (
     MavenProperty(MavenProperty.Name(key), MavenProperty.Value(value)),
-    Prop(Prop.PropName(expectedKey), Prop.PropValue(value))
+    Prop(Prop.PropName(expectedKey), Prop.PropValue(RenderedString.withoutProps(value)))
   )
 
   def genRenderedStringFromValueWithPropsAndQuoted: Gen[(RenderedString, String)] = for {

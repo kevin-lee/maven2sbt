@@ -38,7 +38,7 @@ object Repository {
   implicit val namedRepository: Named[Repository] = Named.named("resolvers")
 
   implicit val renderRepository: Render[Repository] =
-    Render.namedRender("repository", repository => Repository.render(repository))
+    Render.namedRender("repository", (propsName, repository) => Repository.render(propsName, repository))
 
   def from(pom: Elem): Seq[Repository] = for {
     repositories <- pom \ "repositories"
@@ -61,17 +61,17 @@ object Repository {
           .map(name => RepoName(name.trim))
   } yield Repository(repoId, repoName, RepoUrl(url))
 
-  def render(repository: Repository): String = {
-    val repoUrlStr = repository.url.repoUrl
+  def render(propsName: Props.PropsName, repository: Repository): String = {
+    val repoUrlStr = StringUtils.renderWithProps(propsName, repository.url.repoUrl)
     val repoNameStr = (repository.id.filter(_.repoId.nonEmpty), repository.name.filter(_.repoName.nonEmpty)) match {
         case (_, Some(repoName)) =>
           repoName.repoName
         case (Some(repoId), None) =>
           repoId.repoId
         case (None, None) =>
-          repoUrlStr
+          repoUrlStr.innerValue
       }
-    s""""$repoNameStr" at "$repoUrlStr""""
+    s""""$repoNameStr" at ${repoUrlStr.toQuotedString}"""
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ToString"))

@@ -158,8 +158,13 @@
       <version>${some-test-property.version}</version>
     </dependency>
     <dependency>
-      <groupId>my.group</groupId>
+      <groupId>my.group2</groupId>
       <artifactId>${ something }</artifactId>
+      <version>${some-test-property.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>my.group3</groupId>
+      <artifactId>${ ccc.ddd.eee }-blah-blah</artifactId>
       <version>${some-test-property.version}</version>
     </dependency>
 

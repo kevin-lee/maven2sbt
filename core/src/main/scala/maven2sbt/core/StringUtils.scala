@@ -85,7 +85,7 @@ sealed trait StringUtils {
           s"${propsName.propsName}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(dotSeparated)}"
       )
 
-  def renderWithProps(value: String): RenderedString = {
+  def renderWithProps(propsName: Props.PropsName, value: String): RenderedString = {
     val propsFound = propertyUsagePattern.findAllIn(value).toList
     if (propsFound.nonEmpty)
       RenderedString.withProps(
@@ -94,7 +94,7 @@ sealed trait StringUtils {
             case propertyUsagePattern(eachGroup) =>
               acc.replace(
                 s"$each",
-                s"$${${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup)}}"
+                s"$${${propsName.propsName}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup.trim)}}"
               )
           }
         )

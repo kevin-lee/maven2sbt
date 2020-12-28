@@ -75,7 +75,8 @@ object BuildSbtSpec extends Properties {
       n <- Gen.int(Range.linear(0, 10)).log("n")
     } yield {
       val expected = none[String]
-      val actual = BuildSbt.renderListOfFieldValue(none[String], List.empty[Repository], n)
+      val propsName = Props.PropsName("testProps")
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, List.empty[Repository], n)
       actual ==== expected
     }
 
@@ -86,8 +87,9 @@ object BuildSbtSpec extends Properties {
     } yield {
       (repository.id, repository.name) match {
         case (_, Some(repoName)) =>
+          val propsName = Props.PropsName("testProps")
           val expected = s"""resolvers += "${repoName.repoName}" at "${repository.url.repoUrl}"""".some
-          val actual = BuildSbt.renderListOfFieldValue(none[String], List(repository), n)
+          val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, List(repository), n)
           actual ==== expected
 
         case (Some(_), None) =>
@@ -111,8 +113,9 @@ object BuildSbtSpec extends Properties {
     } yield {
       (repository.id, repository.name) match {
         case (Some(repoId), Some(Repository.RepoName(""))) =>
+          val propsName = Props.PropsName("testProps")
           val expected = s"""resolvers += "${repoId.repoId}" at "${repository.url.repoUrl}"""".some
-          val actual = BuildSbt.renderListOfFieldValue(none[String], List(repository), n)
+          val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, List(repository), n)
           actual ==== expected
         case (repoId, repoNmae) =>
           Result.failure.log(
@@ -130,8 +133,9 @@ object BuildSbtSpec extends Properties {
     } yield {
       (repository.id, repository.name) match {
         case (Some(repoId), None) =>
+          val propsName = Props.PropsName("testProps")
           val expected = s"""resolvers += "${repoId.repoId}" at "${repository.url.repoUrl}"""".some
-          val actual = BuildSbt.renderListOfFieldValue(none[String], List(repository), n)
+          val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, List(repository), n)
           actual ==== expected
         case (repoId, repoNmae) =>
           Result.failure.log(
@@ -149,8 +153,9 @@ object BuildSbtSpec extends Properties {
     } yield {
       (repository.id, repository.name) match {
         case (Some(Repository.RepoId("")), Some(Repository.RepoName(""))) =>
+          val propsName = Props.PropsName("testProps")
           val expected = s"""resolvers += "${repository.url.repoUrl}" at "${repository.url.repoUrl}"""".some
-          val actual = BuildSbt.renderListOfFieldValue(none[String], List(repository), n)
+          val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, List(repository), n)
           actual ==== expected
         case (repoId, repoNmae) =>
           Result.failure.log(
@@ -168,8 +173,9 @@ object BuildSbtSpec extends Properties {
     } yield {
       (repository.id, repository.name) match {
         case (None, None) =>
+          val propsName = Props.PropsName("testProps")
           val expected = s"""resolvers += "${repository.url.repoUrl}" at "${repository.url.repoUrl}"""".some
-          val actual = BuildSbt.renderListOfFieldValue(none[String], List(repository), n)
+          val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, List(repository), n)
           actual ==== expected
         case (repoId, repoNmae) =>
           Result.failure.log(
@@ -185,12 +191,13 @@ object BuildSbtSpec extends Properties {
       n <- Gen.int(Range.linear(0, 10)).log("n")
       repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
     } yield {
-      val idt = " " * n
+      val propsName = Props.PropsName("testProps")
+      val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
-      val actual = BuildSbt.renderListOfFieldValue(none[String], repositories, n)
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, repositories, n)
       actual ==== expected
     }
 
@@ -199,14 +206,15 @@ object BuildSbtSpec extends Properties {
       repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
       repositoriesWithEmptyNames <- Gens.genRepositoryWithEmptyName.list(Range.linear(2, 10)).log("repositoriesWithEmptyNames")
     } yield {
-      val idt = " " * n
+      val propsName = Props.PropsName("testProps")
+      val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", ",")}
-           |$idt${repositoriesWithEmptyNames.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val input = repositories ++ repositoriesWithEmptyNames
-      val actual = BuildSbt.renderListOfFieldValue(none[String], input, n)
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, input, n)
       actual ==== expected
     }
 
@@ -215,14 +223,15 @@ object BuildSbtSpec extends Properties {
       repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
       repositoriesWithEmptyNames <- Gens.genRepositoryWithEmptyIdEmptyName.list(Range.linear(2, 10)).log("repositoriesWithEmptyNames")
     } yield {
-      val idt = " " * n
+      val propsName = Props.PropsName("testProps")
+      val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", ",")}
-           |$idt${repositoriesWithEmptyNames.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val input = repositories ++ repositoriesWithEmptyNames
-      val actual = BuildSbt.renderListOfFieldValue(none[String], input, n)
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, input, n)
       actual ==== expected
     }
 
@@ -231,14 +240,15 @@ object BuildSbtSpec extends Properties {
       repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
       repositoriesWithEmptyNames <- Gens.genRepositoryWithNoName.list(Range.linear(2, 10)).log("repositoriesWithEmptyNames")
     } yield {
-      val idt = " " * n
+      val propsName = Props.PropsName("testProps")
+      val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", ",")}
-           |$idt${repositoriesWithEmptyNames.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val input = repositories ++ repositoriesWithEmptyNames
-      val actual = BuildSbt.renderListOfFieldValue(none[String], input, n)
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, input, n)
       actual ==== expected
     }
 
@@ -247,14 +257,15 @@ object BuildSbtSpec extends Properties {
       repositories <- Gens.genRepository.list(Range.linear(2, 10)).log("repositories")
       repositoriesWithEmptyNames <- Gens.genRepositoryWithNoIdNoName.list(Range.linear(2, 10)).log("repositoriesWithEmptyNames")
     } yield {
-      val idt = " " * n
+      val propsName = Props.PropsName("testProps")
+      val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(Repository.render).mkString("  ", s",\n$idt  ", ",")}
-           |$idt${repositoriesWithEmptyNames.map(Repository.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo)).mkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val input = repositories ++ repositoriesWithEmptyNames
-      val actual = BuildSbt.renderListOfFieldValue(none[String], input, n)
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, input, n)
       actual ==== expected
     }
 
@@ -265,8 +276,9 @@ object BuildSbtSpec extends Properties {
     def testRenderLibraryDependenciesEmpty: Property = for {
       n <- Gen.int(Range.linear(0, 10)).log("n")
     } yield {
+      val propsName = Props.PropsName("testProps")
       val expected = none[String]
-      val actual = BuildSbt.renderListOfFieldValue(none[String], List.empty[Dependency], n)
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, List.empty[Dependency], n)
       actual ==== expected
     }
 
@@ -274,8 +286,9 @@ object BuildSbtSpec extends Properties {
       n <- Gen.int(Range.linear(0, 10)).log("n")
       dependency <- Gens.genDependency.log("dependency")
     } yield {
-      val expected = s"libraryDependencies += ${Dependency.render(dependency)}".some
-      val actual = BuildSbt.renderListOfFieldValue(none[String], List(dependency), n)
+      val propsName = Props.PropsName("testProps")
+      val expected = s"libraryDependencies += ${Dependency.render(propsName, dependency)}".some
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, List(dependency), n)
       actual ==== expected
     }
 
@@ -283,12 +296,13 @@ object BuildSbtSpec extends Properties {
       n <- Gen.int(Range.linear(0, 10)).log("n")
       libraryDependencies <- Gens.genDependency.list(Range.linear(2, 10)).log("libraryDependencies")
     } yield {
-      val idt = " " * n
+      val propsName = Props.PropsName("testProps")
+      val idt = StringUtils.indent(n)
       val expected =
         s"""libraryDependencies ++= List(
-           |$idt${libraryDependencies.map(Dependency.render).mkString("  ", s",\n$idt  ", "")}
+           |$idt${libraryDependencies.map(dep => Dependency.render(propsName, dep)).mkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
-      val actual = BuildSbt.renderListOfFieldValue(none[String], libraryDependencies, n)
+      val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, libraryDependencies, n)
       actual ==== expected
     }
 
