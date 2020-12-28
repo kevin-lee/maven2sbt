@@ -116,11 +116,11 @@ sealed trait StringUtils {
               if (value === onlyValue)
                 valueInGroup
               else
-                s""""$value""""
+                s"""s"$value""""
           }
 
         case _ =>
-          s""""$value""""
+          s"""s"$value""""
       }
   }
 

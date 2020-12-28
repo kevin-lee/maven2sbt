@@ -166,7 +166,7 @@ object Gens {
     RenderedString.withProps(
       valueWithProps
     ),
-    s""""$valueWithProps""""
+    s"""s"$valueWithProps""""
   )
 
   def genRenderedStringWithOnlyPropNameAndQuoted: Gen[(RenderedString, String)] = for {
