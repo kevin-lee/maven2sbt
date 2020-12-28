@@ -40,7 +40,7 @@ object Exclusion {
       RenderedString.noQuotesRequired(
         s""" excludeAll(
            |$idt  ${Render[Exclusion].render(propsName, x).toQuotedString},
-           |$idt  ${xs.map(Render[Exclusion].render(propsName, _).toQuotedString).mkString(s",\n$idt  ")}
+           |$idt  ${xs.map(Render[Exclusion].render(propsName, _).toQuotedString).stringsMkString(s",\n$idt  ")}
            |$idt)""".stripMargin
       )
   }

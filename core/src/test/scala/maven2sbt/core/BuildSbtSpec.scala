@@ -195,7 +195,7 @@ object BuildSbtSpec extends Properties {
       val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, repositories, n)
       actual ==== expected
@@ -210,8 +210,8 @@ object BuildSbtSpec extends Properties {
       val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", ",")}
-           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val input = repositories ++ repositoriesWithEmptyNames
       val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, input, n)
@@ -227,8 +227,8 @@ object BuildSbtSpec extends Properties {
       val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", ",")}
-           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val input = repositories ++ repositoriesWithEmptyNames
       val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, input, n)
@@ -244,8 +244,8 @@ object BuildSbtSpec extends Properties {
       val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", ",")}
-           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val input = repositories ++ repositoriesWithEmptyNames
       val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, input, n)
@@ -261,8 +261,8 @@ object BuildSbtSpec extends Properties {
       val idt = StringUtils.indent(n)
       val expected =
         s"""resolvers ++= List(
-           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", ",")}
-           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo).toQuotedString).mkString("  ", s",\n$idt  ", "")}
+           |$idt${repositories.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", ",")}
+           |$idt${repositoriesWithEmptyNames.map(repo => Repository.render(propsName, repo).toQuotedString).stringsMkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val input = repositories ++ repositoriesWithEmptyNames
       val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, input, n)
@@ -300,7 +300,7 @@ object BuildSbtSpec extends Properties {
       val idt = StringUtils.indent(n)
       val expected =
         s"""libraryDependencies ++= List(
-           |$idt${libraryDependencies.map(dep => Dependency.render(propsName, dep).toQuotedString).mkString("  ", s",\n$idt  ", "")}
+           |$idt${libraryDependencies.map(dep => Dependency.render(propsName, dep).toQuotedString).stringsMkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val actual = BuildSbt.renderListOfFieldValue(none[String], propsName, libraryDependencies, n)
       actual ==== expected

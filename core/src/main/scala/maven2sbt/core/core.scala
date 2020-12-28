@@ -89,7 +89,7 @@ package object core {
 
   }
 
-  implicit class RenderedStringOps(val s: RenderedString) extends AnyVal {
+  implicit final class RenderedStringOps(val s: RenderedString) extends AnyVal {
     def toQuotedString: String =
       StringUtils.quoteRenderedString(s)
 
@@ -100,4 +100,15 @@ package object core {
     }
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
+  implicit final class MkStringForOnlyStrings(val stringList: Seq[String]) extends AnyVal {
+    def stringsMkString: String =
+      stringList.mkString
+
+    def stringsMkString(sep: String): String =
+      stringList.mkString(sep)
+
+    def stringsMkString(start: String, sep: String, end: String): String =
+      stringList.mkString(start, sep, end)
+  }
 }

@@ -47,7 +47,7 @@ object BuildSbt {
         val idt = indent(indentSize)
         s"""${prefix.getOrElse("")}${Named[A].name} ++= List(
            |$idt  ${Render[A].render(propsName, x).toQuotedString},
-           |$idt  ${xs.map(eachX => Render[A].render(propsName, eachX).toQuotedString).mkString(s",\n$idt  ")}
+           |$idt  ${xs.map(eachX => Render[A].render(propsName, eachX).toQuotedString).stringsMkString(s",\n$idt  ")}
            |$idt)""".stripMargin.some
     }
 
@@ -61,7 +61,7 @@ object BuildSbt {
         renderListOfFieldValue(prefix, propsName, settings.repositories, indentSize).toList ++
         renderListOfFieldValue(prefix, propsName, settings.dependencies, indentSize).toList
       )
-      .mkString(delimiter)
+      .stringsMkString(delimiter)
   }
 
   final case class ProjectSettings(projectSettings: Settings) extends AnyVal

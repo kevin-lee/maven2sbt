@@ -16,7 +16,7 @@ object Props {
   def renderProps(propsNmae: PropsName, indentSize: Int, props: List[Prop]): String = {
     val indent = StringUtils.indent(indentSize)
     props.map(Prop.render(propsNmae, _).toQuotedString)
-      .mkString(s"lazy val ${propsNmae.propsName} = new {\n$indent", s"\n$indent", s"\n}")
+      .stringsMkString(s"lazy val ${propsNmae.propsName} = new {\n$indent", s"\n$indent", s"\n}")
   }
 
 }
