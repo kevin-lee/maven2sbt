@@ -27,11 +27,12 @@ object BuildSbt {
     , dependencies: List[Dependency]
     )
 
-  def toFieldValue[A: Named : Render](prefix: Option[String], a: A): String =
-    s"""${prefix.getOrElse("")}${Named[A].name} := "${Render[A].render(a)}""""
+  def toFieldValue[A: Named : Render](prefix: Option[String], propsName: Props.PropsName, a: A): String =
+    s"""${prefix.getOrElse("")}${Named[A].name} := "${Render[A].render(propsName, a)}""""
 
   def renderListOfFieldValue[A: Named: Render](
     prefix: Option[String],
+    propsName: Props.PropsName,
     as: List[A],
     indentSize: Int
   ): Option[String] =
@@ -40,39 +41,39 @@ object BuildSbt {
         none[String]
 
       case x :: Nil =>
-        s"${Named[A].name} += ${Render[A].render(x)}".some
+        s"${Named[A].name} += ${Render[A].render(propsName, x)}".some
 
       case x :: xs =>
         val idt = indent(indentSize)
         s"""${prefix.getOrElse("")}${Named[A].name} ++= List(
-           |$idt  ${Render[A].render(x)},
-           |$idt  ${xs.map(Render[A].render).mkString(s",\n$idt  ")}
+           |$idt  ${Render[A].render(propsName, x)},
+           |$idt  ${xs.map(eachX => Render[A].render(propsName, eachX)).mkString(s",\n$idt  ")}
            |$idt)""".stripMargin.some
     }
 
   object Settings {
-    def render(settings: Settings, prefix: Option[String], delimiter: String, indentSize: Int): String =
+    def render(settings: Settings, prefix: Option[String], propsName: Props.PropsName, delimiter: String, indentSize: Int): String =
       (
-        settings.groupId.map(groupId => toFieldValue(prefix, groupId)).toList ++
-        settings.version.map(version => toFieldValue(prefix, version)).toList ++
-        settings.scalaVersion.map(scalaVersion => toFieldValue(prefix, scalaVersion)).toList ++
-        settings.artifactId.map(artifactId => toFieldValue(prefix, artifactId)).toList ++
-        renderListOfFieldValue(prefix, settings.repositories, indentSize).toList ++
-        renderListOfFieldValue(prefix, settings.dependencies, indentSize).toList
+        settings.groupId.map(groupId => toFieldValue(prefix, propsName, groupId)).toList ++
+        settings.version.map(version => toFieldValue(prefix, propsName, version)).toList ++
+        settings.scalaVersion.map(scalaVersion => toFieldValue(prefix, propsName, scalaVersion)).toList ++
+        settings.artifactId.map(artifactId => toFieldValue(prefix, propsName, artifactId)).toList ++
+        renderListOfFieldValue(prefix, propsName, settings.repositories, indentSize).toList ++
+        renderListOfFieldValue(prefix, propsName, settings.dependencies, indentSize).toList
       )
       .mkString(delimiter)
   }
 
   final case class ProjectSettings(projectSettings: Settings) extends AnyVal
   object ProjectSettings {
-    def render(projectSettings: ProjectSettings): String =
-      Settings.render(projectSettings.projectSettings, none[String], s",\n${indent(4)}", 4)
+    def render(propsName: Props.PropsName, projectSettings: ProjectSettings): String =
+      Settings.render(projectSettings.projectSettings, none[String], propsName, s",\n${indent(4)}", 4)
 
   }
   final case class ThisBuildSettings(thisBuildSettings: Settings) extends AnyVal
   object ThisBuildSettings {
-    def render(thisBuildSettings: ThisBuildSettings): String =
-      Settings.render(thisBuildSettings.thisBuildSettings, "ThisBuild / ".some, "\n", 2)
+    def render(propsName: Props.PropsName, thisBuildSettings: ThisBuildSettings): String =
+      Settings.render(thisBuildSettings.thisBuildSettings, "ThisBuild / ".some, propsName, "\n", 2)
   }
   final case class GlobalSettings(globalSettings: Settings) extends AnyVal
   object GlobalSettings {
@@ -88,11 +89,11 @@ object BuildSbt {
         )
       )
 
-    def render(globalSettings: GlobalSettings): String =
-      Settings.render(globalSettings.globalSettings, "Global / ".some, "\n", 2)
+    def render(propsName: Props.PropsName, globalSettings: GlobalSettings): String =
+      Settings.render(globalSettings.globalSettings, "Global / ".some, propsName, "\n", 2)
   }
 
-  def render(buildSbt: BuildSbt): String = buildSbt match {
+  def render(buildSbt: BuildSbt, propsName: Props.PropsName): String = buildSbt match {
     case BuildSbt(
         globalSettings
       , thisBuildSettings
@@ -100,12 +101,12 @@ object BuildSbt {
       , props
       ) =>
 
-      val globalSettingsRendered = GlobalSettings.render(globalSettings)
-      val thisBuildSettingsRendered = ThisBuildSettings.render(thisBuildSettings)
-      val projectSettingsRendered = ProjectSettings.render(projectSettings)
+      val globalSettingsRendered = GlobalSettings.render(propsName, globalSettings)
+      val thisBuildSettingsRendered = ThisBuildSettings.render(propsName, thisBuildSettings)
+      val projectSettingsRendered = ProjectSettings.render(propsName, projectSettings)
 
       s"""
-         |${Props.renderProps(Props.PropsName("props"), 2, props)}
+         |${Props.renderProps(propsName, 2, props)}
          |
          |$globalSettingsRendered
          |$thisBuildSettingsRendered

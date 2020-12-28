@@ -1,14 +1,11 @@
 package maven2sbt.cli
 
 import java.io.File
-
 import scalaz._
 import Scalaz._
-
 import pirate._
 import Pirate._
-
-import maven2sbt.core.ScalaVersion
+import maven2sbt.core.{Props, ScalaVersion}
 import maven2sbt.info.Maven2SbtBuildInfo
 
 /**
@@ -22,6 +19,10 @@ object Maven2SbtArgsParser {
         both('s', "scala-version")
       , metavar("<version>") |+| description("Scala version")
       ).map(ScalaVersion.apply)
+    , flag[String](
+        long("props-name")
+      , metavar("<props-name>") |+| description("properties object name")
+      ).default("props").map(Props.PropsName.apply)
     , flag[String](
         both('o', "out")
       , metavar("<file>") |+| description("output sbt config file (default: build.sbt)")
@@ -40,9 +41,14 @@ object Maven2SbtArgsParser {
         both('s', "scala-version")
       , metavar("<version>") |+| description("Scala version")
       ).map(ScalaVersion.apply)
+    , flag[String](
+        long("props-name")
+      , metavar("<props-name>") |+|
+          description("properties object name (e.g. 'props' in `lazy val props = new {}`)")
+      ).default("props").map(Props.PropsName.apply)
     , argument[String](
-      metavar("<pom-path>") |+| description("Path to the pom file.")
-    ).map(new File(_))
+        metavar("<pom-path>") |+| description("Path to the pom file.")
+      ).map(new File(_))
   ))
 
   val rawCmd: Command[Maven2SbtArgs] =

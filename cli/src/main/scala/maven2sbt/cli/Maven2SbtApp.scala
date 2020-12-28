@@ -35,7 +35,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
     if (file.isAbsolute) file else file.getCanonicalFile
 
   override def run(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
-    case Maven2SbtArgs.FileArgs(scalaVersion, out, overwrite, pomPath) =>
+    case Maven2SbtArgs.FileArgs(scalaVersion, propsName, out, overwrite, pomPath) =>
       for {
         pom <- IO(toCanonicalFile(pomPath))
         buildSbtPath <- IO(toCanonicalFile(out))
@@ -48,8 +48,8 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
               IO(new BufferedWriter(new FileWriter(buildSbtPath)))
                 .bracket { writer =>
                   (for {
-                    buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-                    buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt)))
+                    buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, pom))
+                    buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt, propsName)))
                     _ <- eitherTRightF(IO(writer.write(buildSbtString)))
                     _ <- eitherTRightF[Maven2SbtError](
                         ConsoleEffect[IO].putStrLn(
@@ -63,11 +63,11 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
           }
       } yield result
 
-    case Maven2SbtArgs.PrintArgs(scalaVersion, pomPath) =>
+    case Maven2SbtArgs.PrintArgs(scalaVersion, propsName, pomPath) =>
       (for {
         pom <- eitherTRightF(IO(toCanonicalFile(pomPath)))
-        buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, pom))
-        buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt)))
+        buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, pom))
+        buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt, propsName)))
         _ <- eitherTRightF[Maven2SbtError](
               ConsoleEffect[IO].putStrLn(buildSbtString)
             )

@@ -21,7 +21,7 @@ object Dependency {
 
   implicit val namedDependency: Named[Dependency] = Named.named("libraryDependencies")
   implicit val renderDependency: Render[Dependency] =
-    Render.namedRender("dependency", dependency => Dependency.render(dependency))
+    Render.namedRender("dependency", (propsName, dependency) => Dependency.render(propsName, dependency))
 
   def from(pom: Elem): Seq[Dependency] =
     pom \ "dependencies" \ "dependency" map { dependency =>
@@ -46,12 +46,11 @@ object Dependency {
         )
     }
 
-  def render(dependency: Dependency): String = dependency match {
+  def render(propsName: Props.PropsName, dependency: Dependency): String = dependency match {
     case Dependency(GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) =>
-      val propsName = Props.PropsName("props")
-      val groupIdStr = StringUtils.toPropertyNameOrItself(propsName, groupId)
-      val artifactIdStr = StringUtils.toPropertyNameOrItself(propsName, artifactId)
-      val versionStr = StringUtils.toPropertyNameOrItself(propsName, version)
+      val groupIdStr = StringUtils.renderWithProps(propsName, groupId).toQuotedString
+      val artifactIdStr = StringUtils.renderWithProps(propsName, artifactId).toQuotedString
+      val versionStr = StringUtils.renderWithProps(propsName, version).toQuotedString
       s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions)}"""
   }
 

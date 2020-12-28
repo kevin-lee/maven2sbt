@@ -22,8 +22,8 @@ jobs:
           echo "Run] sbt GitHub release"
           echo 'sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts"'
           sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts"
-          echo 'sbt -J-Xmx2048m "; project cli; ++2.13.4!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"'
-          sbt -J-Xmx2048m "; project cli; ++2.13.4!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"
+          echo 'sbt -J-Xmx2048m "; project cli; ++2.13.3!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"'
+          sbt -J-Xmx2048m "; project cli; ++2.13.3!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"
           echo 'sbt -J-Xmx2048m "; gitHubRelease"'
           sbt -J-Xmx2048m "; gitHubRelease"
 
@@ -37,7 +37,7 @@ jobs:
       matrix:
         scala:
           - { version: "2.12.12", binary-version: "2.12", java-version: "11" }
-          - { version: "2.13.4", binary-version: "2.13", java-version: "11" }
+          - { version: "2.13.3", binary-version: "2.13", java-version: "11" }
 
     steps:
       - uses: actions/checkout@v2

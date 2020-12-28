@@ -23,13 +23,13 @@ object PropsSpec extends Properties {
       case (mavenProperty, expectedProp) =>
         (
           mavenProperty,
-          s"""val ${expectedProp.name.propName} = "${expectedProp.value.propValue}""""
+          s"""val ${expectedProp.name.propName} = ${expectedProp.value.propValue.toQuotedString}"""
         )
     }.unzip
     val propsName = Props.PropsName("testProps")
     val indent = " " * indentSize
     val expected = propsRendered.mkString(s"lazy val ${propsName.propsName} = new {\n$indent", s"\n$indent", "\n}")
-    val props = input.map(M2sProp.fromMavenProperty)
+    val props = input.map(mavenProperty => M2sProp.fromMavenProperty(propsName, mavenProperty))
     val actual = Props.renderProps(propsName, indentSize, props)
     actual ==== expected
   }
