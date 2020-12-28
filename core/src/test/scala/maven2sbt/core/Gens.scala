@@ -36,17 +36,17 @@ object Gens {
   def genRepositoryId: Gen[RepoId] =
     Gen.string(Gen.alphaNum, Range.linear(1, 10))
       .list(Range.linear(1, 5))
-      .map(id => RepoId(id.mkString("-")))
+      .map(id => RepoId(id.stringsMkString("-")))
 
   def genRepositoryName: Gen[RepoName] =
     Gen.string(Gen.alphaNum, Range.linear(1, 10))
       .list(Range.linear(1, 5))
-      .map(name => RepoName(name.mkString(" ")))
+      .map(name => RepoName(name.stringsMkString(" ")))
 
   def genRepositoryUrl: Gen[RepoUrl] =
     Gen.string(Gen.alphaNum, Range.linear(1, 10))
       .list(Range.linear(1, 5))
-      .map(url => RepoUrl(url.mkString("https://", ".", "")))
+      .map(url => RepoUrl(url.stringsMkString("https://", ".", "")))
 
   def genRepository: Gen[Repository] = for {
     id <- genRepositoryId

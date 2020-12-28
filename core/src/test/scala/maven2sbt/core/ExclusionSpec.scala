@@ -46,7 +46,7 @@ object ExclusionSpec extends Properties {
     val indent = " " * 8
     val expected =
       s""" excludeAll(
-         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _).toQuotedString).mkString(s",\n$indent  ")}
+         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _).toQuotedString).stringsMkString(s",\n$indent  ")}
          |$indent)""".stripMargin
     val actual = Exclusion.renderExclusions(propsName, exclusions).toQuotedString
     actual ==== expected
@@ -58,7 +58,7 @@ object ExclusionSpec extends Properties {
     val indent = " " * 8
     val expected =
       s""" excludeAll(
-         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _).toQuotedString).mkString(s",\n$indent  ")}
+         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _).toQuotedString).stringsMkString(s",\n$indent  ")}
          |$indent)""".stripMargin
     val actual = Exclusion.renderExclusions(propsName, exclusions).toQuotedString
     actual ==== expected

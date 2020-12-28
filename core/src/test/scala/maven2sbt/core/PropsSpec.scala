@@ -28,7 +28,7 @@ object PropsSpec extends Properties {
         )
     }.unzip
     val indent = " " * indentSize
-    val expected = propsRendered.mkString(s"lazy val ${propsName.propsName} = new {\n$indent", s"\n$indent", "\n}")
+    val expected = propsRendered.stringsMkString(s"lazy val ${propsName.propsName} = new {\n$indent", s"\n$indent", "\n}")
     val props = input.map(mavenProperty => M2sProp.fromMavenProperty(mavenProperty))
     val actual = Props.renderProps(propsName, indentSize, props)
     actual ==== expected
