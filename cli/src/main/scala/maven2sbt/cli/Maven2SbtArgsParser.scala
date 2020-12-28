@@ -21,7 +21,7 @@ object Maven2SbtArgsParser {
       ).map(ScalaVersion.apply)
     , flag[String](
         long("props-name")
-      , metavar("<props-name>") |+| description("properties object name")
+      , metavar("<props-name>") |+| description("properties object name (e.g. 'props' in `lazy val props = new {}`) (default: props)")
       ).default("props").map(Props.PropsName.apply)
     , flag[String](
         both('o', "out")
@@ -44,7 +44,7 @@ object Maven2SbtArgsParser {
     , flag[String](
         long("props-name")
       , metavar("<props-name>") |+|
-          description("properties object name (e.g. 'props' in `lazy val props = new {}`)")
+          description("properties object name (e.g. 'props' in `lazy val props = new {}`) (default: props)")
       ).default("props").map(Props.PropsName.apply)
     , argument[String](
         metavar("<pom-path>") |+| description("Path to the pom file.")
