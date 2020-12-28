@@ -62,7 +62,9 @@ object DependencySpec extends Properties {
     val propsName = Props.PropsName("props")
     val Dependency(GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency
     val expected =
-      s""""$groupId" % "$artifactId" % "$version"${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions)}"""
+      RenderedString.noQuotesRequired(
+        s""""$groupId" % "$artifactId" % "$version"${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+      )
     val actual = Dependency.render(propsName, dependency)
     actual ==== expected
   }

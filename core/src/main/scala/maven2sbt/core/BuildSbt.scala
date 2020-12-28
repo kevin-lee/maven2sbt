@@ -28,7 +28,7 @@ object BuildSbt {
     )
 
   def toFieldValue[A: Named : Render](prefix: Option[String], propsName: Props.PropsName, a: A): String =
-    s"""${prefix.getOrElse("")}${Named[A].name} := "${Render[A].render(propsName, a)}""""
+    s"""${prefix.getOrElse("")}${Named[A].name} := ${Render[A].render(propsName, a).toQuotedString}"""
 
   def renderListOfFieldValue[A: Named: Render](
     prefix: Option[String],
@@ -41,13 +41,13 @@ object BuildSbt {
         none[String]
 
       case x :: Nil =>
-        s"${Named[A].name} += ${Render[A].render(propsName, x)}".some
+        s"${Named[A].name} += ${Render[A].render(propsName, x).toQuotedString}".some
 
       case x :: xs =>
         val idt = indent(indentSize)
         s"""${prefix.getOrElse("")}${Named[A].name} ++= List(
-           |$idt  ${Render[A].render(propsName, x)},
-           |$idt  ${xs.map(eachX => Render[A].render(propsName, eachX)).mkString(s",\n$idt  ")}
+           |$idt  ${Render[A].render(propsName, x).toQuotedString},
+           |$idt  ${xs.map(eachX => Render[A].render(propsName, eachX).toQuotedString).mkString(s",\n$idt  ")}
            |$idt)""".stripMargin.some
     }
 

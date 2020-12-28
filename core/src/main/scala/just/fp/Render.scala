@@ -1,22 +1,29 @@
 package just.fp
 
-import maven2sbt.core.Props
+import maven2sbt.core.{Props, RenderedString}
 
 /**
- * @author Kevin Lee
- * @since 2020-03-14
- */
+  * @author Kevin Lee
+  * @since 2020-03-14
+  */
 trait Render[A] {
-  def render(propsName: Props.PropsName, a: A): String
+  def render(propsName: Props.PropsName, a: A): RenderedString
 }
 
 object Render {
   def apply[A: Render]: Render[A] = implicitly[Render[A]]
 
-  def namedRender[A](name: String, f: (Props.PropsName, A) => String): Render[A] =
-    NamedRander(name, f)
+  def namedRender[A](
+    name: String,
+    f: (Props.PropsName, A) => RenderedString
+  ): Render[A] =
+    NamedRender(name, f)
 
-  final case class NamedRander[A](name: String, f: (Props.PropsName, A) => String) extends Render[A] {
-    override def render(propsName: Props.PropsName, a: A): String = f(propsName, a)
+  final case class NamedRender[A](
+    name: String,
+    f: (Props.PropsName, A
+  ) => RenderedString) extends Render[A] {
+    override def render(propsName: Props.PropsName, a: A): RenderedString =
+      f(propsName, a)
   }
 }

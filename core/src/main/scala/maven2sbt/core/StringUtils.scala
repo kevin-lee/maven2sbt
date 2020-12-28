@@ -122,6 +122,9 @@ sealed trait StringUtils {
         case _ =>
           s"""s"$value""""
       }
+
+    case RenderedString.NoQuotesRequired(value) =>
+      value
   }
 
   def indent(size: Int): String = " " * size

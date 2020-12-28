@@ -18,14 +18,17 @@ package object core {
 
     implicit val named: Named[GroupId] = Named.named("organization")
 
-    implicit val render: Render[GroupId] =
-      Render.namedRender("groupId", (propsName, groupId) => groupId.groupId)
+    implicit val groupIdRender: Render[GroupId] =
+      Render.namedRender("groupId", GroupId.render)
 
     // The reason to have `Some[String]` as a return type here is
     // https://github.com/scala/bug/issues/12232
     // So sad :(
     def unapply(groupId: GroupId): Some[String] =
       Some(groupId.coerce)
+
+    def render(propsName: Props.PropsName, groupId: GroupId): RenderedString =
+      StringUtils.renderWithProps(propsName, groupId.groupId)
 
   }
 
@@ -35,14 +38,17 @@ package object core {
 
     implicit val named: Named[ArtifactId] = Named.named("name")
 
-    implicit val render: Render[ArtifactId] =
-      Render.namedRender("artifactId", (propsName, artifactId) => artifactId.artifactId)
+    implicit val artifactIdRender: Render[ArtifactId] =
+      Render.namedRender("artifactId", ArtifactId.render)
 
     // The reason to have `Some[String]` as a return type here is
     // https://github.com/scala/bug/issues/12232
     // So sad :(
     def unapply(artifactId: ArtifactId): Some[String] =
       Some(artifactId.coerce)
+
+    def render(propsName: Props.PropsName, artifactId: ArtifactId): RenderedString =
+      StringUtils.renderWithProps(propsName, artifactId.artifactId)
 
   }
 
@@ -52,14 +58,17 @@ package object core {
 
     implicit val named: Named[Version] = Named.named("version")
 
-    implicit val render: Render[Version] =
-      Render.namedRender("version", (propsName, version) => version.version)
+    implicit val versionRender: Render[Version] =
+      Render.namedRender("version", Version.render)
 
     // The reason to have `Some[String]` as a return type here is
     // https://github.com/scala/bug/issues/12232
     // So sad :(
     def unapply(version: Version): Some[String] =
       Some(version.coerce)
+
+    def render(propsName: Props.PropsName, version: Version): RenderedString =
+      StringUtils.renderWithProps(propsName, version.version)
 
   }
 
@@ -69,11 +78,14 @@ package object core {
 
     implicit val named: Named[ScalaVersion] = Named.named("scalaVersion")
 
-    implicit val render: Render[ScalaVersion] =
-      Render.namedRender("scalaVersion", (propsName, scalaVersion) => scalaVersion.scalaVersion)
+    implicit val scalaVersionRender: Render[ScalaVersion] =
+      Render.namedRender("scalaVersion", ScalaVersion.render)
 
     def unapply(scalaVersion: ScalaVersion): Option[String] =
       Option(scalaVersion.coerce)
+
+    def render(propsName: Props.PropsName, scalaVersion: ScalaVersion): RenderedString =
+      StringUtils.renderWithProps(propsName, scalaVersion.scalaVersion)
 
   }
 
@@ -84,6 +96,7 @@ package object core {
     def innerValue: String = s match {
       case RenderedString.WithProps(s) => s
       case RenderedString.WithoutProps(s) => s
+      case RenderedString.NoQuotesRequired(s) => s
     }
   }
 
