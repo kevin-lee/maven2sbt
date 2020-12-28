@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.kevinlee</groupId>
+  <groupId>${group.id}</groupId>
   <artifactId>j8plus</artifactId>
   <version>0.0.11</version>
   <packaging>jar</packaging>
@@ -12,6 +12,7 @@
   <url>https://github.com/Kevin-Lee/j8plus</url>
 
   <properties>
+    <group.id>io.kevinlee</group.id>
     <something>blah-blah-blah</something>
     <aaa.bbb>${something}-else</aaa.bbb>
     <bbb.ccc>${aaa.bbb}-bbb-ccc</bbb.ccc>
@@ -136,13 +137,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.kevinlee</groupId>
+      <groupId>${group.id}</groupId>
       <artifactId>not-real-test0ster1</artifactId>
       <version>${test0ster1.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.kevinlee</groupId>
+      <groupId>${ group.id }</groupId>
       <artifactId>nothing</artifactId>
       <version>0.0.1</version>
     </dependency>
@@ -166,6 +167,12 @@
       <groupId>my.group3</groupId>
       <artifactId>${ ccc.ddd.eee }-blah-blah</artifactId>
       <version>${some-test-property.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>${bbb.ccc}</groupId>
+          <artifactId>${ccc.ddd.eee}-and-something-else</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -192,6 +199,18 @@
         <exclusion>
           <groupId>some.test</groupId>
           <artifactId>project-123</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>${bbb.ccc}</groupId>
+          <artifactId>${ccc.ddd.eee}</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>${bbb.ccc}-and-something-else</groupId>
+          <artifactId>blah-${ccc.ddd.eee}-blah</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>abc-${bbb.ccc}</groupId>
+          <artifactId>${ccc.ddd.eee}-def</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

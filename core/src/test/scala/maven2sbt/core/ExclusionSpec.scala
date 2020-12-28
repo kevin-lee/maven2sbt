@@ -22,13 +22,13 @@ object ExclusionSpec extends Properties {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
     val expected = s"""ExclusionRule(organization = "${exclusion.groupId.groupId}", name = "${exclusion.artifactId.artifactId}")"""
-    val actual = Exclusion.renderExclusionRule(propsName, exclusion)
+    val actual = Exclusion.renderExclusionRule(propsName, exclusion).toQuotedString
     actual ==== expected
   }
 
   def testRenderExclusions0: Result = {
     val expected = ""
-    val actual = Exclusion.renderExclusions(propsName, List.empty[Exclusion])
+    val actual = Exclusion.renderExclusions(propsName, List.empty[Exclusion]).toQuotedString
     actual ==== expected
   }
 
@@ -36,7 +36,7 @@ object ExclusionSpec extends Properties {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
     val expected = s""" exclude("${exclusion.groupId.groupId}", "${exclusion.artifactId.artifactId}")"""
-    val actual = Exclusion.renderExclusions(propsName, List(exclusion))
+    val actual = Exclusion.renderExclusions(propsName, List(exclusion)).toQuotedString
     actual ==== expected
   }
 
@@ -46,9 +46,9 @@ object ExclusionSpec extends Properties {
     val indent = " " * 8
     val expected =
       s""" excludeAll(
-         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _)).mkString(s",\n$indent  ")}
+         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _).toQuotedString).mkString(s",\n$indent  ")}
          |$indent)""".stripMargin
-    val actual = Exclusion.renderExclusions(propsName, exclusions)
+    val actual = Exclusion.renderExclusions(propsName, exclusions).toQuotedString
     actual ==== expected
   }
 
@@ -58,9 +58,9 @@ object ExclusionSpec extends Properties {
     val indent = " " * 8
     val expected =
       s""" excludeAll(
-         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _)).mkString(s",\n$indent  ")}
+         |$indent  ${exclusions.map(Exclusion.renderExclusionRule(propsName, _).toQuotedString).mkString(s",\n$indent  ")}
          |$indent)""".stripMargin
-    val actual = Exclusion.renderExclusions(propsName, exclusions)
+    val actual = Exclusion.renderExclusions(propsName, exclusions).toQuotedString
     actual ==== expected
   }
 

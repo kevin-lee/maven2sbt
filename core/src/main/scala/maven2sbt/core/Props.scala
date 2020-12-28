@@ -1,6 +1,7 @@
 package maven2sbt.core
 
 import io.estatico.newtype.macros.newtype
+import just.fp.Render
 
 import scala.language.implicitConversions
 
@@ -14,7 +15,7 @@ object Props {
 
   def renderProps(propsNmae: PropsName, indentSize: Int, props: List[Prop]): String = {
     val indent = StringUtils.indent(indentSize)
-    props.map(Prop.render)
+    props.map(Prop.render(propsNmae, _).toQuotedString)
       .mkString(s"lazy val ${propsNmae.propsName} = new {\n$indent", s"\n$indent", s"\n}")
   }
 
@@ -24,17 +25,22 @@ final case class Prop(name: Prop.PropName, value: Prop.PropValue)
 
 object Prop {
   final case class PropName(propName: String) extends AnyVal
-  final case class PropValue(propValue: RenderedString) extends AnyVal
+  final case class PropValue(propValue: String) extends AnyVal
 
-  def fromMavenProperty(propsName: Props.PropsName, mavenProperty: MavenProperty): Prop =
+  def fromMavenProperty(mavenProperty: MavenProperty): Prop =
     Prop(
       PropName(StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenProperty.key.name)),
-      PropValue(StringUtils.renderWithProps(propsName, mavenProperty.value.value))
+      PropValue(mavenProperty.value.value)
     )
 
-  def render(prop: Prop): String = {
-    val propValue = prop.value.propValue.toQuotedString
-    s"""val ${prop.name.propName} = $propValue"""
+  def render(propsName: Props.PropsName, prop: Prop): RenderedString = {
+    val propValue = StringUtils.renderWithProps(propsName, prop.value.propValue).toQuotedString
+    RenderedString.noQuotesRequired(
+      s"""val ${prop.name.propName} = $propValue"""
+    )
   }
+
+  implicit final val propRender: Render[Prop] =
+    Render.namedRender("prop", (propsName, prop) => Prop.render(propsName, prop))
 
 }

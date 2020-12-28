@@ -19,17 +19,17 @@ object PropsSpec extends Properties {
         .log("mavenProperties")
     indentSize <- Gen.int(Range.linear(0, 8)).log("indent")
   } yield {
+    val propsName = Props.PropsName("testProps")
     val (input, propsRendered) = mavenProperties.map {
       case (mavenProperty, expectedProp) =>
         (
           mavenProperty,
-          s"""val ${expectedProp.name.propName} = ${expectedProp.value.propValue.toQuotedString}"""
+          s"""val ${expectedProp.name.propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}"""
         )
     }.unzip
-    val propsName = Props.PropsName("testProps")
     val indent = " " * indentSize
     val expected = propsRendered.mkString(s"lazy val ${propsName.propsName} = new {\n$indent", s"\n$indent", "\n}")
-    val props = input.map(mavenProperty => M2sProp.fromMavenProperty(propsName, mavenProperty))
+    val props = input.map(mavenProperty => M2sProp.fromMavenProperty(mavenProperty))
     val actual = Props.renderProps(propsName, indentSize, props)
     actual ==== expected
   }

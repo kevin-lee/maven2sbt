@@ -28,7 +28,7 @@ object PropSpec extends Properties {
         case (mavenProperty, expectedProp) =>
           (mavenProperty, expectedProp)
       }.unzip
-      val actual = input.map(mavenProperty => M2sProp.fromMavenProperty(propsName, mavenProperty))
+      val actual = input.map(mavenProperty => M2sProp.fromMavenProperty(mavenProperty))
       actual ==== expected
     }
 
@@ -47,11 +47,13 @@ object PropSpec extends Properties {
         case (mavenProperty, expectedProp) =>
           (
             mavenProperty,
-            s"""val ${expectedProp.name.propName} = ${expectedProp.value.propValue.toQuotedString}"""
+            RenderedString.noQuotesRequired(
+              s"""val ${expectedProp.name.propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}"""
+            )
           )
       }
-    val prop = M2sProp.fromMavenProperty(propsName, input)
-    val actual = M2sProp.render(prop)
+    val prop = M2sProp.fromMavenProperty(input)
+    val actual = M2sProp.render(propsName, prop)
     actual ==== expected
   }
 

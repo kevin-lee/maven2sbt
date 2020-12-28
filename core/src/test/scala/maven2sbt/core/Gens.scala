@@ -134,7 +134,7 @@ object Gens {
     value <- Gen.string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 50))
   } yield (
     MavenProperty(MavenProperty.Name(key), MavenProperty.Value(value)),
-    Prop(Prop.PropName(expectedKey), Prop.PropValue(RenderedString.withoutProps(value)))
+    Prop(Prop.PropName(expectedKey), Prop.PropValue(value))
   )
 
   def genRenderedStringFromValueWithPropsAndQuoted: Gen[(RenderedString, String)] = for {

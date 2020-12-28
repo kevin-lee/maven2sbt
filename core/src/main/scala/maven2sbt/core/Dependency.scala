@@ -46,12 +46,14 @@ object Dependency {
         )
     }
 
-  def render(propsName: Props.PropsName, dependency: Dependency): String = dependency match {
-    case Dependency(GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) =>
-      val groupIdStr = StringUtils.renderWithProps(propsName, groupId).toQuotedString
-      val artifactIdStr = StringUtils.renderWithProps(propsName, artifactId).toQuotedString
-      val versionStr = StringUtils.renderWithProps(propsName, version).toQuotedString
-      s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions)}"""
+  def render(propsName: Props.PropsName, dependency: Dependency): RenderedString = dependency match {
+    case Dependency(groupId, artifactId, version, scope, exclusions) =>
+      val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
+      val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
+      val versionStr = Render[Version].render(propsName, version).toQuotedString
+      RenderedString.noQuotesRequired(
+        s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+      )
   }
 
 }

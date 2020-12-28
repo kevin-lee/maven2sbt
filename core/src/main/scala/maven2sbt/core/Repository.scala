@@ -61,7 +61,7 @@ object Repository {
           .map(name => RepoName(name.trim))
   } yield Repository(repoId, repoName, RepoUrl(url))
 
-  def render(propsName: Props.PropsName, repository: Repository): String = {
+  def render(propsName: Props.PropsName, repository: Repository): RenderedString = {
     val repoUrlStr = StringUtils.renderWithProps(propsName, repository.url.repoUrl)
     val repoNameStr = (repository.id.filter(_.repoId.nonEmpty), repository.name.filter(_.repoName.nonEmpty)) match {
         case (_, Some(repoName)) =>
@@ -71,7 +71,9 @@ object Repository {
         case (None, None) =>
           repoUrlStr.innerValue
       }
-    s""""$repoNameStr" at ${repoUrlStr.toQuotedString}"""
+    RenderedString.noQuotesRequired(
+      s""""$repoNameStr" at ${repoUrlStr.toQuotedString}"""
+    )
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ToString"))
