@@ -12,19 +12,24 @@ sidebar_label: 'How to Use Library'
 import java.io.File
 
 import maven2sbt.core.Maven2Sbt
+import maven2sbt.core.Props
 import maven2sbt.core.ScalaVersion
 
 import cats._
 
 Maven2Sbt[Id].buildSbtFromPomFile(
-  ScalaVersion("2.13.1"), new File("/path/to/pom.xml")
+  ScalaVersion("2.13.3"),
+  Props.PropsName("props"),
+  new File("/path/to/pom.xml")
 )
 // Id[Either[Maven2SbtError, BuildSbt]]
 
 // or
 
 Maven2Sbt[Id].buildSbtFromInputStream(
-  ScalaVersion("2.13.1"), inputStream
+  ScalaVersion("2.13.3"),
+  Props.PropsName("props"),
+  inputStream
 )
 // Id[Either[Maven2SbtError, BuildSbt]]
 ```
@@ -36,19 +41,24 @@ Maven2Sbt[Id].buildSbtFromInputStream(
 import java.io.File
 
 import maven2sbt.core.Maven2Sbt
+import maven2sbt.core.Props
 import maven2sbt.core.ScalaVersion
 
 import cats.effect._
 
 Maven2Sbt[IO].buildSbtFromPomFile(
-  ScalaVersion("2.13.1"), new File("/path/to/pom.xml")
+  ScalaVersion("2.13.1"),
+  Props.PropsName("props"),
+  new File("/path/to/pom.xml")
 )
 // IO[Either[Maven2SbtError, BuildSbt]]
 
 // or
 
 Maven2Sbt[IO].buildSbtFromInputStream(
-  ScalaVersion("2.13.1"), inputStream
+  ScalaVersion("2.13.1"),
+  Props.PropsName("props"),
+  inputStream
 )
 // IO[Either[Maven2SbtError, BuildSbt]]
 ```
