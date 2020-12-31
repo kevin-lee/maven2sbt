@@ -14,15 +14,23 @@ import maven2sbt.info.Maven2SbtBuildInfo
  */
 object Maven2SbtArgsParser {
 
+  private val scalaVersionArg: Parse[ScalaVersion] = flag[String](
+    both('s', "scala-version")
+    , metavar("<version>") |+| description("Scala version")
+  ).map(ScalaVersion.apply)
+
+  private val paramsNameArg: Parse[Props.PropsName] = flag[String](
+    long("props-name")
+    , metavar("<props-name>") |+| description("properties object name (e.g. 'props' in `lazy val props = new {}`) (default: props)")
+  ).default("props").map(Props.PropsName.apply)
+
+  private val pomPathArg: Parse[File] = argument[String](
+    metavar("<pom-path>") |+| description("Path to the pom file.")
+  ).map(new File(_))
+
   def fileParser: Parse[Maven2SbtArgs] = Maven2SbtArgs.fileArgs _ |*| ((
-      flag[String](
-        both('s', "scala-version")
-      , metavar("<version>") |+| description("Scala version")
-      ).map(ScalaVersion.apply)
-    , flag[String](
-        long("props-name")
-      , metavar("<props-name>") |+| description("properties object name (e.g. 'props' in `lazy val props = new {}`) (default: props)")
-      ).default("props").map(Props.PropsName.apply)
+      scalaVersionArg
+    , paramsNameArg
     , flag[String](
         both('o', "out")
       , metavar("<file>") |+| description("output sbt config file (default: build.sbt)")
@@ -31,24 +39,13 @@ object Maven2SbtArgsParser {
         long("overwrite")
       , description("Overwrite if the output file already exists.")
       ).map(Overwrite.fromBoolean)
-    , argument[String](
-        metavar("<pom-path>") |+| description("Path to the pom file.")
-      ).map(new File(_))
+    , pomPathArg
   ))
 
   def printParse: Parse[Maven2SbtArgs] = Maven2SbtArgs.printArgs _ |*| ((
-      flag[String](
-        both('s', "scala-version")
-      , metavar("<version>") |+| description("Scala version")
-      ).map(ScalaVersion.apply)
-    , flag[String](
-        long("props-name")
-      , metavar("<props-name>") |+|
-          description("properties object name (e.g. 'props' in `lazy val props = new {}`) (default: props)")
-      ).default("props").map(Props.PropsName.apply)
-    , argument[String](
-        metavar("<pom-path>") |+| description("Path to the pom file.")
-      ).map(new File(_))
+      scalaVersionArg
+    , paramsNameArg
+    , pomPathArg
   ))
 
   val rawCmd: Command[Maven2SbtArgs] =
