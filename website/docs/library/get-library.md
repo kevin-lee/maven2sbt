@@ -13,5 +13,5 @@ sidebar_label: 'Get Library'
 
 Add it to `build.sbt`.
 ```scala
-libraryDependencies += "io.kevinlee" %% "maven2sbt-core" % "1.1.0"
+libraryDependencies += "io.kevinlee" %% "maven2sbt-core" % "1.1.1"
 ```
