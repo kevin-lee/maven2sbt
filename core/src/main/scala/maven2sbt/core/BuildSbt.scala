@@ -13,6 +13,7 @@ final case class BuildSbt(
   , thisBuildSettings: ThisBuildSettings
   , projectSettings: ProjectSettings
   , props: List[Prop]
+  , libs: Libs
   )
 
 object BuildSbt {
@@ -93,12 +94,13 @@ object BuildSbt {
       Settings.render(globalSettings.globalSettings, "Global / ".some, propsName, "\n", 2)
   }
 
-  def render(buildSbt: BuildSbt, propsName: Props.PropsName): String = buildSbt match {
+  def render(buildSbt: BuildSbt, propsName: Props.PropsName, libsName: Libs.LibsName): String = buildSbt match {
     case BuildSbt(
         globalSettings
       , thisBuildSettings
       , projectSettings
       , props
+      , libs
       ) =>
 
       val globalSettingsRendered = GlobalSettings.render(propsName, globalSettings)
@@ -106,14 +108,16 @@ object BuildSbt {
       val projectSettingsRendered = ProjectSettings.render(propsName, projectSettings)
 
       s"""
-         |${Props.renderProps(propsName, 2, props)}
-         |
          |$globalSettingsRendered
          |$thisBuildSettingsRendered
          |lazy val root = (project in file("."))
          |  .settings(
          |    $projectSettingsRendered
          |  )
+         |
+         |${Props.renderProps(propsName, 2, props)}
+         |
+         |${Libs.render(propsName, libsName, 2, libs)}
          |""".stripMargin
   }
 }
