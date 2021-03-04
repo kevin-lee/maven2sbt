@@ -3,7 +3,7 @@ package maven2sbt.core
 import just.fp.{Named, Render}
 
 import scala.language.postfixOps
-import scala.xml.Elem
+import scala.xml.Node
 
 /**
   * @author Kevin Lee
@@ -23,7 +23,7 @@ object Dependency {
   implicit val renderDependency: Render[Dependency] =
     Render.namedRender("dependency", (propsName, dependency) => Dependency.render(propsName, dependency))
 
-  def from(pom: Elem): Seq[Dependency] =
+  def from(pom: Node): Seq[Dependency] =
     pom \ "dependencies" \ "dependency" map { dependency =>
       val groupId = dependency \ "groupId" text
       val artifactId = dependency \ "artifactId" text
@@ -53,6 +53,22 @@ object Dependency {
       val versionStr = Render[Version].render(propsName, version).toQuotedString
       RenderedString.noQuotesRequired(
         s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+      )
+  }
+
+  def renderReusable(
+    propsName: Props.PropsName,
+    dependencyWithValName: (Libs.LibValName, Dependency)
+  ): (Libs.LibValName, RenderedString) = dependencyWithValName match {
+    case (libValName, Dependency(groupId, artifactId, version, scope, exclusions)) =>
+      val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
+      val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
+      val versionStr = Render[Version].render(propsName, version).toQuotedString
+      (
+        libValName
+      , RenderedString.noQuotesRequired(
+          s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+        )
       )
   }
 

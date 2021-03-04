@@ -54,6 +54,7 @@ object Maven2Sbt {
         ProjectInfo(groupId, artifactId, version) <- effectOf(ProjectInfo.from(pom))
         mavenProperties <- effectOf(MavenProperty.from(pom))
         props <- effectOf(mavenProperties.map(Prop.fromMavenProperty))
+        libs <- effectOf(Libs.from(pom))
         repositories <- effectOf(Repository.from(pom))
         dependencies <- effectOf(Dependency.from(pom))
         globalSettings <- pureOf(BuildSbt.GlobalSettings.empty)
@@ -83,6 +84,7 @@ object Maven2Sbt {
             , thisBuildSettings
             , projectSettings
             , props.toList
+            , libs
             )
           )
       } yield buildSbtData.asRight

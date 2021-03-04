@@ -208,4 +208,20 @@ object Gens {
     exclusions <- genExclusion.list(Range.linear(0, 5))
   } yield Dependency(groupId, artifactId, version, scope, exclusions)
 
+  def genLibValNameAndDependency: Gen[(Libs.LibValName, Dependency)] =
+    for {
+      groupId <- genGroupId
+      artifactId <- genArtifactId
+      version <- genVersion
+      scope <- genScope
+      exclusions <- genExclusion.list(Range.linear(0, 5))
+    } yield
+      (
+        Libs.LibValName(
+          StringUtils
+            .capitalizeAfterIgnoringNonAlphaNumUnderscore(artifactId.artifactId)
+        ),
+        Dependency(groupId, artifactId, version, scope, exclusions)
+      )
+
 }
