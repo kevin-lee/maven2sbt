@@ -34,7 +34,7 @@ lazy val noPublish: SettingsDefinition = Seq(
   skip in publish := true
 )
 
-lazy val hedgehogVersion: String = "0.6.0"
+lazy val hedgehogVersion: String = "0.6.5"
 
 lazy val hedgehogRepo: Resolver =
     "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
@@ -45,12 +45,12 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
   , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
   )
 
-lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.3.0"
+lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.4.2"
 lazy val cats_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
-lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.3.0"
+lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.3.3"
 lazy val catsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
-val EffectieVersion = "1.8.0"
+val EffectieVersion = "1.9.0"
 lazy val effectieCatsEffect: ModuleID = "io.kevinlee" %% "effectie-cats-effect" % EffectieVersion
 lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % EffectieVersion
 
@@ -72,37 +72,37 @@ def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
     .settings(
         name := prefixedProjectName(projectName)
-      , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.2" cross CrossVersion.full)
+      , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full)
       , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
       , resolvers += hedgehogRepo
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
       , libraryDependencies ++= hedgehogLibs ++ Seq(newTypeLib)
       , scalacOptions := (SemVer.parseUnsafe(scalaVersion.value) match {
           case SemVer(Major(2), Minor(13), _, _, _) =>
-            scalacOptions.value.filter(_ != "-Xlint:nullary-override") ++
+            scalacOptions.value.distinct.filter(_ != "-Xlint:nullary-override") ++
               Seq("-Wconf:cat=lint-byname-implicit:s", "-Ymacro-annotations")// ++ Seq("-Xlint:-multiarg-infix")
           case _ =>
-            scalacOptions.value
+            scalacOptions.value.distinct
         })
       /* WartRemover and scalacOptions { */
-          , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-          , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-//          , wartremoverErrors ++= commonWarts((scalaBinaryVersion in update).value)
+//      , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
+//      , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
+      , wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
 //            , wartremoverErrors ++= Warts.all
       , Compile / console / wartremoverErrors := List.empty
       , Compile / console / wartremoverWarnings := List.empty
       , Compile / console / scalacOptions :=
         (console / scalacOptions).value
-          .filterNot(option =>
-            option.contains("wartremover") || option.contains("import")
-          )
+          .distinct
+          .filterNot(option =>option.contains("wartremover") || option.contains("import"))
       , Test / console / wartremoverErrors := List.empty
       , Test / console / wartremoverWarnings := List.empty
       , Test / console / scalacOptions :=
         (console / scalacOptions).value
-          .filterNot( option =>
-            option.contains("wartremover") || option.contains("import")
-          )
+          .distinct
+          .filterNot( option => option.contains("wartremover") || option.contains("import"))
+//      , Compile / compile / wartremoverExcluded += sourceManaged.value
+//      , Test / compile / wartremoverExcluded += sourceManaged.value
       /* } WartRemover and scalacOptions */
     )
     .settings(
@@ -121,7 +121,7 @@ lazy val core = subProject("core", file("core"))
         )
       , SemVer.parseUnsafe(scalaVersion.value)
       ) {
-          case (Major(2), Minor(11)) =>
+          case (Major(2), Minor(11), _) =>
             Seq(cats_2_0_0, catsEffect_2_0_0)
           case _ =>
             Seq(cats, catsEffect)
@@ -155,7 +155,7 @@ lazy val cli = subProject("cli", file("cli"))
 
 
 lazy val maven2sbt = (project in file("."))
-  .enablePlugins(DevOopsGitReleasePlugin, DocusaurPlugin)
+  .enablePlugins(DevOopsGitHubReleasePlugin, DocusaurPlugin)
   .settings(
       name := RepoName
       /* GitHub Release { */
