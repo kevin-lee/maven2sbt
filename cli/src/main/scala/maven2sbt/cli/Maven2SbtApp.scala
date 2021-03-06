@@ -6,7 +6,7 @@ import cats.syntax.all._
 import cats.effect._
 import effectie.cats.ConsoleEffect
 import effectie.cats.EitherTSupport._
-import maven2sbt.core.{BuildSbt, Libs, Maven2Sbt, Maven2SbtError}
+import maven2sbt.core.{BuildSbt, Libs, Maven2Sbt, Maven2SbtError, ScalaBinaryVersion}
 import pirate._
 import piratex._
 
@@ -32,6 +32,8 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
   override def run(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
     case Maven2SbtArgs.FileArgs(scalaVersion, propsName, out, overwrite, pomPath) =>
+      val libsName = Libs.LibsName("libs")
+      val scalaBinaryVersionName = ScalaBinaryVersion.Name("scalaBinaryVersion").some
       for {
         pom <- IO(toCanonicalFile(pomPath))
         buildSbtPath <- IO(toCanonicalFile(out))
@@ -44,8 +46,8 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
               IO(new BufferedWriter(new FileWriter(buildSbtPath)))
                 .bracket { writer =>
                   (for {
-                    buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, pom))
-                    buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt, propsName, Libs.LibsName("libs"))))
+                    buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, scalaBinaryVersionName, pom))
+                    buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt, propsName, libsName)))
                     _ <- eitherTRightF(IO(writer.write(buildSbtString)))
                     _ <- eitherTRightF[Maven2SbtError](
                         ConsoleEffect[IO].putStrLn(
@@ -60,10 +62,13 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
       } yield result
 
     case Maven2SbtArgs.PrintArgs(scalaVersion, propsName, pomPath) =>
+      val libsName = Libs.LibsName("libs")
+      val scalaBinaryVersionName = ScalaBinaryVersion.Name("scalaBinaryVersion").some
+
       (for {
         pom <- eitherTRightF(IO(toCanonicalFile(pomPath)))
-        buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, pom))
-        buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt, propsName, Libs.LibsName("libs"))))
+        buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, scalaBinaryVersionName, pom))
+        buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt, propsName, libsName)))
         _ <- eitherTRightF[Maven2SbtError](
               ConsoleEffect[IO].putStrLn(buildSbtString)
             )

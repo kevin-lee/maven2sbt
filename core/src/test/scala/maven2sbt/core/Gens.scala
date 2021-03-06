@@ -206,22 +206,23 @@ object Gens {
     version <- genVersion
     scope <- genScope
     exclusions <- genExclusion.list(Range.linear(0, 5))
-  } yield Dependency(groupId, artifactId, version, scope, exclusions)
+    scalaLib <- Gen.boolean
+  } yield if (scalaLib) {
+      Dependency.scala(groupId, artifactId, version, scope, exclusions)
+    } else {
+      Dependency.java(groupId, artifactId, version, scope, exclusions)
+    }
 
   def genLibValNameAndDependency: Gen[(Libs.LibValName, Dependency)] =
     for {
-      groupId <- genGroupId
-      artifactId <- genArtifactId
-      version <- genVersion
-      scope <- genScope
-      exclusions <- genExclusion.list(Range.linear(0, 5))
+      dependency <- genDependency
     } yield
       (
         Libs.LibValName(
           StringUtils
-            .capitalizeAfterIgnoringNonAlphaNumUnderscore(artifactId.artifactId)
+            .capitalizeAfterIgnoringNonAlphaNumUnderscore(dependency.artifactId.artifactId)
         ),
-        Dependency(groupId, artifactId, version, scope, exclusions)
+        dependency
       )
 
 }

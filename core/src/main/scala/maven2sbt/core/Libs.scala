@@ -19,11 +19,11 @@ object Libs {
   def toValName(dependency: Dependency): LibValName =
     LibValName(StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(dependency.artifactId.artifactId))
   
-  def from(pom: Node): Libs =
+  def from(pom: Node, scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]): Libs =
     Libs(
       (for {
         dependencies <- (pom \ "dependencyManagement")
-        dependency <- Dependency.from(dependencies)
+        dependency <- Dependency.from(dependencies, scalaBinaryVersionName)
       } yield (toValName(dependency), dependency)).toList
     )
 

@@ -89,6 +89,11 @@ package object core {
 
   }
 
+  @newtype case class ScalaBinaryVersion(scalaBinaryVersion: String)
+  object ScalaBinaryVersion {
+    @newtype case class Name(name: String)
+  }
+
   implicit final class RenderedStringOps(val s: RenderedString) extends AnyVal {
     def toQuotedString: String =
       StringUtils.quoteRenderedString(s)
@@ -111,4 +116,5 @@ package object core {
     def stringsMkString(start: String, sep: String, end: String): String =
       stringList.mkString(start, sep, end)
   }
+
 }
