@@ -2,8 +2,6 @@ package maven2sbt.core
 
 import StringUtils._
 
-import just.fp.Render
-
 /**
   * @author Kevin Lee
   * @since 2019-04-22

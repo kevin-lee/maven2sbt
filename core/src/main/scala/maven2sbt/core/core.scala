@@ -2,7 +2,7 @@ package maven2sbt
 
 import io.estatico.newtype.macros._
 import io.estatico.newtype.ops._
-import just.fp.{Named, Render}
+import just.fp.Named
 
 import scala.language.implicitConversions
 

@@ -4,7 +4,7 @@ import Repository._
 import cats.Show
 import cats.syntax.all._
 import io.estatico.newtype.macros.newtype
-import just.fp.{Named, Render}
+import just.fp.Named
 
 import scala.xml.Elem
 

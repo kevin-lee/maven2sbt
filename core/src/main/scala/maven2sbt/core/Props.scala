@@ -1,7 +1,6 @@
 package maven2sbt.core
 
 import io.estatico.newtype.macros.newtype
-import just.fp.Render
 
 import scala.language.implicitConversions
 
