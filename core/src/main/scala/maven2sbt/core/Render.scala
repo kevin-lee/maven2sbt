@@ -1,6 +1,4 @@
-package just.fp
-
-import maven2sbt.core.{Props, RenderedString}
+package maven2sbt.core
 
 /**
   * @author Kevin Lee
@@ -21,8 +19,8 @@ object Render {
 
   final case class NamedRender[A](
     name: String,
-    f: (Props.PropsName, A
-  ) => RenderedString) extends Render[A] {
+    f: (Props.PropsName, A) => RenderedString
+  ) extends Render[A] {
     override def render(propsName: Props.PropsName, a: A): RenderedString =
       f(propsName, a)
   }

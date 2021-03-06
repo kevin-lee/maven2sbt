@@ -1,6 +1,6 @@
 package maven2sbt.core
 
-import just.fp.{Named, Render}
+import just.fp.Named
 
 import scala.language.postfixOps
 import scala.xml.Node

@@ -2,7 +2,7 @@ package maven2sbt.core
 
 import BuildSbt._
 import cats.syntax.all._
-import just.fp.{Named, Render}
+import just.fp.Named
 
 /**
  * @author Kevin Lee
