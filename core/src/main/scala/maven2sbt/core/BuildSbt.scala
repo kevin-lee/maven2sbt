@@ -135,8 +135,7 @@ object BuildSbt {
       val thisBuildSettingsRendered = ThisBuildSettings.render(propsName, libsName, thisBuildSettings)
       val projectSettingsRendered = ProjectSettings.render(propsName, libsName, libs, projectSettings)
 
-      s"""
-         |$globalSettingsRendered
+      s"""$globalSettingsRendered
          |$thisBuildSettingsRendered
          |lazy val root = (project in file("."))
          |  .settings(
