@@ -109,7 +109,8 @@ object Dependency {
   implicit val namedDependency: Named[Dependency] = Named.named("libraryDependencies")
   implicit val renderDependency: ReferencedRender[Dependency] =
     ReferencedRender.namedReferencedRender(
-      "dependency", (propsName, libs, dependency) => Dependency.render(propsName, libs, dependency)
+      "dependency",
+      (propsName, libsName, libs, dependency) => Dependency.render(propsName, libsName, libs, dependency)
     )
 
   def from(pom: Node, scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]): Seq[Dependency] =
@@ -158,7 +159,7 @@ object Dependency {
       }
     }
 
-  def render(propsName: Props.PropsName, libs: Libs, dependency: Dependency): RenderedString = {
+  def render(propsName: Props.PropsName, libsName: Libs.LibsName, libs: Libs, dependency: Dependency): RenderedString = {
 
     def renderWithoutLibs(propsName: Props.PropsName, dependency: Dependency): RenderedString =
       dependency match {
@@ -194,18 +195,18 @@ object Dependency {
             ) if version.version.isBlank || libVersion === version =>
             if ((scope === Scope.Compile || scope === Scope.Default)) {
               if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
-                RenderedString.noQuotesRequired(s"libs.${libValName.libValName}")
+                RenderedString.noQuotesRequired(s"${libsName.libsName}.${libValName.libValName}")
               else if (libExclusions.isEmpty)
-                RenderedString.noQuotesRequired(s"libs.${libValName.libValName}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}")
+                RenderedString.noQuotesRequired(s"${libsName.libsName}.${libValName.libValName}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}")
               else
                 renderWithoutLibs(propsName, dependency)
             } else {
               if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
                 RenderedString.noQuotesRequired(
-                  s"""libs.${libValName.libValName}${Scope.renderNonCompileWithPrefix(" % ", scope)}"""
+                  s"""${libsName.libsName}.${libValName.libValName}${Scope.renderNonCompileWithPrefix(" % ", scope)}"""
                 )
               else if (libExclusions.isEmpty)
-                RenderedString.noQuotesRequired(s"libs.${libValName.libValName}${Scope.renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}")
+                RenderedString.noQuotesRequired(s"${libsName.libsName}.${libValName.libValName}${Scope.renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}")
               else
                 renderWithoutLibs(propsName, dependency)
             }
@@ -216,10 +217,10 @@ object Dependency {
           case ((_, _, libVersion, libScope, libExclusions), (_, _, version, scope, exclusions)) if version.version.isBlank || libVersion === version =>
             if (libScope === scope) {
               if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
-                RenderedString.noQuotesRequired(s"libs.${libValName.libValName}")
+                RenderedString.noQuotesRequired(s"${libsName.libsName}.${libValName.libValName}")
               else if (libExclusions.isEmpty)
                 RenderedString.noQuotesRequired(
-                  s"""libs.${libValName.libValName}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+                  s"""${libsName.libsName}.${libValName.libValName}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
                 )
               else
                 renderWithoutLibs(propsName, dependency)

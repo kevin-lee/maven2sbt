@@ -52,31 +52,45 @@ object BuildSbt {
     }
 
   object Settings {
-    def render(settings: Settings, prefix: Option[String], propsName: Props.PropsName, libs: Libs, delimiter: String, indentSize: Int): String =
+    def render(
+      settings: Settings,
+      prefix: Option[String],
+      propsName: Props.PropsName,
+      libsName: Libs.LibsName,
+      libs: Libs,
+      delimiter: String,
+      indentSize: Int
+    ): String =
       (
         settings.groupId.map(groupId => toFieldValue(prefix, propsName, groupId)).toList ++
         settings.version.map(version => toFieldValue(prefix, propsName, version)).toList ++
         settings.scalaVersion.map(scalaVersion => toFieldValue(prefix, propsName, scalaVersion)).toList ++
         settings.artifactId.map(artifactId => toFieldValue(prefix, propsName, artifactId)).toList ++
         renderListOfFieldValue(prefix, settings.repositories, indentSize)(repo => Render[Repository].render(propsName, repo)).toList ++
-        renderListOfFieldValue(prefix, settings.dependencies, indentSize)(dependency => ReferencedRender[Dependency].render(propsName, libs, dependency)).toList
+        renderListOfFieldValue(
+          prefix, settings.dependencies, indentSize)(
+          dependency => ReferencedRender[Dependency].render(propsName, libsName, libs, dependency)
+        ).toList
       )
       .stringsMkString(delimiter)
   }
 
   final case class ProjectSettings(projectSettings: Settings) extends AnyVal
   object ProjectSettings {
-    def render(propsName: Props.PropsName, libs: Libs, projectSettings: ProjectSettings): String =
-      Settings.render(projectSettings.projectSettings, none[String], propsName, libs, s",\n${indent(4)}", 4)
+    def render(
+      propsName: Props.PropsName, libsName: Libs.LibsName, libs: Libs, projectSettings: ProjectSettings
+    ): String =
+      Settings.render(projectSettings.projectSettings, none[String], propsName, libsName, libs, s",\n${indent(4)}", 4)
 
   }
   final case class ThisBuildSettings(thisBuildSettings: Settings) extends AnyVal
   object ThisBuildSettings {
-    def render(propsName: Props.PropsName, thisBuildSettings: ThisBuildSettings): String =
+    def render(propsName: Props.PropsName, libsName: Libs.LibsName, thisBuildSettings: ThisBuildSettings): String =
       Settings.render(
         thisBuildSettings.thisBuildSettings,
         "ThisBuild / ".some,
         propsName,
+        libsName,
         Libs(List.empty[(Libs.LibValName, Dependency)]),
         "\n",
         2
@@ -96,10 +110,12 @@ object BuildSbt {
         )
       )
 
-    def render(propsName: Props.PropsName, globalSettings: GlobalSettings): String =
+    def render(propsName: Props.PropsName, libsName: Libs.LibsName, globalSettings: GlobalSettings): String =
       Settings.render(
         globalSettings.globalSettings,
-        "Global / ".some, propsName,
+        "Global / ".some,
+        propsName,
+        libsName,
         Libs(List.empty[(Libs.LibValName, Dependency)]),
         "\n",
         2
@@ -115,9 +131,9 @@ object BuildSbt {
       , libs
       ) =>
 
-      val globalSettingsRendered = GlobalSettings.render(propsName, globalSettings)
-      val thisBuildSettingsRendered = ThisBuildSettings.render(propsName, thisBuildSettings)
-      val projectSettingsRendered = ProjectSettings.render(propsName, libs, projectSettings)
+      val globalSettingsRendered = GlobalSettings.render(propsName, libsName, globalSettings)
+      val thisBuildSettingsRendered = ThisBuildSettings.render(propsName, libsName, thisBuildSettings)
+      val projectSettingsRendered = ProjectSettings.render(propsName, libsName, libs, projectSettings)
 
       s"""
          |$globalSettingsRendered

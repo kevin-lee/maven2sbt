@@ -321,13 +321,14 @@ object BuildSbtSpec extends Properties {
       n <- Gen.int(Range.linear(0, 10)).log("n")
     } yield {
       val propsName = Props.PropsName("testProps")
+      val libsName = Libs.LibsName("testLibs")
       val libs = Libs(List.empty[(Libs.LibValName, Dependency)])
       val expected = none[String]
       val actual = BuildSbt.renderListOfFieldValue(
           none[String],
           List.empty[Dependency],
           n
-        )(dep => ReferencedRender[Dependency].render(propsName, libs, dep))
+        )(dep => ReferencedRender[Dependency].render(propsName, libsName, libs, dep))
       actual ==== expected
     }
 
@@ -336,13 +337,14 @@ object BuildSbtSpec extends Properties {
       dependency <- Gens.genDependency.log("dependency")
     } yield {
       val propsName = Props.PropsName("testProps")
+      val libsName = Libs.LibsName("testLibs")
       val libs = Libs(List.empty[(Libs.LibValName, Dependency)])
-      val expected = s"libraryDependencies += ${Dependency.render(propsName, libs, dependency).toQuotedString}".some
+      val expected = s"libraryDependencies += ${Dependency.render(propsName, libsName, libs, dependency).toQuotedString}".some
       val actual = BuildSbt.renderListOfFieldValue(
           none[String],
           List(dependency),
           n
-        )(dep => ReferencedRender[Dependency].render(propsName, libs, dep))
+        )(dep => ReferencedRender[Dependency].render(propsName, libsName, libs, dep))
       actual ==== expected
     }
 
@@ -351,17 +353,20 @@ object BuildSbtSpec extends Properties {
       libraryDependencies <- Gens.genDependency.list(Range.linear(2, 10)).log("libraryDependencies")
     } yield {
       val propsName = Props.PropsName("testProps")
+      val libsName = Libs.LibsName("testLibs")
       val libs = Libs(List.empty[(Libs.LibValName, Dependency)])
       val idt = StringUtils.indent(n)
       val expected =
         s"""libraryDependencies ++= List(
-           |$idt${libraryDependencies.map(dep => Dependency.render(propsName, libs, dep).toQuotedString).stringsMkString("  ", s",\n$idt  ", "")}
+           |$idt${libraryDependencies
+              .map(dep => Dependency.render(propsName, libsName, libs, dep).toQuotedString)
+              .stringsMkString("  ", s",\n$idt  ", "")}
            |$idt)""".stripMargin.some
       val actual = BuildSbt.renderListOfFieldValue(
           none[String],
           libraryDependencies,
           n
-        )(dep => ReferencedRender[Dependency].render(propsName, libs, dep))
+        )(dep => ReferencedRender[Dependency].render(propsName, libsName, libs, dep))
       actual ==== expected
     }
 

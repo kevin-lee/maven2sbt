@@ -226,6 +226,12 @@ object Gens {
       Dependency.java(groupId, artifactId, version, scope, exclusions)
     }
 
+  def genLibsName: Gen[Libs.LibsName] = for {
+    first <- Gen.alpha
+    rest <- Gen.string(Gen.alphaNum, Range.linear(0, 10))
+    libsName = first.toString + rest
+  } yield Libs.LibsName(libsName)
+
   def genLibValNameAndDependency: Gen[(Libs.LibValName, Dependency)] =
     for {
       dependency <- genDependency

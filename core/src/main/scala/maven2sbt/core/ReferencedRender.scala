@@ -5,7 +5,7 @@ package maven2sbt.core
  * @since 2020-03-14
  */
 trait ReferencedRender[A] {
-  def render(propsName: Props.PropsName, libs: Libs, a: A): RenderedString
+  def render(propsName: Props.PropsName, libsName: Libs.LibsName, libs: Libs, a: A): RenderedString
 }
 
 object ReferencedRender {
@@ -13,16 +13,16 @@ object ReferencedRender {
 
   def namedReferencedRender[A](
     name: String,
-    f: (Props.PropsName, Libs, A) => RenderedString
+    f: (Props.PropsName, Libs.LibsName, Libs, A) => RenderedString
   ): ReferencedRender[A] =
     NamedReferencedRender(name, f)
 
   final case class NamedReferencedRender[A](
     name: String,
-    f: (Props.PropsName, Libs, A) => RenderedString
+    f: (Props.PropsName, Libs.LibsName, Libs, A) => RenderedString
   ) extends ReferencedRender[A] {
-    override def render(propsName: Props.PropsName, libs: Libs, a: A): RenderedString =
-      f(propsName, libs, a)
+    override def render(propsName: Props.PropsName, libsName: Libs.LibsName, libs: Libs, a: A): RenderedString =
+      f(propsName, libsName, libs, a)
   }
 }
 
