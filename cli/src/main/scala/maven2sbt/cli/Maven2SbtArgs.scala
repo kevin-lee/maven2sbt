@@ -1,7 +1,8 @@
 package maven2sbt.cli
 
+import maven2sbt.core.{Libs, Props, ScalaBinaryVersion, ScalaVersion}
+
 import java.io.File
-import maven2sbt.core.{Libs, Props, ScalaVersion}
 
 /**
  * @author Kevin Lee
@@ -13,6 +14,7 @@ object Maven2SbtArgs {
 
   final case class FileArgs(
       scalaVersion: ScalaVersion
+    , scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]
     , propsName: Props.PropsName
     , libsName: Libs.LibsName
     , out: File
@@ -22,6 +24,7 @@ object Maven2SbtArgs {
 
   final case class PrintArgs(
       scalaVersion: ScalaVersion
+    , scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]
     , propsName: Props.PropsName
     , libsName: Libs.LibsName
     , pomPath: File
@@ -30,19 +33,23 @@ object Maven2SbtArgs {
 
   def fileArgs(
     scalaVersion: ScalaVersion
+  , scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]
   , propsName: Props.PropsName
   , libsName: Libs.LibsName
   , out: File
   , overwrite: Overwrite
   , pomPath: File
-  ): Maven2SbtArgs = FileArgs(scalaVersion, propsName, libsName, out, overwrite, pomPath)
+  ): Maven2SbtArgs =
+    FileArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, out, overwrite, pomPath)
 
   def printArgs(
     scalaVersion: ScalaVersion
+  , scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]
   , propsName: Props.PropsName
   , libsName: Libs.LibsName
   , pomPath: File
-  ): Maven2SbtArgs = PrintArgs(scalaVersion, propsName, libsName, pomPath)
+  ): Maven2SbtArgs =
+    PrintArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, pomPath)
 
 }
 

@@ -5,7 +5,7 @@ import cats.effect._
 import cats.syntax.all._
 import effectie.cats.ConsoleEffect
 import effectie.cats.EitherTSupport._
-import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError, ScalaBinaryVersion}
+import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError}
 import pirate._
 import piratex._
 
@@ -32,8 +32,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
     if (file.isAbsolute) file else file.getCanonicalFile
 
   override def run(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
-    case Maven2SbtArgs.FileArgs(scalaVersion, propsName, libsName, out, overwrite, pomPath) =>
-      val scalaBinaryVersionName = ScalaBinaryVersion.Name("scalaBinaryVersion").some
+    case Maven2SbtArgs.FileArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, out, overwrite, pomPath) =>
       for {
         pom <- IO(toCanonicalFile(pomPath))
         buildSbtPath <- IO(toCanonicalFile(out))
@@ -61,9 +60,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
           }
       } yield result
 
-    case Maven2SbtArgs.PrintArgs(scalaVersion, propsName, libsName, pomPath) =>
-      val scalaBinaryVersionName = ScalaBinaryVersion.Name("scalaBinaryVersion").some
-
+    case Maven2SbtArgs.PrintArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, pomPath) =>
       (for {
         pom <- eitherTRightF(IO(toCanonicalFile(pomPath)))
         buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, scalaBinaryVersionName, pom))

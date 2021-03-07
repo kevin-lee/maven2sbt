@@ -1,12 +1,13 @@
 package maven2sbt.cli
 
-import java.io.File
 import scalaz._
 import Scalaz._
 import pirate._
 import Pirate._
-import maven2sbt.core.{Libs, Props, ScalaVersion}
+import maven2sbt.core.{Libs, Props, ScalaBinaryVersion, ScalaVersion}
 import maven2sbt.info.Maven2SbtBuildInfo
+
+import java.io.File
 
 /**
  * @author Kevin Lee
@@ -18,6 +19,40 @@ object Maven2SbtArgsParser {
     both('s', "scala-version")
     , metavar("<version>") |+| description("Scala version")
   ).map(ScalaVersion.apply)
+
+  private val scalaBinaryVersionArg: Parse[Option[ScalaBinaryVersion.Name]] = flag[String](
+    both('b', "scala-binary-version-name")
+    , metavar("<scala-binary-version-name>") |+|
+        description(
+          s"""The name of Scala binary version property. This is useful to figure out if it is a Scala library or Java library
+             |e.g.)
+             |-b scala.binary
+             |# or
+             |--scala-binary-version-name scala.binary
+             |---
+             |<properties>
+             |  <scala.binary>2.13</scala.binary>
+             |</properties>
+             |<dependencies>
+             |  <dependency>
+             |    <groupId>io.kevinlee</groupId>
+             |    <artifactId>myLib1_$${scala.binary}</artifactId>
+             |    <version>0.1.0</version>
+             |  </dependency>
+             |  <dependency>
+             |    <groupId>io.kevinlee</groupId>
+             |    <artifactId>myLib2</artifactId>
+             |    <version>0.2.0</version>
+             |  </dependency>
+             |</dependencies>
+             |---
+             |results in
+             |"io.kevinlee" %% "myLib1" % "0.1.0"
+             |"io.kevinlee" % "myLib2" % "0.1.0"
+             |---
+             |""".stripMargin
+        )
+  ).option.map(_.map(ScalaBinaryVersion.Name(_)))
 
   private val paramsNameArg: Parse[Props.PropsName] = flag[String](
     long("props-name")
@@ -35,6 +70,7 @@ object Maven2SbtArgsParser {
 
   def fileParser: Parse[Maven2SbtArgs] = Maven2SbtArgs.fileArgs _ |*| ((
       scalaVersionArg
+    , scalaBinaryVersionArg
     , paramsNameArg
     , libsNameArg
     , flag[String](
@@ -50,6 +86,7 @@ object Maven2SbtArgsParser {
 
   def printParse: Parse[Maven2SbtArgs] = Maven2SbtArgs.printArgs _ |*| ((
       scalaVersionArg
+    , scalaBinaryVersionArg
     , paramsNameArg
     , libsNameArg
     , pomPathArg
