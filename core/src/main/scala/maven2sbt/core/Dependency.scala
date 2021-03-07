@@ -1,5 +1,7 @@
 package maven2sbt.core
 
+import cats.Show
+import cats.syntax.all._
 import just.fp.Named
 
 import scala.language.postfixOps
@@ -45,9 +47,19 @@ object Dependency {
     exclusions: List[Exclusion]
   ): Dependency = Java(groupId, artifactId, version, scope, exclusions)
 
+  implicit val show: Show[Dependency] = {
+    case Dependency.Scala(groupId, artifactId, version, scope, exclusions) =>
+      show"Dependency.Scala($groupId, $artifactId, $version, $scope, ${exclusions.show})"
+    case Dependency.Java(groupId, artifactId, version, scope, exclusions) =>
+      show"Dependency.Java($groupId, $artifactId, $version, $scope, ${exclusions.show})"
+  }
 
   implicit final class DependencyOps(val dependency: Dependency) extends AnyVal {
     def artifactId: ArtifactId = Dependency.artifactId(dependency)
+
+    def scope: Scope = Dependency.scope(dependency)
+
+    def exclusions: List[Exclusion] = Dependency.exclusions(dependency)
 
     def isScalaLib: Boolean = Dependency.isScalaLib(dependency)
 
@@ -62,6 +74,20 @@ object Dependency {
       artifactId
     case Java(_, artifactId, _, _, _) =>
       artifactId
+  }
+
+  def scope(dependency: Dependency): Scope = dependency match {
+    case Scala(_, _, _, scope, _) =>
+      scope
+    case Java(_, _, _, scope, _) =>
+      scope
+  }
+
+  def exclusions(dependency: Dependency): List[Exclusion] = dependency match {
+    case Scala(_, _, _, _, exclusions) =>
+      exclusions
+    case Java(_, _, _, _, exclusions) =>
+      exclusions
   }
 
   def isScalaLib(dependency: Dependency): Boolean = dependency match {
@@ -81,8 +107,10 @@ object Dependency {
 
 
   implicit val namedDependency: Named[Dependency] = Named.named("libraryDependencies")
-  implicit val renderDependency: Render[Dependency] =
-    Render.namedRender("dependency", (propsName, dependency) => Dependency.render(propsName, dependency))
+  implicit val renderDependency: ReferencedRender[Dependency] =
+    ReferencedRender.namedReferencedRender(
+      "dependency", (propsName, libs, dependency) => Dependency.render(propsName, libs, dependency)
+    )
 
   def from(pom: Node, scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]): Seq[Dependency] =
     pom \ "dependencies" \ "dependency" map { dependency =>
@@ -130,48 +158,83 @@ object Dependency {
       }
     }
 
-  def render(propsName: Props.PropsName, dependency: Dependency): RenderedString = dependency match {
-    case Dependency.Scala(groupId, artifactId, version, scope, exclusions) =>
-      val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
-      val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
-      val versionStr = Render[Version].render(propsName, version).toQuotedString
-      RenderedString.noQuotesRequired(
-        s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
-      )
+  def render(propsName: Props.PropsName, libs: Libs, dependency: Dependency): RenderedString = {
 
-    case Dependency.Java(groupId, artifactId, version, scope, exclusions) =>
-      val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
-      val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
-      val versionStr = Render[Version].render(propsName, version).toQuotedString
-      RenderedString.noQuotesRequired(
-        s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
-      )
+    def renderWithoutLibs(propsName: Props.PropsName, dependency: Dependency): RenderedString =
+      dependency match {
+        case Dependency.Scala(groupId, artifactId, version, scope, exclusions) =>
+          val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
+          val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
+          val versionStr = Render[Version].render(propsName, version).toQuotedString
+          RenderedString.noQuotesRequired(
+            s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope.renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+          )
+
+        case Dependency.Java(groupId, artifactId, version, scope, exclusions) =>
+          val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
+          val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
+          val versionStr = Render[Version].render(propsName, version).toQuotedString
+          RenderedString.noQuotesRequired(
+            s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+          )
+      }
+
+    val refLibFound = libs.dependencies.find { case (_, dep) =>
+      val (libGroupId, libArtifactId, _, _, _) = dep.tupled
+      val (groupId, artifactId, _, _, _) = dependency.tupled
+      libGroupId === groupId && libArtifactId === artifactId
+    }
+
+    refLibFound match {
+      case Some((libValName, libDep)) =>
+        (libDep.tupled, dependency.tupled) match {
+          case (
+              (_, _, libVersion, Scope.Compile | Scope.Default, libExclusions),
+              (_, _, version, scope, exclusions)
+            ) if version.version.isBlank || libVersion === version =>
+            if ((scope === Scope.Compile || scope === Scope.Default)) {
+              if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
+                RenderedString.noQuotesRequired(s"libs.${libValName.libValName}")
+              else if (libExclusions.isEmpty)
+                RenderedString.noQuotesRequired(s"libs.${libValName.libValName}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}")
+              else
+                renderWithoutLibs(propsName, dependency)
+            } else {
+              if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
+                RenderedString.noQuotesRequired(
+                  s"""libs.${libValName.libValName}${Scope.renderNonCompileWithPrefix(" % ", scope)}"""
+                )
+              else if (libExclusions.isEmpty)
+                RenderedString.noQuotesRequired(s"libs.${libValName.libValName}${Scope.renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}")
+              else
+                renderWithoutLibs(propsName, dependency)
+            }
+
+          case ((_, _, _, Scope.Compile | Scope.Default, _), (_, _, _, _, _)) =>
+            renderWithoutLibs(propsName, dependency)
+
+          case ((_, _, libVersion, libScope, libExclusions), (_, _, version, scope, exclusions)) if version.version.isBlank || libVersion === version =>
+            if (libScope === scope) {
+              if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
+                RenderedString.noQuotesRequired(s"libs.${libValName.libValName}")
+              else if (libExclusions.isEmpty)
+                RenderedString.noQuotesRequired(
+                  s"""libs.${libValName.libValName}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+                )
+              else
+                renderWithoutLibs(propsName, dependency)
+            } else {
+              renderWithoutLibs(propsName, dependency)
+            }
+
+          case ((_, _, _, _, _), (_, _, _, _, _)) =>
+            renderWithoutLibs(propsName, dependency)
+
+        }
+      case None =>
+        renderWithoutLibs(propsName, dependency)
+    }
   }
 
-  def renderReusable(
-    propsName: Props.PropsName,
-    dependencyWithValName: (Libs.LibValName, Dependency)
-  ): (Libs.LibValName, RenderedString) = dependencyWithValName match {
-    case (libValName, Dependency.Scala(groupId, artifactId, version, scope, exclusions)) =>
-      val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
-      val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
-      val versionStr = Render[Version].render(propsName, version).toQuotedString
-      (
-        libValName
-      , RenderedString.noQuotesRequired(
-          s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
-        )
-      )
-    case (libValName, Dependency.Java(groupId, artifactId, version, scope, exclusions)) =>
-      val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
-      val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
-      val versionStr = Render[Version].render(propsName, version).toQuotedString
-      (
-        libValName
-      , RenderedString.noQuotesRequired(
-          s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
-        )
-      )
-  }
 
 }

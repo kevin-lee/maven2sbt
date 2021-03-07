@@ -1,5 +1,6 @@
 package maven2sbt.core
 
+import cats.Show
 import cats.kernel.Eq
 import cats.syntax.all._
 
@@ -24,7 +25,11 @@ object Scope {
   def system: Scope = System
   def default: Scope = Default
 
+  def all: List[Scope] = List(compile, test, provided, runtime, system)
+
   implicit final val eq: Eq[Scope] = Eq.fromUniversalEquals[Scope]
+
+  implicit val show: Show[Scope] = render(_)
 
   def render(scope: Scope): String = scope match {
     case Compile => "Compile"
@@ -40,13 +45,16 @@ object Scope {
     case Default => ""
   }
 
-  def renderWithPrefix(prefix: String, scope: Scope): String = {
-    val rendered = render(scope)
-    if (rendered.isEmpty)
+  def renderNonCompileWithPrefix(prefix: String, scope: Scope): String =
+    if (scope === Scope.compile) {
       ""
-    else
-      s"$prefix$rendered"
-  }
+    } else {
+      val rendered = render(scope)
+      if (rendered.isEmpty)
+        ""
+      else
+        s"$prefix$rendered"
+    }
 
   def renderToMaven(scope: Scope): String = scope match {
     case Compile => "compile"

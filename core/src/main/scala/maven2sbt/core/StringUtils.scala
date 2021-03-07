@@ -92,10 +92,13 @@ sealed trait StringUtils {
         propsFound.foldLeft(value)((acc, each) =>
           each match {
             case propertyUsagePattern(eachGroup) =>
-              acc.replace(
-                s"$each",
-                s"$${${propsName.propsName}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup.trim)}}"
-              )
+              if (eachGroup === "scalaBinaryVersion.value")
+                acc
+              else
+                acc.replace(
+                  each,
+                  s"$${${propsName.propsName}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup.trim)}}"
+                )
           }
         )
       )

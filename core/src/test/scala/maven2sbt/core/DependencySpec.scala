@@ -15,6 +15,12 @@ object DependencySpec extends Properties {
   override def tests: List[Test] = List(
     property("test from", testFrom)
   , property("test render", testRender)
+  , property("test render with Libs", testRenderWithLibs)
+  , property("test render with Libs with different version", testRenderWithLibsWithVersionDiff)
+  , property("test render with Libs with different scope", testRenderWithLibsWithScopeDiff)
+  , property("test render with Libs with different exclusions", testRenderWithLibsWithExclusionDiff)
+  , property("test render with Libs with different exclusions (lib exclusions are empty)", testRenderWithLibsWithExclusionDiffAndEmptyLibExclusions)
+  , property("test render with Libs with different scope and exclusions", testRenderWithLibsWithScopeAndExclusionsDiff)
   )
 
   def testFrom: Property = for {
@@ -29,13 +35,146 @@ object DependencySpec extends Properties {
     dependency <- Gens.genDependency.log("dependency")
   } yield {
     val propsName = Props.PropsName("props")
+    val libs = Libs(List.empty[(Libs.LibValName, Dependency)])
     val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
     val expected =
       RenderedString.noQuotesRequired(
-        s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+        s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
       )
-    val actual = Dependency.render(propsName, dependency)
+    val actual = Dependency.render(propsName, libs, dependency)
     actual ==== expected
+  }
+
+  def testRenderWithLibs: Property = for {
+    dependency <- Gens.genDependency.log("dependency")
+  } yield {
+    val propsName = Props.PropsName("props")
+    val libs = Libs(List((Libs.LibValName("myLib"), dependency)))
+    val expected =
+      RenderedString.noQuotesRequired("libs.myLib")
+    val actual = Dependency.render(propsName, libs, dependency)
+    actual ==== expected
+  }
+
+  def testRenderWithLibsWithVersionDiff: Property = for {
+    dependency <- Gens.genDependency.log("dependency")
+  } yield {
+    val propsName = Props.PropsName("props")
+    val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
+    val libs = Libs(List((Libs.LibValName("myLib"), (dependency match {
+      case dep@Dependency.Java(_, _, version, _, _) =>
+        dep.copy(version = Version(version.version + "-alpha"))
+      case dep@Dependency.Scala(_, _, version, _, _) =>
+        dep.copy(version = Version(version.version + "-alpha"))
+    }))))
+    val expected =
+      RenderedString.noQuotesRequired(
+        s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+      )
+    val actual = Dependency.render(propsName, libs, dependency)
+    actual ==== expected
+  }
+
+  def testRenderWithLibsWithScopeDiff: Property = for {
+    dependency <- Gens.genDependency.log("dependency")
+  } yield {
+
+    val propsName = Props.PropsName("props")
+    val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
+    val myLib: Dependency = (dependency match {
+        case dep@Dependency.Java(_, _, _, scope, _) =>
+          dep.copy(scope = differentScope(scope))
+        case dep@Dependency.Scala(_, _, _, scope, _) =>
+          dep.copy(scope = differentScope(scope))
+      })
+    val libs = Libs(List((Libs.LibValName("myLib"), myLib)))
+    val expected = RenderedString.noQuotesRequired(
+      if (myLib.scope === Scope.compile || myLib.scope === Scope.default) {
+        s"""libs.myLib${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, myLib.exclusions.diff(exclusions)).toQuotedString}"""
+      } else {
+        s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+      }
+    )
+    val actual = Dependency.render(propsName, libs, dependency)
+    (actual ==== expected).log(
+      s"""libs: ${libs.show}
+         |dependency: ${dependency.show}
+         |""".stripMargin)
+  }
+
+  def testRenderWithLibsWithExclusionDiff: Property = for {
+    dependency <- Gens.genDependency.log("dependency")
+    libExclusions <- Gens.genExclusion.list(Range.linear(1, 5)).log("libExclusions")
+  } yield {
+
+    val propsName = Props.PropsName("props")
+    val myLib: Dependency = dependency match {
+        case dep@Dependency.Java(_, _, _, _, _) =>
+          dep.copy(exclusions = libExclusions)
+        case dep@Dependency.Scala(_, _, _, _, _) =>
+          dep.copy(exclusions = libExclusions)
+      }
+    val libs = Libs(List((Libs.LibValName("myLib"), myLib)))
+    val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
+    val expected =
+        RenderedString.noQuotesRequired(
+          s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+        )
+
+    val actual = Dependency.render(propsName, libs, dependency)
+    (actual ==== expected).log(
+      s"""libs: ${libs.show}
+         |dependency: ${dependency.show}
+         |""".stripMargin)
+  }
+
+  def testRenderWithLibsWithExclusionDiffAndEmptyLibExclusions: Property = for {
+    dependency <- Gens.genDependencyWithNonEmptyExclusions.log("dependency")
+  } yield {
+
+    val propsName = Props.PropsName("props")
+    val myLib: Dependency = dependency match {
+        case dep@Dependency.Java(_, _, _, _, _) =>
+          dep.copy(exclusions = List.empty[Exclusion])
+        case dep@Dependency.Scala(_, _, _, _, _) =>
+          dep.copy(exclusions = List.empty[Exclusion])
+      }
+    val libs = Libs(List((Libs.LibValName("myLib"), myLib)))
+    val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
+    val expected =
+        RenderedString.noQuotesRequired(
+          s"""libs.myLib${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+        )
+
+    val actual = Dependency.render(propsName, libs, dependency)
+    (actual ==== expected).log(
+      s"""libs: ${libs.show}
+         |dependency: ${dependency.show}
+         |""".stripMargin)
+  }
+
+  def testRenderWithLibsWithScopeAndExclusionsDiff: Property = for {
+    dependency <- Gens.genDependency.log("dependency")
+    libExclusions <- Gens.genExclusion.list(Range.linear(1, 5)).log("libExclusions")
+  } yield {
+
+    val propsName = Props.PropsName("props")
+    val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
+    val myLib: Dependency = (dependency match {
+      case dep@Dependency.Java(_, _, _, scope, _) =>
+        dep.copy(scope = differentScope(scope), exclusions = libExclusions)
+      case dep@Dependency.Scala(_, _, _, scope, _) =>
+        dep.copy(scope = differentScope(scope), exclusions = libExclusions)
+    })
+    val libs = Libs(List((Libs.LibValName("myLib"), myLib)))
+    val expected = RenderedString.noQuotesRequired(
+      s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+    )
+    val actual = Dependency.render(propsName, libs, dependency)
+    (actual ==== expected).log(
+      s"""libs: ${libs.show}
+         |dependency: ${dependency.show}
+         |""".stripMargin)
   }
 
 
@@ -79,5 +218,10 @@ object DependencySpec extends Properties {
         }
       </dependencies>
     </project>
+
+  private def differentScope(scope: Scope): Scope =
+    scala.util.Random.shuffle(Scope.all.diff(List(scope)))
+      .headOption
+      .getOrElse(sys.error("If you see this, there's something wrong in this test."))
 
 }

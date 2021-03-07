@@ -52,7 +52,7 @@ object LibsSpec extends Properties {
         ) = dependency.tupled
         depString = RenderedString.noQuotesRequired(
           s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%" } "$artifactId" % "$version"${Scope
-            .renderWithPrefix(" % ", scope)}${Exclusion
+            .renderNonCompileWithPrefix(" % ", scope)}${Exclusion
             .renderExclusions(propsName, exclusions)
             .toQuotedString}"""
         )

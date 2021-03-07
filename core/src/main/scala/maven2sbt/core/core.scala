@@ -4,6 +4,8 @@ import io.estatico.newtype.macros._
 import io.estatico.newtype.ops._
 import just.fp.Named
 
+import cats._
+
 import scala.language.implicitConversions
 
 /**
@@ -15,6 +17,10 @@ package object core {
   @newtype case class GroupId(groupId: String)
 
   object GroupId {
+
+    implicit val eq: Eq[GroupId] = deriving
+
+    implicit val show: Show[GroupId] = deriving
 
     implicit val named: Named[GroupId] = Named.named("organization")
 
@@ -36,6 +42,10 @@ package object core {
 
   object ArtifactId {
 
+    implicit val eq: Eq[ArtifactId] = deriving
+
+    implicit val show: Show[ArtifactId] = deriving
+
     implicit val named: Named[ArtifactId] = Named.named("name")
 
     implicit val artifactIdRender: Render[ArtifactId] =
@@ -56,6 +66,10 @@ package object core {
 
   object Version {
 
+    implicit val eq: Eq[Version] = deriving
+
+    implicit val show: Show[Version] = deriving
+
     implicit val named: Named[Version] = Named.named("version")
 
     implicit val versionRender: Render[Version] =
@@ -75,6 +89,10 @@ package object core {
   @newtype case class ScalaVersion(scalaVersion: String)
 
   object ScalaVersion {
+
+    implicit val eq: Eq[ScalaVersion] = deriving
+
+    implicit val show: Show[ScalaVersion] = deriving
 
     implicit val named: Named[ScalaVersion] = Named.named("scalaVersion")
 

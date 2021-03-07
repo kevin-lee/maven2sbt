@@ -1,6 +1,8 @@
 package maven2sbt.core
 
 import StringUtils._
+import cats._
+import cats.syntax.show._
 
 /**
   * @author Kevin Lee
@@ -9,6 +11,9 @@ import StringUtils._
 final case class Exclusion(groupId: GroupId, artifactId: ArtifactId)
 
 object Exclusion {
+
+  implicit val eq: Eq[Exclusion] = Eq.fromUniversalEquals[Exclusion]
+  implicit val show: Show[Exclusion] = excl => s"Exclusion(groupId: ${excl.groupId.show}, artifactId: ${excl.artifactId.show})"
 
   implicit final val exclusionRender: Render[Exclusion] =
     Render.namedRender("exclusion", Exclusion.renderExclusionRule)
