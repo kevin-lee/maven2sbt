@@ -5,7 +5,7 @@ import scalaz._
 import Scalaz._
 import pirate._
 import Pirate._
-import maven2sbt.core.{Props, ScalaVersion}
+import maven2sbt.core.{Libs, Props, ScalaVersion}
 import maven2sbt.info.Maven2SbtBuildInfo
 
 /**
@@ -24,6 +24,11 @@ object Maven2SbtArgsParser {
     , metavar("<props-name>") |+| description("properties object name (e.g. 'props' in `lazy val props = new {}`) (default: props)")
   ).default("props").map(Props.PropsName.apply)
 
+  private val libsNameArg: Parse[Libs.LibsName] = flag[String](
+    long("libs-name")
+    , metavar("<libs-name>") |+| description("The name of the object containing all the libraries to re-use (e.g. 'libs' in `lazy val libs = new {}`) (default: libs)")
+  ).default("libs").map(Libs.LibsName.apply)
+
   private val pomPathArg: Parse[File] = argument[String](
     metavar("<pom-path>") |+| description("Path to the pom file.")
   ).map(new File(_))
@@ -31,6 +36,7 @@ object Maven2SbtArgsParser {
   def fileParser: Parse[Maven2SbtArgs] = Maven2SbtArgs.fileArgs _ |*| ((
       scalaVersionArg
     , paramsNameArg
+    , libsNameArg
     , flag[String](
         both('o', "out")
       , metavar("<file>") |+| description("output sbt config file (default: build.sbt)")
@@ -45,6 +51,7 @@ object Maven2SbtArgsParser {
   def printParse: Parse[Maven2SbtArgs] = Maven2SbtArgs.printArgs _ |*| ((
       scalaVersionArg
     , paramsNameArg
+    , libsNameArg
     , pomPathArg
   ))
 

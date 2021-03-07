@@ -1,14 +1,15 @@
 package maven2sbt.cli
 
-import java.io.{BufferedWriter, File, FileWriter}
 import cats.data._
-import cats.syntax.all._
 import cats.effect._
+import cats.syntax.all._
 import effectie.cats.ConsoleEffect
 import effectie.cats.EitherTSupport._
-import maven2sbt.core.{BuildSbt, Libs, Maven2Sbt, Maven2SbtError, ScalaBinaryVersion}
+import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError, ScalaBinaryVersion}
 import pirate._
 import piratex._
+
+import java.io.{BufferedWriter, File, FileWriter}
 
 
 /**
@@ -31,8 +32,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
     if (file.isAbsolute) file else file.getCanonicalFile
 
   override def run(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
-    case Maven2SbtArgs.FileArgs(scalaVersion, propsName, out, overwrite, pomPath) =>
-      val libsName = Libs.LibsName("libs")
+    case Maven2SbtArgs.FileArgs(scalaVersion, propsName, libsName, out, overwrite, pomPath) =>
       val scalaBinaryVersionName = ScalaBinaryVersion.Name("scalaBinaryVersion").some
       for {
         pom <- IO(toCanonicalFile(pomPath))
@@ -61,8 +61,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
           }
       } yield result
 
-    case Maven2SbtArgs.PrintArgs(scalaVersion, propsName, pomPath) =>
-      val libsName = Libs.LibsName("libs")
+    case Maven2SbtArgs.PrintArgs(scalaVersion, propsName, libsName, pomPath) =>
       val scalaBinaryVersionName = ScalaBinaryVersion.Name("scalaBinaryVersion").some
 
       (for {

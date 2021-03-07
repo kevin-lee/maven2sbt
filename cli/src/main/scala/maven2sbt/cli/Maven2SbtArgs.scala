@@ -1,9 +1,7 @@
 package maven2sbt.cli
 
 import java.io.File
-
-import maven2sbt.core.ScalaVersion
-import maven2sbt.core.Props
+import maven2sbt.core.{Libs, Props, ScalaVersion}
 
 /**
  * @author Kevin Lee
@@ -16,6 +14,7 @@ object Maven2SbtArgs {
   final case class FileArgs(
       scalaVersion: ScalaVersion
     , propsName: Props.PropsName
+    , libsName: Libs.LibsName
     , out: File
     , overwrite: Overwrite
     , pomPath: File
@@ -24,6 +23,7 @@ object Maven2SbtArgs {
   final case class PrintArgs(
       scalaVersion: ScalaVersion
     , propsName: Props.PropsName
+    , libsName: Libs.LibsName
     , pomPath: File
     ) extends Maven2SbtArgs
 
@@ -31,16 +31,18 @@ object Maven2SbtArgs {
   def fileArgs(
     scalaVersion: ScalaVersion
   , propsName: Props.PropsName
+  , libsName: Libs.LibsName
   , out: File
   , overwrite: Overwrite
   , pomPath: File
-  ): Maven2SbtArgs = FileArgs(scalaVersion, propsName, out, overwrite, pomPath)
+  ): Maven2SbtArgs = FileArgs(scalaVersion, propsName, libsName, out, overwrite, pomPath)
 
   def printArgs(
     scalaVersion: ScalaVersion
   , propsName: Props.PropsName
+  , libsName: Libs.LibsName
   , pomPath: File
-  ): Maven2SbtArgs = PrintArgs(scalaVersion, propsName, pomPath)
+  ): Maven2SbtArgs = PrintArgs(scalaVersion, propsName, libsName, pomPath)
 
 }
 

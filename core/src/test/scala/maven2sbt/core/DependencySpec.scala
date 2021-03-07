@@ -32,6 +32,7 @@ object DependencySpec extends Properties {
   }
 
   def testRender: Property = for {
+    libsName <- Gens.genLibsName.log("libsName")
     dependency <- Gens.genDependency.log("dependency")
   } yield {
     val propsName = Props.PropsName("props")
@@ -41,22 +42,24 @@ object DependencySpec extends Properties {
       RenderedString.noQuotesRequired(
         s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
       )
-    val actual = Dependency.render(propsName, libs, dependency)
+    val actual = Dependency.render(propsName, libsName, libs, dependency)
     actual ==== expected
   }
 
   def testRenderWithLibs: Property = for {
+    libsName <- Gens.genLibsName.log("libsName")
     dependency <- Gens.genDependency.log("dependency")
   } yield {
     val propsName = Props.PropsName("props")
     val libs = Libs(List((Libs.LibValName("myLib"), dependency)))
     val expected =
-      RenderedString.noQuotesRequired("libs.myLib")
-    val actual = Dependency.render(propsName, libs, dependency)
+      RenderedString.noQuotesRequired(s"${libsName.libsName}.myLib")
+    val actual = Dependency.render(propsName, libsName, libs, dependency)
     actual ==== expected
   }
 
   def testRenderWithLibsWithVersionDiff: Property = for {
+    libsName <- Gens.genLibsName.log("libsName")
     dependency <- Gens.genDependency.log("dependency")
   } yield {
     val propsName = Props.PropsName("props")
@@ -71,11 +74,12 @@ object DependencySpec extends Properties {
       RenderedString.noQuotesRequired(
         s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
       )
-    val actual = Dependency.render(propsName, libs, dependency)
+    val actual = Dependency.render(propsName, libsName, libs, dependency)
     actual ==== expected
   }
 
   def testRenderWithLibsWithScopeDiff: Property = for {
+    libsName <- Gens.genLibsName.log("libsName")
     dependency <- Gens.genDependency.log("dependency")
   } yield {
 
@@ -90,12 +94,12 @@ object DependencySpec extends Properties {
     val libs = Libs(List((Libs.LibValName("myLib"), myLib)))
     val expected = RenderedString.noQuotesRequired(
       if (myLib.scope === Scope.compile || myLib.scope === Scope.default) {
-        s"""libs.myLib${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, myLib.exclusions.diff(exclusions)).toQuotedString}"""
+        s"""${libsName.libsName}.myLib${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, myLib.exclusions.diff(exclusions)).toQuotedString}"""
       } else {
         s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
       }
     )
-    val actual = Dependency.render(propsName, libs, dependency)
+    val actual = Dependency.render(propsName, libsName, libs, dependency)
     (actual ==== expected).log(
       s"""libs: ${libs.show}
          |dependency: ${dependency.show}
@@ -103,6 +107,7 @@ object DependencySpec extends Properties {
   }
 
   def testRenderWithLibsWithExclusionDiff: Property = for {
+    libsName <- Gens.genLibsName.log("libsName")
     dependency <- Gens.genDependency.log("dependency")
     libExclusions <- Gens.genExclusion.list(Range.linear(1, 5)).log("libExclusions")
   } yield {
@@ -121,7 +126,7 @@ object DependencySpec extends Properties {
           s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
         )
 
-    val actual = Dependency.render(propsName, libs, dependency)
+    val actual = Dependency.render(propsName, libsName, libs, dependency)
     (actual ==== expected).log(
       s"""libs: ${libs.show}
          |dependency: ${dependency.show}
@@ -129,6 +134,7 @@ object DependencySpec extends Properties {
   }
 
   def testRenderWithLibsWithExclusionDiffAndEmptyLibExclusions: Property = for {
+    libsName <- Gens.genLibsName.log("libsName")
     dependency <- Gens.genDependencyWithNonEmptyExclusions.log("dependency")
   } yield {
 
@@ -143,10 +149,10 @@ object DependencySpec extends Properties {
     val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
     val expected =
         RenderedString.noQuotesRequired(
-          s"""libs.myLib${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+          s"""${libsName.libsName}.myLib${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
         )
 
-    val actual = Dependency.render(propsName, libs, dependency)
+    val actual = Dependency.render(propsName, libsName, libs, dependency)
     (actual ==== expected).log(
       s"""libs: ${libs.show}
          |dependency: ${dependency.show}
@@ -154,6 +160,7 @@ object DependencySpec extends Properties {
   }
 
   def testRenderWithLibsWithScopeAndExclusionsDiff: Property = for {
+    libsName <- Gens.genLibsName.log("libsName")
     dependency <- Gens.genDependency.log("dependency")
     libExclusions <- Gens.genExclusion.list(Range.linear(1, 5)).log("libExclusions")
   } yield {
@@ -170,7 +177,7 @@ object DependencySpec extends Properties {
     val expected = RenderedString.noQuotesRequired(
       s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
     )
-    val actual = Dependency.render(propsName, libs, dependency)
+    val actual = Dependency.render(propsName, libsName, libs, dependency)
     (actual ==== expected).log(
       s"""libs: ${libs.show}
          |dependency: ${dependency.show}
