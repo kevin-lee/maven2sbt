@@ -45,18 +45,18 @@ object ScopeSpec extends Properties {
   } yield {
     Result.all(
       scopeAndRendered.map { case (scope, expected) =>
-        Scope.renderWithPrefix(prefix, scope) ==== (if (scope === Scope.Default) "" else s"$prefix$expected")
+        Scope.renderNonCompileWithPrefix(prefix, scope) ====
+          (if (scope === Scope.Default || scope === Scope.Compile) "" else s"$prefix$expected")
       }
     )
   }
 
-  def testParseValid: Result = {
+  def testParseValid: Result =
     Result.all(
       mavenScopeAndScope.map { case (mavenScope, scope) =>
           Scope.parse(mavenScope) ==== scope.asRight[String]
       }
     )
-  }
 
   def testParseInvalid: Property = for {
     n <- Gen.int(Range.linear(1, 1000)).log("n")

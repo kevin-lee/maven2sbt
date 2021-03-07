@@ -213,6 +213,19 @@ object Gens {
       Dependency.java(groupId, artifactId, version, scope, exclusions)
     }
 
+  def genDependencyWithNonEmptyExclusions: Gen[Dependency] = for {
+    groupId <- genGroupId
+    artifactId <- genArtifactId
+    version <- genVersion
+    scope <- genScope
+    exclusions <- genExclusion.list(Range.linear(1, 5))
+    scalaLib <- Gen.boolean
+  } yield if (scalaLib) {
+      Dependency.scala(groupId, artifactId, version, scope, exclusions)
+    } else {
+      Dependency.java(groupId, artifactId, version, scope, exclusions)
+    }
+
   def genLibValNameAndDependency: Gen[(Libs.LibValName, Dependency)] =
     for {
       dependency <- genDependency
