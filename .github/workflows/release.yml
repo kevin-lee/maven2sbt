@@ -6,7 +6,7 @@ on:
       - '*'
 
 jobs:
-  build:
+  github-release:
 
     runs-on: ubuntu-latest
     steps:
@@ -15,29 +15,37 @@ jobs:
         with:
           java-version: "11"
 
+      - name: Cache SBT
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.ivy2/cache
+            ~/.cache/coursier
+            ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
+
       - name: sbt GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
         run: |
           echo "Run] sbt GitHub release"
-          echo 'sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts"'
-          sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts"
-          echo 'sbt -J-Xmx2048m "; project cli; ++2.13.3!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"'
-          sbt -J-Xmx2048m "; project cli; ++2.13.3!; clean; universal:packageBin; universal:packageZipTarball; debian:packageBin"
-          echo 'sbt -J-Xmx2048m "; gitHubRelease"'
-          sbt -J-Xmx2048m "; gitHubRelease"
+          echo 'sbt -J-Xmx2048m devOopsGitHubRelease'
+          sbt \
+            -J-Xmx2048m \
+            devOopsGitHubRelease
 
-
-  publish:
-    needs: build
+  github-release-artifacts-and-publish:
+    needs: github-release
 
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         scala:
-          - { version: "2.12.12", binary-version: "2.12", java-version: "11" }
-          - { version: "2.13.3", binary-version: "2.13", java-version: "11" }
+          - { name: "Scala 2", version: "2.12.12", binary-version: "2.12", java-version: "11", cli: "" }
+          - { name: "Scala 2", version: "2.13.3",  binary-version: "2.13", java-version: "11", cli: "cli" }
 
     steps:
       - uses: actions/checkout@v2
@@ -45,33 +53,29 @@ jobs:
         with:
           java-version: ${{ matrix.scala.java-version }}
 
-      - name: Cache Coursier
-        uses: actions/cache@v1
+      - name: Cache SBT
+        uses: actions/cache@v2
         with:
-          path: ~/.cache/coursier
-          key: ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          path: |
+            ~/.ivy2/cache
+            ~/.cache/coursier
+            ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
           restore-keys: |
-            ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-
+            ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
 
-      - name: Cache Ivy
-        uses: actions/cache@v1
-        with:
-          path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
-
-      - name: sbt Publish core
+      - name: "sbt GitHub Release and Publish tag for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
           BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
         run: |
-          echo "Run] sbt publish - core for Scala ${{ matrix.scala.version }}"
-          echo 'sbt -J-Xmx2048m "; project core; ++ ${{ matrix.scala.version }}! -v; clean; publish"'
-          sbt -J-Xmx2048m "; project core; ++ ${{ matrix.scala.version }}! -v; clean; publish"
+          export GITHUB_TAG=${GITHUB_REF#refs/tags/}
+          .github/workflows/sbt-release.sh ${{ matrix.scala.version }} ${{ matrix.scala.cli }}
 
   publish_maven:
-    needs: publish
+    needs: github-release-artifacts-and-publish
 
     runs-on: ubuntu-latest
 
