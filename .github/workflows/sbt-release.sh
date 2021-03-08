@@ -8,7 +8,6 @@ if [ -z "$1" ]
     echo "sbt-build.sh 2.13.4"
     exit 1
 else
-  : ${CURRENT_BRANCH_NAME:?"CURRENT_BRANCH_NAME is missing."}
 
   scala_version=$1
   echo "============================================"
