@@ -40,7 +40,7 @@ else
     sbt \
       -J-Xmx2048m \
       ++${scala_version}! \
-      - v \
+      -v \
       clean \
       test \
       packagedArtifacts \
