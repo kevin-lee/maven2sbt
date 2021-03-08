@@ -13,6 +13,7 @@ import java.io.File
 
 import maven2sbt.core.Maven2Sbt
 import maven2sbt.core.Props
+import maven2sbt.core.ScalaBinaryVersion
 import maven2sbt.core.ScalaVersion
 
 import cats._
@@ -20,6 +21,7 @@ import cats._
 Maven2Sbt[Id].buildSbtFromPomFile(
   ScalaVersion("2.13.3"),
   Props.PropsName("props"),
+  Some(ScalaBinaryVersion.Name("scalaBinaryVersion")), // or None
   new File("/path/to/pom.xml")
 )
 // Id[Either[Maven2SbtError, BuildSbt]]
@@ -29,6 +31,7 @@ Maven2Sbt[Id].buildSbtFromPomFile(
 Maven2Sbt[Id].buildSbtFromInputStream(
   ScalaVersion("2.13.3"),
   Props.PropsName("props"),
+  Some(ScalaBinaryVersion.Name("scalaBinaryVersion")), // or None
   inputStream
 )
 // Id[Either[Maven2SbtError, BuildSbt]]
