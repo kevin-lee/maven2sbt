@@ -77,13 +77,7 @@ def subProject(projectName: String, path: File): Project =
       , resolvers += hedgehogRepo
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
       , libraryDependencies ++= hedgehogLibs ++ Seq(newTypeLib)
-      , scalacOptions := (SemVer.parseUnsafe(scalaVersion.value) match {
-          case SemVer(Major(2), Minor(13), _, _, _) =>
-            scalacOptions.value.distinct.filter(_ != "-Xlint:nullary-override") ++
-              Seq("-Wconf:cat=lint-byname-implicit:s", "-Ymacro-annotations")// ++ Seq("-Xlint:-multiarg-infix")
-          case _ =>
-            scalacOptions.value.distinct
-        })
+      , scalacOptions := scalacOptions.value.distinct
       /* WartRemover and scalacOptions { */
 //      , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
 //      , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
@@ -151,6 +145,7 @@ lazy val cli = subProject("cli", file("cli"))
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
     , executableScriptName := ExecutableScriptName
   )
+  .settings(noPublish)
   .dependsOn(core, ProjectRef(pirateUri, "pirate"))
 
 
