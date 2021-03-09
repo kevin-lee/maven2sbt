@@ -1,0 +1,54 @@
+name: "Doc Site Build Only"
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  build-docusaurus:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        scala:
+          - { version: "2.13.3", binary-version: "2.13", java-version: "11" }
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.scala.java-version }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.4.0'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Cache SBT
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.ivy2/cache
+            ~/.cache/coursier
+            ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
+
+      - name: Cache npm
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Render markdown and build website
+        run: |
+          sbt clean \
+            docusaurGenerateAlgoliaConfigFile \
+            docusaurGenerateGoogleAnalyticsConfigFile \
+            docusaurInstall \
+            docusaurCleanBuild \
+            docusaurBuild
