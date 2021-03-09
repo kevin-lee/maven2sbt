@@ -7,7 +7,7 @@ sidebar_label: 'Get CLI'
 
 ## Standalone CLI App
 
-It requires Java 8 or higher. So JRE should be installed and available to run `maven2sbt-cli`.
+It requires Java 11 or higher. So JRE should be installed and available to run `maven2sbt-cli`.
 
 ### Debian / Ubuntu Linux
 If you use Debian or Unbuntu Linux you can download [maven2sbt-cli_1.2.0_all.deb](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.2.0/maven2sbt-cli_1.2.0_all.deb) and install it.
