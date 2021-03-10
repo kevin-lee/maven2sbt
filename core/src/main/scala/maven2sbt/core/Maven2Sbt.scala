@@ -55,7 +55,7 @@ object Maven2Sbt {
     ): F[Either[Maven2SbtError, BuildSbt]] =
       for {
         pom <- effectOf(pomElem)
-        ProjectInfo(groupId, artifactId, version) <- effectOf(ProjectInfo.from(pom))
+        projectInfo <- effectOf[F](ProjectInfo.from(pom))
         mavenProperties <- effectOf(MavenProperty.from(pom))
         props <- effectOf(mavenProperties.map(Prop.fromMavenProperty))
         libs <- effectOf(Libs.from(pom, scalaBinaryVersionName))
@@ -64,9 +64,9 @@ object Maven2Sbt {
         globalSettings <- pureOf(BuildSbt.GlobalSettings.empty)
         thisBuildSettings <- pureOf(
             BuildSbt.ThisBuildSettings(BuildSbt.Settings(
-                groupId.some
+                projectInfo.groupId.some
               , none[ArtifactId]
-              , version.some
+              , projectInfo.version.some
               , scalaVersion.some
               , List.empty[Repository]
               , List.empty[Dependency]
@@ -75,7 +75,7 @@ object Maven2Sbt {
         projectSettings <- pureOf(
             BuildSbt.ProjectSettings(BuildSbt.Settings(
                 none[GroupId]
-              , artifactId.some
+              , projectInfo.artifactId.some
               , none[Version]
               , none[ScalaVersion]
               , repositories.toList

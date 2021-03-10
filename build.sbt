@@ -7,8 +7,10 @@ val GitHubUsername = "Kevin-Lee"
 val RepoName = "maven2sbt"
 val ExecutableScriptName = RepoName
 
+val DottyVersion = "3.0.0-RC1"
 val ProjectScalaVersion = "2.13.3"
-val CrossScalaVersions = Seq("2.12.12", ProjectScalaVersion)
+//val ProjectScalaVersion = DottyVersion
+val CrossScalaVersions = Seq("2.12.12", "2.13.3", ProjectScalaVersion, DottyVersion).distinct
 
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / version := ProjectVersion
@@ -33,6 +35,14 @@ lazy val noPublish: SettingsDefinition = Seq(
   skip in packagedArtifacts := true,
   skip in publish := true
 )
+
+val removeDottyIncompatible: ModuleID => Boolean =
+  m =>
+    m.name == "wartremover" ||
+      m.name == "ammonite" ||
+      m.name == "kind-projector" ||
+      m.name == "mdoc" ||
+      m.name == "better-monadic-for"
 
 lazy val hedgehogVersion: String = "0.6.5"
 
@@ -60,13 +70,45 @@ def paradisePlugin(
   allLibs: Seq[ModuleID],
   version: SemVer
 ): Seq[ModuleID] = version match {
-  case SemVer(Major(2), Minor(13), _, _, _) =>
+  case SemVer(Major(3), _, _, _, _) | SemVer(Major(2), Minor(13), _, _, _) =>
     allLibs.filterNot { x =>
       s"${x.organization}:${x.name}" == "org.scalamacros:paradise"
     }
   case _ =>
     allLibs
 }
+
+def libraryDependenciesPostProcess(
+  isDotty: Boolean,
+  libraries: Seq[ModuleID]
+): Seq[ModuleID] = (
+  if (isDotty) {
+    libraries
+      .filterNot(removeDottyIncompatible)
+  } else
+    libraries
+  )
+
+lazy val scala3cLanguageOptions = "-language:" + List(
+  "dynamics",
+  "existentials",
+  "higherKinds",
+  "reflectiveCalls",
+  "experimental.macros",
+  "implicitConversions"
+).mkString(",")
+
+def scalacOptionsPostProcess(isDotty: Boolean, options: Seq[String]): Seq[String] =
+  if (isDotty) {
+    Seq(
+      "-source:3.0-migration",
+      scala3cLanguageOptions,
+      "-Ykind-projector",
+      "-siteroot", "./dotty-docs",
+    )
+  } else {
+    options
+  }
 
 def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
@@ -76,8 +118,42 @@ def subProject(projectName: String, path: File): Project =
       , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
       , resolvers += hedgehogRepo
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-      , libraryDependencies ++= hedgehogLibs ++ Seq(newTypeLib)
-      , scalacOptions := scalacOptions.value.distinct
+      , libraryDependencies ++= hedgehogLibs
+      , scalacOptions := scalacOptionsPostProcess(isDotty.value, scalacOptions.value).distinct
+      , Compile / doc / scalacOptions := ((Compile / doc / scalacOptions).value.filterNot(
+        if (isDotty.value) {
+          Set(
+            "-source:3.0-migration",
+            "-scalajs",
+            "-deprecation",
+            "-explain-types",
+            "-explain",
+            "-feature",
+            scala3cLanguageOptions,
+            "-unchecked",
+            "-Xfatal-warnings",
+            "-Ykind-projector",
+            "-from-tasty",
+            "-encoding",
+            "utf8",
+          )
+        } else {
+          Set.empty[String]
+        }
+      ))
+      , unmanagedSourceDirectories in Compile ++= {
+        val sharedSourceDir = baseDirectory.value / "src/main"
+        if (scalaVersion.value.startsWith("3."))
+          Seq(
+            sharedSourceDir / "scala-3.0",
+          )
+        else if (scalaVersion.value.startsWith("2."))
+          Seq(
+            sharedSourceDir / "scala-2.12_2.13",
+          )
+        else
+          Seq.empty
+      }
       /* WartRemover and scalacOptions { */
 //      , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
 //      , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
@@ -107,20 +183,23 @@ lazy val core = subProject("core", file("core"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
       crossScalaVersions := CrossScalaVersions
-    , libraryDependencies ++= crossVersionProps(
-        Seq(
-          "org.scala-lang.modules" %% "scala-xml" % "1.3.0",
+    , libraryDependencies ++= (crossVersionProps(
+        Seq("org.scala-lang.modules" %% "scala-xml" % "1.3.0")
+      , SemVer.parseUnsafe(scalaVersion.value)
+      ) {
+          case (Major(3), _, _) =>
+            Seq(cats, catsEffect)
+          case (Major(2), Minor(11), _) =>
+            Seq(newTypeLib, cats_2_0_0, catsEffect_2_0_0)
+          case _ =>
+            Seq(newTypeLib, cats, catsEffect)
+        }).map(_.withDottyCompat(scalaVersion.value))
+    , libraryDependencies ++= Seq(
           effectieCatsEffect,
           effectieScalazEffect,
         )
-      , SemVer.parseUnsafe(scalaVersion.value)
-      ) {
-          case (Major(2), Minor(11), _) =>
-            Seq(cats_2_0_0, catsEffect_2_0_0)
-          case _ =>
-            Seq(cats, catsEffect)
-        }
     , libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
+    , libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value)
     , wartremoverExcluded += sourceManaged.value
     /* Build Info { */
     , buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
@@ -133,13 +212,15 @@ lazy val core = subProject("core", file("core"))
     /* } publish */
   )
 
-lazy val pirateVersion = "b3a0a3eff3a527dff542133aaf0fd935aa2940fc"
+lazy val pirateVersion = "78d5406f68962bb3077cf5394967c771b64f14cb"
 lazy val pirateUri = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
 
 lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging)
   .settings(
       libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
+    , libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value)
+    , scalaVersion := (ThisBuild / scalaVersion).value
     , maintainer := "Kevin Lee <kevin.code@kevinlee.io>"
     , packageSummary := "Maven2Sbt"
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
@@ -155,6 +236,7 @@ lazy val maven2sbt = (project in file("."))
       name := RepoName
       /* GitHub Release { */
     , libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
+    , libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value)
     , devOopsPackagedArtifacts := List(
         s"core/target/scala-*/${name.value}*.jar"
       , s"cli/target/universal/${name.value}*.zip"

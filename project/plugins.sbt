@@ -15,3 +15,5 @@ addSbtPlugin("io.kevinlee" % "sbt-devoops" % "2.0.0")
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
 
 addSbtPlugin("io.kevinlee" % "sbt-docusaur" % "0.4.0")
+
+addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.5.3")

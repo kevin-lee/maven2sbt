@@ -71,7 +71,7 @@ object RepositorySpec extends Properties {
     repository.name match {
       case Some(repoName) =>
         val propsName = Props.PropsName("testProps")
-        val expected = RenderedString.noQuotesRequired(s""""${repoName.repoName}" at "${repository.url.repoUrl}"""")
+        val expected = RenderedString.noQuotesRequired(s""""${repoName.value}" at "${repository.url.value}"""")
         val actual = Repository.render(propsName, repository)
         actual ==== expected
       case None =>
@@ -85,7 +85,7 @@ object RepositorySpec extends Properties {
     repository.id match {
       case Some(repoId) =>
         val propsName = Props.PropsName("testProps")
-        val expected = RenderedString.noQuotesRequired(s""""${repoId.repoId}" at "${repository.url.repoUrl}"""")
+        val expected = RenderedString.noQuotesRequired(s""""${repoId.value}" at "${repository.url.value}"""")
         val actual = Repository.render(propsName, repository)
         actual ==== expected
       case None =>
@@ -99,7 +99,7 @@ object RepositorySpec extends Properties {
     repository.id match {
       case Some(repoId) =>
         val propsName = Props.PropsName("testProps")
-        val expected = RenderedString.noQuotesRequired(s""""${repoId.repoId}" at "${repository.url.repoUrl}"""")
+        val expected = RenderedString.noQuotesRequired(s""""${repoId.value}" at "${repository.url.value}"""")
         val actual = Repository.render(propsName, repository)
         actual ==== expected
       case None =>
@@ -111,7 +111,7 @@ object RepositorySpec extends Properties {
     repository <- Gens.genRepositoryWithEmptyIdEmptyName.log("repository")
   } yield {
     val propsName = Props.PropsName("testProps")
-    val expected = RenderedString.noQuotesRequired(s""""${repository.url.repoUrl}" at "${repository.url.repoUrl}"""")
+    val expected = RenderedString.noQuotesRequired(s""""${repository.url.value}" at "${repository.url.value}"""")
     val actual = Repository.render(propsName, repository)
     actual ==== expected
   }
@@ -120,7 +120,7 @@ object RepositorySpec extends Properties {
     repository <- Gens.genRepositoryWithNoIdNoName.log("repository")
   } yield {
     val propsName = Props.PropsName("testProps")
-    val expected = RenderedString.noQuotesRequired(s""""${repository.url.repoUrl}" at "${repository.url.repoUrl}"""")
+    val expected = RenderedString.noQuotesRequired(s""""${repository.url.value}" at "${repository.url.value}"""")
     val actual = Repository.render(propsName, repository)
     actual ==== expected
   }
@@ -135,26 +135,26 @@ object RepositorySpec extends Properties {
     (repoId, maybeRepoName) match {
       case (Some(repoId), Some(repoName)) =>
         <repository>
-          <id>{ repoId.repoId }</id>
-          <name>{ repoName.repoName }</name>
-          <url>{ repoUrl.repoUrl }</url>
+          <id>{ repoId.value }</id>
+          <name>{ repoName.value }</name>
+          <url>{ repoUrl.value }</url>
         </repository>
 
       case (Some(repoId), None) =>
         <repository>
-          <id>{ repoId.repoId }</id>
-          <url>{ repoUrl.repoUrl }</url>
+          <id>{ repoId.value }</id>
+          <url>{ repoUrl.value }</url>
         </repository>
 
       case (None, Some(repoName)) =>
         <repository>
-          <name>{ repoName.repoName }</name>
-          <url>{ repoUrl.repoUrl }</url>
+          <name>{ repoName.value }</name>
+          <url>{ repoUrl.value }</url>
         </repository>
 
       case (None, None) =>
         <repository>
-          <url>{ repoUrl.repoUrl }</url>
+          <url>{ repoUrl.value }</url>
         </repository>
     }
 

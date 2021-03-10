@@ -82,7 +82,7 @@ sealed trait StringUtils {
     findPropertyName(name)
       .fold(s""""$name"""")(
         dotSeparated =>
-          s"${propsName.propsName}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(dotSeparated)}"
+          s"${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(dotSeparated)}"
       )
 
   def renderWithProps(propsName: Props.PropsName, value: String): RenderedString = {
@@ -97,7 +97,7 @@ sealed trait StringUtils {
               else
                 acc.replace(
                   each,
-                  s"$${${propsName.propsName}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup.trim)}}"
+                  s"$${${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup.trim)}}"
                 )
           }
         )

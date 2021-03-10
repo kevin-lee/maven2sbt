@@ -21,7 +21,7 @@ object ExclusionSpec extends Properties {
   def testRenderExclusionRule: Property = for {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
-    val expected = s"""ExclusionRule(organization = "${exclusion.groupId.groupId}", name = "${exclusion.artifactId.artifactId}")"""
+    val expected = s"""ExclusionRule(organization = "${exclusion.groupId.value}", name = "${exclusion.artifactId.value}")"""
     val actual = Exclusion.renderExclusionRule(propsName, exclusion).toQuotedString
     actual ==== expected
   }
@@ -35,7 +35,7 @@ object ExclusionSpec extends Properties {
   def testRenderExclusions1: Property = for {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
-    val expected = s""" exclude("${exclusion.groupId.groupId}", "${exclusion.artifactId.artifactId}")"""
+    val expected = s""" exclude("${exclusion.groupId.value}", "${exclusion.artifactId.value}")"""
     val actual = Exclusion.renderExclusions(propsName, List(exclusion)).toQuotedString
     actual ==== expected
   }

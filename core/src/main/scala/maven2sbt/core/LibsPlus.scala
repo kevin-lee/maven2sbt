@@ -2,32 +2,27 @@ package maven2sbt.core
 
 import cats.Show
 import cats.syntax.show._
-import io.estatico.newtype.macros.newtype
 
-import scala.language.implicitConversions
 import scala.xml.Node
+
+import Libs._
 
 /**
  * @author Kevin Lee
- * @since 2021-03-04
+ * @since 2021-03-10
  */
-final case class Libs(dependencies: List[(Libs.LibValName, Dependency)])
-
-object Libs {
-  @newtype case class LibsName(libsName: String)
-  
-  @newtype case class LibValName(libValName: String)
+trait LibsPlus {
 
   implicit val show: Show[Libs] = libs =>
     s"""Libs(dependencies =
        |  ${libs.dependencies.map { case (libValName, dependency) =>
-            s"(libValName = ${libValName.libValName}, ${dependency.show})"
-          }.mkString("  [\n      ","\n      ", "\n    ]")}
+      s"(libValName = ${libValName.value}, ${dependency.show})"
+    }.mkString("  [\n      ","\n      ", "\n    ]")}
        |  )""".stripMargin
 
   def toValName(dependency: Dependency): LibValName =
-    LibValName(StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(dependency.artifactId.artifactId))
-  
+    LibValName(StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(dependency.artifactId.value))
+
   def from(pom: Node, scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]): Libs =
     Libs(
       (for {
@@ -41,10 +36,10 @@ object Libs {
     val indent = StringUtils.indent(indentSize)
     libs.dependencies
       .map(Libs.renderReusable(propsName, _))
-        .map { case (name, libStr) =>
-          s"${indent}val ${name.libValName} = ${libStr.toQuotedString}"
-        }
-      .stringsMkString(s"lazy val ${libsName.libsName} = new {\n", "\n", "\n}")
+      .map { case (name, libStr) =>
+        s"${indent}val ${name.value} = ${libStr.toQuotedString}"
+      }
+      .stringsMkString(s"lazy val ${libsName.value} = new {\n", "\n", "\n}")
 
   }
 

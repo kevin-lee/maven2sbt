@@ -31,7 +31,7 @@ object ProjectInfo {
 
   implicit val show: Show[ProjectInfo] =
     projectInfo =>
-      s"ProjectInfo(groupId: ${projectInfo.groupId.groupId}, " +
-        s"artifactId: ${projectInfo.artifactId.artifactId}, " +
-        s"version: ${projectInfo.version.version})"
+      s"ProjectInfo(groupId: ${projectInfo.groupId.value}, " +
+        s"artifactId: ${projectInfo.artifactId.value}, " +
+        s"version: ${projectInfo.version.value})"
 }

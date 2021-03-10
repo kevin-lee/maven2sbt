@@ -1,10 +1,9 @@
 package maven2sbt
 
+import cats._
 import io.estatico.newtype.macros._
 import io.estatico.newtype.ops._
 import just.fp.Named
-
-import cats._
 
 import scala.language.implicitConversions
 
@@ -14,7 +13,7 @@ import scala.language.implicitConversions
   */
 package object core {
 
-  @newtype case class GroupId(groupId: String)
+  @newtype case class GroupId(value: String)
 
   object GroupId {
 
@@ -34,11 +33,11 @@ package object core {
       Some(groupId.coerce)
 
     def render(propsName: Props.PropsName, groupId: GroupId): RenderedString =
-      StringUtils.renderWithProps(propsName, groupId.groupId)
+      StringUtils.renderWithProps(propsName, groupId.value)
 
   }
 
-  @newtype case class ArtifactId(artifactId: String)
+  @newtype case class ArtifactId(value: String)
 
   object ArtifactId {
 
@@ -58,11 +57,11 @@ package object core {
       Some(artifactId.coerce)
 
     def render(propsName: Props.PropsName, artifactId: ArtifactId): RenderedString =
-      StringUtils.renderWithProps(propsName, artifactId.artifactId)
+      StringUtils.renderWithProps(propsName, artifactId.value)
 
   }
 
-  @newtype case class Version(version: String)
+  @newtype case class Version(value: String)
 
   object Version {
 
@@ -82,11 +81,11 @@ package object core {
       Some(version.coerce)
 
     def render(propsName: Props.PropsName, version: Version): RenderedString =
-      StringUtils.renderWithProps(propsName, version.version)
+      StringUtils.renderWithProps(propsName, version.value)
 
   }
 
-  @newtype case class ScalaVersion(scalaVersion: String)
+  @newtype case class ScalaVersion(value: String)
 
   object ScalaVersion {
 
@@ -103,13 +102,13 @@ package object core {
       Option(scalaVersion.coerce)
 
     def render(propsName: Props.PropsName, scalaVersion: ScalaVersion): RenderedString =
-      StringUtils.renderWithProps(propsName, scalaVersion.scalaVersion)
+      StringUtils.renderWithProps(propsName, scalaVersion.value)
 
   }
 
-  @newtype case class ScalaBinaryVersion(scalaBinaryVersion: String)
+  @newtype case class ScalaBinaryVersion(value: String)
   object ScalaBinaryVersion {
-    @newtype case class Name(name: String)
+    @newtype case class Name(value: String)
   }
 
   implicit final class RenderedStringOps(val s: RenderedString) extends AnyVal {

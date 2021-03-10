@@ -239,7 +239,7 @@ object Gens {
       (
         Libs.LibValName(
           StringUtils
-            .capitalizeAfterIgnoringNonAlphaNumUnderscore(dependency.artifactId.artifactId)
+            .capitalizeAfterIgnoringNonAlphaNumUnderscore(dependency.artifactId.value)
         ),
         dependency
       )
