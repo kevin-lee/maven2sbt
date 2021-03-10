@@ -21,7 +21,7 @@ jobs:
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
           BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
         run: |
-          PROJECT_VERSION="${{ github.event.inputs.scala-version }}"
+          PROJECT_VERSION="${{ github.event.inputs.project-version }}"
           PROJECT_VERSION="${PROJECT_VERSION/v}"
           BINTRAY_SUBJECT=kevinlee
           BINTRAY_REPO=maven
