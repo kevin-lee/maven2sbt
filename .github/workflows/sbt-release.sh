@@ -19,7 +19,7 @@ else
   export SOURCE_DATE_EPOCH=$(date +%s)
   echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
 
-  if [[ -z "${GITHUB_TAG}" ]]
+  if [[ -n "${GITHUB_TAG}" ]]
   then
     if [ "$2" == "cli" ]
     then
@@ -51,9 +51,9 @@ else
         devOopsGitHubReleaseUploadArtifacts
     fi
 
-  echo "============================================"
-  echo "Publish projects: Done"
-  echo "============================================"
+    echo "============================================"
+    echo "Publish projects: Done"
+    echo "============================================"
 
   else
     echo "It is a tag build. GITHUB_TAG=${GITHUB_TAG}"

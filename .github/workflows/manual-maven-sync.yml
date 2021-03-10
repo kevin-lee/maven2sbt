@@ -1,0 +1,34 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      project-version:
+        description: 'Project Version to sync to Maven Central (e.g v1.2.3)'
+        required: true
+
+jobs:
+
+  publish_maven:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Sync core to Maven Central
+        env:
+          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+          BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
+        run: |
+          PROJECT_VERSION="${{ github.event.inputs.scala-version }}"
+          PROJECT_VERSION="${PROJECT_VERSION/v}"
+          BINTRAY_SUBJECT=kevinlee
+          BINTRAY_REPO=maven
+          BINTRAY_PACKAGE=maven2sbt-core
+          echo "BINTRAY_SUBJECT: $BINTRAY_SUBJECT"
+          echo "   BINTRAY_REPO: $BINTRAY_REPO"
+          echo "BINTRAY_PACKAGE: $BINTRAY_PACKAGE"
+          echo "PROJECT_VERSION: $PROJECT_VERSION"
+          echo "Sync to Maven Central..."
+          curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$BINTRAY_PACKAGE/versions/$PROJECT_VERSION"
