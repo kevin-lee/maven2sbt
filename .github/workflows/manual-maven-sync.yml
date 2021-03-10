@@ -1,4 +1,4 @@
-name: Release
+name: "Manual - Maven Sync"
 
 on:
   workflow_dispatch:

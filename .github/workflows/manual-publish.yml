@@ -1,4 +1,4 @@
-name: Release
+name: "Manual - Publish Only"
 
 on:
   workflow_dispatch:
