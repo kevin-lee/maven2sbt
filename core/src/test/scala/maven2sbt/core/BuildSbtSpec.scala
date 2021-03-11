@@ -92,7 +92,7 @@ object BuildSbtSpec extends Properties {
       (repository.id, repository.name) match {
         case (_, Some(repoName)) =>
           val propsName = Props.PropsName("testProps")
-          val expected = s"""resolvers += "${repoName.repoName}" at "${repository.url.repoUrl}"""".some
+          val expected = s"""resolvers += "${repoName.value}" at "${repository.url.value}"""".some
           val actual = BuildSbt.renderListOfFieldValue(
               none[String],
               List(repository),
@@ -122,7 +122,7 @@ object BuildSbtSpec extends Properties {
       (repository.id, repository.name) match {
         case (Some(repoId), Some(Repository.RepoName(""))) =>
           val propsName = Props.PropsName("testProps")
-          val expected = s"""resolvers += "${repoId.repoId}" at "${repository.url.repoUrl}"""".some
+          val expected = s"""resolvers += "${repoId.value}" at "${repository.url.value}"""".some
           val actual = BuildSbt.renderListOfFieldValue(
               none[String],
               List(repository),
@@ -146,7 +146,7 @@ object BuildSbtSpec extends Properties {
       (repository.id, repository.name) match {
         case (Some(repoId), None) =>
           val propsName = Props.PropsName("testProps")
-          val expected = s"""resolvers += "${repoId.repoId}" at "${repository.url.repoUrl}"""".some
+          val expected = s"""resolvers += "${repoId.value}" at "${repository.url.value}"""".some
           val actual = BuildSbt.renderListOfFieldValue(
               none[String],
               List(repository),
@@ -170,7 +170,7 @@ object BuildSbtSpec extends Properties {
       (repository.id, repository.name) match {
         case (Some(Repository.RepoId("")), Some(Repository.RepoName(""))) =>
           val propsName = Props.PropsName("testProps")
-          val expected = s"""resolvers += "${repository.url.repoUrl}" at "${repository.url.repoUrl}"""".some
+          val expected = s"""resolvers += "${repository.url.value}" at "${repository.url.value}"""".some
           val actual = BuildSbt.renderListOfFieldValue(
               none[String],
               List(repository),
@@ -194,7 +194,7 @@ object BuildSbtSpec extends Properties {
       (repository.id, repository.name) match {
         case (None, None) =>
           val propsName = Props.PropsName("testProps")
-          val expected = s"""resolvers += "${repository.url.repoUrl}" at "${repository.url.repoUrl}"""".some
+          val expected = s"""resolvers += "${repository.url.value}" at "${repository.url.value}"""".some
           val actual = BuildSbt.renderListOfFieldValue(
               none[String],
               List(repository),

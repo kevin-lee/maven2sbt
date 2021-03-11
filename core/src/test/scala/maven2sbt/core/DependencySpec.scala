@@ -53,7 +53,7 @@ object DependencySpec extends Properties {
     val propsName = Props.PropsName("props")
     val libs = Libs(List((Libs.LibValName("myLib"), dependency)))
     val expected =
-      RenderedString.noQuotesRequired(s"${libsName.libsName}.myLib")
+      RenderedString.noQuotesRequired(s"${libsName.value}.myLib")
     val actual = Dependency.render(propsName, libsName, libs, dependency)
     actual ==== expected
   }
@@ -66,9 +66,9 @@ object DependencySpec extends Properties {
     val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
     val libs = Libs(List((Libs.LibValName("myLib"), (dependency match {
       case dep@Dependency.Java(_, _, version, _, _) =>
-        dep.copy(version = Version(version.version + "-alpha"))
+        dep.copy(version = Version(version.value + "-alpha"))
       case dep@Dependency.Scala(_, _, version, _, _) =>
-        dep.copy(version = Version(version.version + "-alpha"))
+        dep.copy(version = Version(version.value + "-alpha"))
     }))))
     val expected =
       RenderedString.noQuotesRequired(
@@ -94,7 +94,7 @@ object DependencySpec extends Properties {
     val libs = Libs(List((Libs.LibValName("myLib"), myLib)))
     val expected = RenderedString.noQuotesRequired(
       if (myLib.scope === Scope.compile || myLib.scope === Scope.default) {
-        s"""${libsName.libsName}.myLib${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, myLib.exclusions.diff(exclusions)).toQuotedString}"""
+        s"""${libsName.value}.myLib${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, myLib.exclusions.diff(exclusions)).toQuotedString}"""
       } else {
         s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
       }
@@ -149,7 +149,7 @@ object DependencySpec extends Properties {
     val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
     val expected =
         RenderedString.noQuotesRequired(
-          s"""${libsName.libsName}.myLib${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
+          s"""${libsName.value}.myLib${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""
         )
 
     val actual = Dependency.render(propsName, libsName, libs, dependency)
@@ -195,7 +195,7 @@ object DependencySpec extends Properties {
             case (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) =>
               val mavenScope = Scope.renderToMaven(scope)
               val artifactIdVal = if (dependency.isScalaLib) {
-                s"${artifactId}_$${${scalaBinaryVersionName.name}}"
+                s"${artifactId}_$${${scalaBinaryVersionName.value}}"
               } else {
                 artifactId
               }

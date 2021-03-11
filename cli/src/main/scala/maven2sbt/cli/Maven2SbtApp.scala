@@ -31,7 +31,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
   def toCanonicalFile(file: File): File =
     if (file.isAbsolute) file else file.getCanonicalFile
 
-  override def run(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
+  override def runApp(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
     case Maven2SbtArgs.FileArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, out, overwrite, pomPath) =>
       for {
         pom <- IO(toCanonicalFile(pomPath))

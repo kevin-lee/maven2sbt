@@ -59,11 +59,12 @@ object StringUtilsSpec extends Properties {
 
   def testCapitalizeAfterIgnoringNonAlphaNumUnderscoreMore: Property =
     for {
-      (mavenPropName, propName) <- Gens.genMavenPropertyNameWithPropNamePair
+      mavenPropNameAndPropName <- Gens.genMavenPropertyNameWithPropNamePair
         .log("(mavenPropName, propName)")
     } yield {
+      val (mavenPropName, propName) = mavenPropNameAndPropName
       val actual = StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(
-        mavenPropName.name
+        mavenPropName.value
       )
       val expected = propName.propName
       actual ==== expected
@@ -93,14 +94,14 @@ object StringUtilsSpec extends Properties {
     } yield {
       val input = valuesWithProps
         .foldLeft(List.empty[String]) {
-          case (acc, (prop, value)) => s"$${${prop.name}}$value" :: acc
+          case (acc, (prop, value)) => s"$${${prop.value}}$value" :: acc
         }
         .reverse
         .mkString
       val expected = RenderedString.withProps(
         valueWithExpectedProp
           .foldLeft(List.empty[String]) {
-            case (acc, (prop, value)) => s"$${${propsName.propsName}.${prop.propName}}$value" :: acc
+            case (acc, (prop, value)) => s"$${${propsName.value}.${prop.propName}}$value" :: acc
           }
           .reverse
           .mkString
@@ -110,8 +111,9 @@ object StringUtilsSpec extends Properties {
     }
 
   def testQuoteRenderedString: Property = for {
-    (renderedString, quoted) <- Gens.genRenderedStringWithQuotedString.log("(renderedString, quoted)")
+    renderedStringQuoted <- Gens.genRenderedStringWithQuotedString.log("(renderedString, quoted)")
   } yield {
+    val (renderedString, quoted) = renderedStringQuoted 
     val actual = StringUtils.quoteRenderedString(renderedString)
     actual ==== quoted
   }

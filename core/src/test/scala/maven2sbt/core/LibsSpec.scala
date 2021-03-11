@@ -57,10 +57,10 @@ object LibsSpec extends Properties {
             .toQuotedString}"""
         )
       } yield
-        s"${indent}val ${libValName.libValName} = ${depString.toQuotedString}"
+        s"${indent}val ${libValName.value} = ${depString.toQuotedString}"
 
       val expected =
-        s"""lazy val ${libsName.libsName} = new {
+        s"""lazy val ${libsName.value} = new {
          |${libsString.mkString("\n")}
          |}""".stripMargin
 
@@ -78,7 +78,7 @@ object LibsSpec extends Properties {
           dependencies.map { dependency =>
             val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
             val artifactIdVal = if (dependency.isScalaLib) {
-              s"${artifactId}_$${${scalaBinaryVersionName.name}}"
+              s"${artifactId}_$${${scalaBinaryVersionName.value}}"
             } else {
               artifactId
             }

@@ -1,25 +1,5 @@
 package maven2sbt.core
 
-import io.estatico.newtype.macros.newtype
-
-import scala.language.implicitConversions
-
-/**
- * @author Kevin Lee
- * @since 2020-12-13
- */
-@SuppressWarnings(Array("org.wartremover.warts.ImplicitConversion", "org.wartremover.warts.ImplicitParameter"))
-object Props {
-  @newtype case class PropsName(propsName: String)
-
-  def renderProps(propsNmae: PropsName, indentSize: Int, props: List[Prop]): String = {
-    val indent = StringUtils.indent(indentSize)
-    props.map(Prop.render(propsNmae, _).toQuotedString)
-      .stringsMkString(s"lazy val ${propsNmae.propsName} = new {\n$indent", s"\n$indent", s"\n}")
-  }
-
-}
-
 final case class Prop(name: Prop.PropName, value: Prop.PropValue)
 
 object Prop {
@@ -28,7 +8,7 @@ object Prop {
 
   def fromMavenProperty(mavenProperty: MavenProperty): Prop =
     Prop(
-      PropName(StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenProperty.key.name)),
+      PropName(StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenProperty.key.value)),
       PropValue(mavenProperty.value.value)
     )
 

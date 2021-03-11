@@ -1,21 +1,15 @@
 package maven2sbt.core
 
-import scala.xml.Elem
+import maven2sbt.core.MavenProperty.{Name, Value}
 import StringUtils._
-import io.estatico.newtype.macros.newtype
 
-import scala.language.implicitConversions
+import scala.xml.Elem
 
 /**
-  * @author Kevin Lee
-  * @since 2019-04-21
-  */
-final case class MavenProperty(key: MavenProperty.Name, value: MavenProperty.Value)
-
-object MavenProperty {
-
-  @newtype case class Name(name: String)
-  @newtype case class Value(value: String)
+ * @author Kevin Lee
+ * @since 2021-03-11
+ */
+trait MavenPropertyPlus {
 
   def from(pom: Elem): Seq[MavenProperty] = for {
     properties <- pom \ "properties"

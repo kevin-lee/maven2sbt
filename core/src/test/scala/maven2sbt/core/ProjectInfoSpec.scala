@@ -34,16 +34,16 @@ object ProjectInfoSpec extends Properties {
     version <- Gens.genVersion.log("version")
   } yield {
     val pom = generatePomWithParent(parentGroupId, groupId, artifactId, version)
-    val expected = ProjectInfo(groupId.fold(parentGroupId)(g => if (g.groupId.isBlank) parentGroupId else g), artifactId, version)
+    val expected = ProjectInfo(groupId.fold(parentGroupId)(g => if (g.value.isBlank) parentGroupId else g), artifactId, version)
     val actual = ProjectInfo.from(pom)
     actual ==== expected
   }
 
   def generatePom(groupId: GroupId, artifactId: ArtifactId, version: Version): Elem =
     <project>
-      <groupId>{groupId.groupId}</groupId>
-      <artifactId>{artifactId.artifactId}</artifactId>
-      <version>{version.version}</version>
+      <groupId>{groupId.value}</groupId>
+      <artifactId>{artifactId.value}</artifactId>
+      <version>{version.value}</version>
     </project>
 
   def generatePomWithParent(
@@ -54,11 +54,11 @@ object ProjectInfoSpec extends Properties {
   ): Elem = {
     <project>
       <parent>
-        <groupId>{parentGroupId.groupId}</groupId>
+        <groupId>{parentGroupId.value}</groupId>
       </parent>
-      <groupId>{groupId.fold("")(_.groupId)}</groupId>
-      <artifactId>{artifactId.artifactId}</artifactId>
-      <version>{version.version}</version>
+      <groupId>{groupId.fold("")(_.value)}</groupId>
+      <artifactId>{artifactId.value}</artifactId>
+      <version>{version.value}</version>
     </project>
   }
 
