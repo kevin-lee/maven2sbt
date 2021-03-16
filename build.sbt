@@ -8,9 +8,9 @@ val RepoName = "maven2sbt"
 val ExecutableScriptName = RepoName
 
 val DottyVersion = "3.0.0-RC1"
-val ProjectScalaVersion = "2.13.3"
+val ProjectScalaVersion = "2.13.5"
 //val ProjectScalaVersion = DottyVersion
-val CrossScalaVersions = Seq("2.12.12", "2.13.3", ProjectScalaVersion, DottyVersion).distinct
+val CrossScalaVersions = Seq("2.12.12", "2.13.5", ProjectScalaVersion, DottyVersion).distinct
 
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / version := ProjectVersion
@@ -214,6 +214,7 @@ lazy val core = subProject("core", file("core"))
 
 lazy val pirateVersion = "78d5406f68962bb3077cf5394967c771b64f14cb"
 lazy val pirateUri = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
+lazy val pirate = ProjectRef(pirateUri, "pirate")
 
 lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging)
@@ -227,7 +228,7 @@ lazy val cli = subProject("cli", file("cli"))
     , executableScriptName := ExecutableScriptName
   )
   .settings(noPublish)
-  .dependsOn(core, ProjectRef(pirateUri, "pirate"))
+  .dependsOn(core, pirate)
 
 
 lazy val maven2sbt = (project in file("."))
