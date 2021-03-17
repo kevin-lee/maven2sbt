@@ -227,17 +227,23 @@ lazy val cli = subProject("cli", file("cli"))
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
     , executableScriptName := ExecutableScriptName
     , graalVMNativeImageOptions ++= Seq(
-      "-H:+ReportExceptionStackTraces",
-      "--initialize-at-build-time",
-      s"-H:ReflectionConfigurationFiles=${ (sourceDirectory.value / "graal" / "reflect-config.json").getCanonicalPath }",
-      "--verbose",
-      "--no-fallback",
+        "-H:+ReportExceptionStackTraces",
+        "--initialize-at-build-time",
+        s"-H:ReflectionConfigurationFiles=${ (sourceDirectory.value / "graal" / "reflect-config.json").getCanonicalPath }",
+        "--verbose",
+        "--no-fallback",
 //      "--report-unsupported-elements-at-runtime",
 //      "--allow-incomplete-classpath",
 //      "--initialize-at-build-time=scala.runtime.Statics",
 //      "--initialize-at-build-time=scala.Enumeration.populateNameMap",
 //      "--initialize-at-build-time=scala.Enumeration.getFields$1",
-    )
+      )
+    , graalVMNativeImageCommand := {
+      val theCommand = graalVMNativeImageCommand.value
+      sys.props.get("os.name")
+        .filter(_.toLowerCase.startsWith("windows"))
+        .fold(theCommand)(_ => "native-image.cmd")
+    }
   )
   .settings(noPublish)
   .dependsOn(core, pirate)
