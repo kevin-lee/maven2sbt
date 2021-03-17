@@ -217,7 +217,7 @@ lazy val pirateUri = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirate
 lazy val pirate = ProjectRef(pirateUri, "pirate")
 
 lazy val cli = subProject("cli", file("cli"))
-  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(JavaAppPackaging, GraalVMNativeImagePlugin)
   .settings(
       libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
     , libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value)
@@ -226,6 +226,18 @@ lazy val cli = subProject("cli", file("cli"))
     , packageSummary := "Maven2Sbt"
     , packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt"
     , executableScriptName := ExecutableScriptName
+    , graalVMNativeImageOptions ++= Seq(
+      "-H:+ReportExceptionStackTraces",
+      "--initialize-at-build-time",
+      s"-H:ReflectionConfigurationFiles=${ (sourceDirectory.value / "graal" / "reflect-config.json").getCanonicalPath }",
+      "--verbose",
+      "--no-fallback",
+//      "--report-unsupported-elements-at-runtime",
+//      "--allow-incomplete-classpath",
+//      "--initialize-at-build-time=scala.runtime.Statics",
+//      "--initialize-at-build-time=scala.Enumeration.populateNameMap",
+//      "--initialize-at-build-time=scala.Enumeration.getFields$1",
+    )
   )
   .settings(noPublish)
   .dependsOn(core, pirate)
@@ -235,9 +247,9 @@ lazy val maven2sbt = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin, DocusaurPlugin)
   .settings(
       name := RepoName
-      /* GitHub Release { */
     , libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value))
     , libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value)
+    /* GitHub Release { */
     , devOopsPackagedArtifacts := List(
         s"core/target/scala-*/${name.value}*.jar"
       , s"cli/target/universal/${name.value}*.zip"
