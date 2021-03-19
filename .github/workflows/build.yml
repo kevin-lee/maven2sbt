@@ -12,6 +12,9 @@ on:
 env:
   CLI_SCALA_VERSION: "2.13.5"
   CLI_SCALA_BINARY_VERSION: "2.13"
+  GRAALVM_VERSION: "21.0.0.2"
+  GRAALVM_JAVA_VERSION: "java11"
+  GRAALVM_ARCH: "amd64"
 
 jobs:
 
@@ -101,11 +104,11 @@ jobs:
         uses: DeLaGuardo/setup-graalvm@master
         with:
           # GraalVM version, no pattern syntax available atm
-          graalvm: '21.0.0.2'
+          graalvm: ${{ env.GRAALVM_VERSION }}
           # Java version, optional, defaults to 'java8'. Available options are 'java8' and 'java11'.
-          java: 'java11'
+          java: ${{ env.GRAALVM_JAVA_VERSION }}
           # Architecture flag, optional, defaults to 'amd64'. Available options are 'amd64' and 'aarch64'. Later is available only for linux runners.
-          arch: 'amd64'
+          arch: ${{ env.GRAALVM_ARCH }}
 
       - name: Install native-image component
         run: |
@@ -138,52 +141,51 @@ jobs:
           sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} print --help"
           sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} file --help"
 
-  graalvm_build_windows:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest]
-        gu-binary: [gu.cmd]
-        run-binary: [maven2sbt-cli.cmd]
-    steps:
-      - name: Setup Graalvm
-        id: setup-graalvm
-        uses: DeLaGuardo/setup-graalvm@master
-        with:
-          # GraalVM version, no pattern syntax available atm
-          graalvm: '21.0.0.2'
-          # Java version, optional, defaults to 'java8'. Available options are 'java8' and 'java11'.
-          java: 'java11'
-          # Architecture flag, optional, defaults to 'amd64'. Available options are 'amd64' and 'aarch64'. Later is available only for linux runners.
-          arch: 'amd64'
-
-      - name: Install native-image component
-        run: |
-          ${{ matrix.gu-binary }} install native-image
-
-      - uses: actions/checkout@v2
-      - name: Cache SBT
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.cache/coursier
-            ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-
-
-      - name: "GraalVM Build for Scala ${{ env.CLI_SCALA_VERSION }} - ${{ github.run_number }}"
-        env:
-          CURRENT_BRANCH_NAME: ${{ github.ref }}
-          RUN_ID: ${{ github.run_id }}
-          RUN_NUMBER: ${{ github.run_number }}
-          JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
-        run: |
-          sbt -v '; project cli; graalvm-native-image:packageBin'
-
-          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} --version"
-          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} --help"
-          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} print --help"
-          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} file --help"
-
+#  graalvm_build_windows:
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      matrix:
+#        os: [windows-latest]
+#        gu-binary: [gu.cmd]
+#        run-binary: [maven2sbt-cli.cmd]
+#    steps:
+#      - name: Setup Graalvm
+#        id: setup-graalvm
+#        uses: DeLaGuardo/setup-graalvm@master
+#        with:
+#          # GraalVM version, no pattern syntax available atm
+#          graalvm: ${{ env.GRAALVM_VERSION }}
+#          # Java version, optional, defaults to 'java8'. Available options are 'java8' and 'java11'.
+#          java: ${{ env.GRAALVM_JAVA_VERSION }}
+#          # Architecture flag, optional, defaults to 'amd64'. Available options are 'amd64' and 'aarch64'. Later is available only for linux runners.
+#          arch: ${{ env.GRAALVM_ARCH }}
+#
+#      - name: Install native-image component
+#        run: |
+#          ${{ matrix.gu-binary }} install native-image
+#
+#      - uses: actions/checkout@v2
+#      - name: Cache SBT
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.ivy2/cache
+#            ~/.cache/coursier
+#            ~/.sbt
+#          key: ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+#          restore-keys: |
+#            ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-
+#
+#      - name: "GraalVM Build for Scala ${{ env.CLI_SCALA_VERSION }} - ${{ github.run_number }}"
+#        env:
+#          CURRENT_BRANCH_NAME: ${{ github.ref }}
+#          RUN_ID: ${{ github.run_id }}
+#          RUN_NUMBER: ${{ github.run_number }}
+#          JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+#        run: |
+#          sbt -v '; project cli; graalvm-native-image:packageBin'
+#
+#          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} --version"
+#          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} --help"
+#          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} print --help"
+#          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} file --help"
