@@ -27,15 +27,6 @@ ThisBuild / scmInfo :=
 
 def prefixedProjectName(name: String) = s"$RepoName${if (name.isEmpty) "" else s"-$name"}"
 
-lazy val noPublish: SettingsDefinition = Seq(
-  publish := {},
-  publishLocal := {},
-  publishArtifact := false,
-  skip in sbt.Keys.`package` := true,
-  skip in packagedArtifacts := true,
-  skip in publish := true
-)
-
 val removeDottyIncompatible: ModuleID => Boolean =
   m =>
     m.name == "wartremover" ||
