@@ -252,6 +252,7 @@ lazy val maven2sbt = (project in file("."))
       , s"cli/target/universal/${name.value}*.zip"
       , s"cli/target/universal/${name.value}*.tgz"
       , s"cli/target/${name.value}*.deb"
+      , "cli/target/graalvm-native-image/maven2sbt-cli*"
       )
     /* } GitHub Release */
     /* Website { */
