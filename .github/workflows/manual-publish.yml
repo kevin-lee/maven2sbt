@@ -1,4 +1,4 @@
-name: "Manual - Publish Only"
+name: "[M] Publish Only"
 
 on:
   workflow_dispatch:

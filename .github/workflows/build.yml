@@ -10,8 +10,8 @@ on:
       - main
 
 env:
-  CLI_SCALA_VERSION: "2.13.5"
-  CLI_SCALA_BINARY_VERSION: "2.13"
+  CLI_SCALA_VERSION: "3.0.0-RC1"
+  CLI_SCALA_BINARY_VERSION: "3.0.0-RC1"
   GRAALVM_VERSION: "21.0.0.2"
   GRAALVM_JAVA_VERSION: "java11"
   GRAALVM_ARCH: "amd64"
@@ -132,7 +132,11 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
         run: |
-          ./sbt -J-Xmx2048m "; ++${{ env.CLI_SCALA_VERSION }}! ; project cli; graalvm-native-image:packageBin"
+          ./sbt \
+            -J-Xmx2048m \
+            ++${{ env.CLI_SCALA_VERSION }}! \
+            test \
+            graalvm-native-image:packageBin
 
           ls -lGh cli/target/graalvm-native-image/
 

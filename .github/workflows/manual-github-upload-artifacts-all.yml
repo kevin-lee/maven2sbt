@@ -1,4 +1,4 @@
-name: "Manual GitHub Release - Upload Artifacts"
+name: "[M] GitHub Release: Upload Artifacts"
 
 on:
   workflow_dispatch:

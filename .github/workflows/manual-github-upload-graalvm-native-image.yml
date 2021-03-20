@@ -1,0 +1,85 @@
+name: "[M] GitHub Release: GraalVM Native Image"
+
+on:
+  workflow_dispatch:
+
+env:
+  CLI_SCALA_VERSION: "3.0.0-RC1"
+  CLI_SCALA_BINARY_VERSION: "3.0.0-RC1"
+  GRAALVM_VERSION: "21.0.0.2"
+  GRAALVM_JAVA_VERSION: "java11"
+  GRAALVM_ARCH: "amd64"
+
+jobs:
+
+  github-release-graalvm-native-image:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        gu-binary: [gu]
+        run-binary: [maven2sbt-cli]
+        exclude:
+          - os: ubuntu-latest
+            gu-binary: gu.cmd
+          - os: ubuntu-latest
+            run-binary: maven2sbt-cli.cmd
+          - os: macos-latest
+            gu-binary: gu.cmd
+          - os: macos-latest
+            run-binary: maven2sbt-cli.cmd
+          - os: windows-latest
+            gu-binary: gu
+          - os: windows-latest
+            run-binary: maven2sbt-cli
+    steps:
+      - name: Setup Graalvm
+        id: setup-graalvm
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          # GraalVM version, no pattern syntax available atm
+          graalvm: ${{ env.GRAALVM_VERSION }}
+          # Java version, optional, defaults to 'java8'. Available options are 'java8' and 'java11'.
+          java: ${{ env.GRAALVM_JAVA_VERSION }}
+          # Architecture flag, optional, defaults to 'amd64'. Available options are 'amd64' and 'aarch64'. Later is available only for linux runners.
+          arch: ${{ env.GRAALVM_ARCH }}
+
+      - name: Install native-image component
+        run: |
+          ${{ matrix.gu-binary }} install native-image
+
+      - uses: actions/checkout@v2
+      - name: Cache SBT
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.ivy2/cache
+            ~/.cache/coursier
+            ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-
+
+      - name: "GraalVM Build for Scala ${{ env.CLI_SCALA_VERSION }} - ${{ github.run_number }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+          CURRENT_BRANCH_NAME: ${{ github.ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          ./sbt \
+            -J-Xmx2048m \
+            ++${{ env.CLI_SCALA_VERSION }}! \
+            clean \
+            test \
+            graalvm-native-image:packageBin
+
+          ls -lGh cli/target/graalvm-native-image/
+          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} --help"
+
+          mv cli/target/graalvm-native-image/maven2sbt-cli cli/target/graalvm-native-image/maven2sbt-cli-${{ matrix.os }}
+
+          ./sbt \
+            -J-Xmx2048m \
+            -client \
+            devOopsGitHubReleaseUploadArtifacts
