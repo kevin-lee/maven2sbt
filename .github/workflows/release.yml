@@ -152,7 +152,6 @@ jobs:
 
           ./sbt \
             -J-Xmx2048m \
-            -client \
             devOopsGitHubReleaseUploadArtifacts
 
   publish_maven:
