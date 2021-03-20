@@ -5,9 +5,9 @@ on:
     branches:
       - "**"
 
-  pull_request:
-    branches:
-      - main
+#  pull_request:
+#    branches:
+#      - main
 
 env:
   CLI_SCALA_VERSION: "3.0.0-RC1"
