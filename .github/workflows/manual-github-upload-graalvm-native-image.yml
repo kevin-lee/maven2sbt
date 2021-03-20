@@ -74,6 +74,8 @@ jobs:
             test \
             graalvm-native-image:packageBin
 
+          rm -f */target/scala-*/maven2sbt*.jar
+
           ls -lGh cli/target/graalvm-native-image/
           sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} --help"
 
