@@ -11,6 +11,7 @@ env:
   GRAALVM_VERSION: "21.0.0.2"
   GRAALVM_JAVA_VERSION: "java11"
   GRAALVM_ARCH: "amd64"
+  GRAALVM_BIN_DIR_NAME: "native-image"
 
 jobs:
   github-release:
@@ -143,14 +144,14 @@ jobs:
             ++${{ env.CLI_SCALA_VERSION }}! \
             clean \
             test \
-            graalvm-native-image:packageBin
+            nativeImage
 
           rm -f */target/scala-*/maven2sbt*.jar
 
-          ls -lGh cli/target/graalvm-native-image/
-          sh -c "cli/target/graalvm-native-image/${{ matrix.run-binary }} --help"
+          ls -lGh cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
+          sh -c "cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --help"
 
-          mv cli/target/graalvm-native-image/maven2sbt-cli cli/target/graalvm-native-image/maven2sbt-cli-${{ matrix.os }}
+          mv cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/maven2sbt-cli cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/maven2sbt-cli-${{ matrix.os }}
 
           ./sbt \
             -J-Xmx2048m \
