@@ -8,7 +8,7 @@ app_version=${1:-1.2.0}
 app_package_file="${app_name}-ubuntu-latest"
 download_url="https://github.com/Kevin-Lee/maven2sbt/releases/download/v${app_version}/${app_package_file}"
 
-usr_local_path="/usr/local"
+usr_local_path=${USER}
 opt_location="${usr_local_path}/opt"
 app_location="${opt_location}/${app_name}"
 installed_app_bin_path="${app_location}/${app_executable_name}"
