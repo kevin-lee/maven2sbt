@@ -8,8 +8,8 @@ val RepoName = "maven2sbt"
 val ExecutableScriptName = RepoName
 
 val DottyVersion = "3.0.0-RC1"
-val ProjectScalaVersion = "2.13.5"
-//val ProjectScalaVersion = DottyVersion
+//val ProjectScalaVersion = "2.13.5"
+val ProjectScalaVersion = DottyVersion
 val CrossScalaVersions = Seq("2.12.12", "2.13.5", ProjectScalaVersion, DottyVersion).distinct
 
 ThisBuild / organization := "io.kevinlee"
@@ -228,12 +228,12 @@ lazy val cli = subProject("cli", file("cli"))
 //      "--initialize-at-build-time=scala.Enumeration.populateNameMap",
 //      "--initialize-at-build-time=scala.Enumeration.getFields$1",
       )
-    , nativeImageCommand := {
-      val theCommand = nativeImageCommand.value
-      sys.props.get("os.name")
-        .filter(_.toLowerCase.startsWith("windows"))
-        .fold[Seq[String]](theCommand)(_ => List("native-image.cmd"))
-    }
+//    , nativeImageCommand := {
+//      val theCommand = nativeImageCommand.value
+//      sys.props.get("os.name")
+//        .filter(_.toLowerCase.startsWith("windows"))
+//        .fold[Seq[String]](theCommand)(_ => List("native-image.cmd"))
+//    }
   )
   .settings(noPublish)
   .dependsOn(core, pirate)
@@ -251,7 +251,7 @@ lazy val maven2sbt = (project in file("."))
       , s"cli/target/universal/${name.value}*.zip"
       , s"cli/target/universal/${name.value}*.tgz"
       , s"cli/target/${name.value}*.deb"
-      , "cli/target/graalvm-native-image/maven2sbt-cli*"
+      , "cli/target/graalvm-native-image/maven2sbt-cli-*"
       )
     /* } GitHub Release */
     /* Website { */
