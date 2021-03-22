@@ -84,12 +84,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        run-binary: [maven2sbt-cli, maven2sbt-cli.cmd]
+        run-binary: [maven2sbt-cli, maven2sbt-cli.exe]
         exclude:
           - os: ubuntu-latest
-            run-binary: maven2sbt-cli.cmd
+            run-binary: maven2sbt-cli.exe
           - os: macos-latest
-            run-binary: maven2sbt-cli.cmd
+            run-binary: maven2sbt-cli.exe
           - os: windows-latest
             run-binary: maven2sbt-cli
     steps:
@@ -118,6 +118,7 @@ jobs:
           sbt \
             -J-Xmx2048m \
             ++${{ env.CLI_SCALA_VERSION }}! \
+            clean \
             test \
             nativeImage
 
@@ -163,14 +164,10 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
         run: |
-          echo "$PATH"
-          echo "==============="
-          ls -l "/c/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin"
-          echo "==============="
-
           sbt \
             -J-Xmx2048m \
             ++${{ env.CLI_SCALA_VERSION }}! \
+            clean \
             test \
             nativeImage
 
