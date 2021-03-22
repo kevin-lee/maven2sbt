@@ -163,6 +163,7 @@ jobs:
       - name: "GraalVM Build for Scala ${{ env.CLI_SCALA_VERSION }} - ${{ github.run_number }}"
         shell: bash
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
           CURRENT_BRANCH_NAME: ${{ github.ref }}
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
