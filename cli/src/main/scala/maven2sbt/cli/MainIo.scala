@@ -19,7 +19,7 @@ trait MainIo[A] extends IOApp {
 
   def runApp(args: A): IO[Either[Maven2SbtError, Unit]]
 
-  def prefs: Prefs = DefaultPrefs()
+  def prefs: Prefs = DefaultPrefs().copy(descIndent = 33, width = 100)
 
   def exitWith[X](exitCode: ExitCode): IO[X] =
     IO(sys.exit(exitCode.code))
