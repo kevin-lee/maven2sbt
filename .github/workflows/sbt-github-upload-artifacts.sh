@@ -32,7 +32,6 @@ else
       universal:packageBin \
       devOopsGitHubReleaseUploadArtifacts
 
-      ls -ld cli/target/maven2sbt-cli*
       ls -ld cli/target/universal/maven2sbt-cli*
   else
     sbt \
