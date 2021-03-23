@@ -40,8 +40,7 @@ else
       -v \
       clean \
       test \
-      packagedArtifacts \
-      devOopsGitHubReleaseUploadArtifacts
+      packagedArtifacts
   fi
 
 echo "============================================"

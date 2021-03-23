@@ -44,8 +44,7 @@ else
         clean \
         test \
         packagedArtifacts \
-        publish \
-        devOopsGitHubReleaseUploadArtifacts
+        publish
     fi
 
     echo "============================================"
