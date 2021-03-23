@@ -32,9 +32,7 @@ else
       clean \
       test \
       packagedArtifacts \
-      universal:packageBin \
-      universal:packageZipTarball \
-      debian:packageBin
+      universal:packageBin
 
     ls -ld cli/target/maven2sbt-cli*
     ls -ld cli/target/universal/maven2sbt-cli*

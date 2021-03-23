@@ -247,11 +247,8 @@ lazy val maven2sbt = (project in file("."))
     , libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value)
     /* GitHub Release { */
     , devOopsPackagedArtifacts := List(
-        s"core/target/scala-*/${name.value}*.jar"
-      , s"cli/target/universal/${name.value}*.zip"
-      , s"cli/target/universal/${name.value}*.tgz"
-      , s"cli/target/${name.value}*.deb"
-      , "cli/target/native-image/maven2sbt-cli-*"
+        s"cli/target/universal/${name.value}*.zip",
+        "cli/target/native-image/maven2sbt-cli-*",
       )
     /* } GitHub Release */
     /* Website { */

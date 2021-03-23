@@ -33,8 +33,6 @@ else
         packagedArtifacts \
         publish \
         universal:packageBin \
-        universal:packageZipTarball \
-        debian:packageBin \
         devOopsGitHubReleaseUploadArtifacts
 
         ls -ld cli/target/maven2sbt-cli*
