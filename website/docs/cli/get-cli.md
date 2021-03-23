@@ -9,15 +9,33 @@ sidebar_label: 'Get CLI'
 
 It requires Java 11 or higher. So JRE should be installed and available to run `maven2sbt-cli`.
 
+### macOS (Native)
+
+
+#### Install GraalVM Native Image (Recommended)
+
+Just run the following one in the terminal then it installs maven2sbt GraalVM Native Image which does not require JVM so much faster to run.
+
+:::tip Recommended
+
+```shell
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-macos.sh)"
+```
+:::
+
 ### Debian / Ubuntu Linux
 
 #### Install GraalVM Native Image (Recommended)
 
 Just run the following one in the terminal then it installs maven2sbt GraalVM Native Image which does not require JVM so much faster to run.
 
+:::tip Recommended
+
 ```shell
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-ubuntu.sh)"
 ```
+
+:::
 
 #### Debian Package (JVM)
 
@@ -30,16 +48,6 @@ e.g.)
 ```shell
 $ which maven2sbt
 /usr/bin/maven2sbt
-```
-
-### macOS (Native)
-
-#### Install GraalVM Native Image (Recommended)
-
-Just run the following one in the terminal then it installs maven2sbt GraalVM Native Image which does not require JVM so much faster to run.
-
-```shell
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-macos.sh)"
 ```
 
 ### Linux / macOS (JVM)
@@ -68,7 +76,12 @@ alias maven2sbt='/path/to/maven2sbt-cli-1.2.0/bin/maven2sbt'
 ### Windows
 #### Install GraalVM Native Image (Recommended)
 
-Download [maven2sbt-cli-windows-latest.exe](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.2.0/maven2sbt-cli-windows-latest.exe). Sorry, there's no installation script yet.
+
+Download maven2sbt-cli-windows-latest.exe blow. Sorry, there's no installation script for Windows yet.
+
+:::tip Recommended
+Download: [maven2sbt-cli-windows-latest.exe](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.2.0/maven2sbt-cli-windows-latest.exe)
+:::
 
 #### Java Package (JVM)
 Download and unzip the `maven2sbt-cli-1.2.0.zip` or `maven2sbt-cli-1.2.0.tgz` just like Linux or macOS.
