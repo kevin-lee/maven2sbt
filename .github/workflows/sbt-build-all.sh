@@ -34,7 +34,6 @@ else
       packagedArtifacts \
       universal:packageBin
 
-    ls -ld cli/target/maven2sbt-cli*
     ls -ld cli/target/universal/maven2sbt-cli*
 
     if [ "$2" == "report" ]
