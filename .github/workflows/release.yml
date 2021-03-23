@@ -114,21 +114,21 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
         run: |
-          ./sbt \
+          sbt \
             -J-Xmx2048m \
             ++${{ env.CLI_SCALA_VERSION }}! \
             clean \
             test \
             nativeImage
 
-          rm -f */target/scala-*/maven2sbt*.jar
+          rm -f */target/scala-*/*.jar
 
           ls -lGh cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
           sh -c "cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --help"
 
           mv cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }}-${{ matrix.os }}
 
-          ./sbt \
+          sbt \
             -J-Xmx2048m \
             devOopsGitHubReleaseUploadArtifacts
 

@@ -171,7 +171,7 @@ jobs:
             test \
             nativeImage
 
-          rm -f */target/scala-*/maven2sbt*.jar
+          rm -f */target/scala-*/*.jar
 
           ls -lGh cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
 
