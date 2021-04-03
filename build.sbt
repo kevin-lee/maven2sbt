@@ -18,12 +18,12 @@ ThisBuild / scalaVersion := ProjectScalaVersion
 ThisBuild / developers   := List(
   Developer(GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url(s"https://github.com/$GitHubUsername"))
 )
-ThisBuild / homepage := Some(url(s"https://github.com/$GitHubUsername/$RepoName"))
+ThisBuild / homepage := url(s"https://github.com/$GitHubUsername/$RepoName").some
 ThisBuild / scmInfo :=
-  Some(ScmInfo(
-      url(s"https://github.com/$GitHubUsername/$RepoName")
-    , s"https://github.com/$GitHubUsername/$RepoName.git"
-  ))
+  ScmInfo(
+    url(s"https://github.com/$GitHubUsername/$RepoName"),
+    s"https://github.com/$GitHubUsername/$RepoName.git"
+  ).some
 
 def prefixedProjectName(name: String) = s"$RepoName${if (name.isEmpty) "" else s"-$name"}"
 
@@ -41,9 +41,9 @@ lazy val hedgehogRepo: Resolver =
     "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
 lazy val hedgehogLibs: Seq[ModuleID] = Seq(
-    "qa.hedgehog" %% "hedgehog-core" % hedgehogVersion % Test
-  , "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test
-  , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
+    "qa.hedgehog" %% "hedgehog-core" % hedgehogVersion % Test,
+    "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test,
+    "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test,
   )
 
 lazy val cats: ModuleID = "org.typelevel" %% "cats-core" % "2.4.2"
@@ -86,7 +86,7 @@ lazy val scala3cLanguageOptions = "-language:" + List(
   "higherKinds",
   "reflectiveCalls",
   "experimental.macros",
-  "implicitConversions"
+  "implicitConversions",
 ).mkString(",")
 
 def scalacOptionsPostProcess(isDotty: Boolean, options: Seq[String]): Seq[String] =
@@ -104,14 +104,14 @@ def scalacOptionsPostProcess(isDotty: Boolean, options: Seq[String]): Seq[String
 def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
     .settings(
-        name := prefixedProjectName(projectName)
-      , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full)
-      , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
-      , resolvers += hedgehogRepo
-      , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-      , libraryDependencies ++= hedgehogLibs
-      , scalacOptions := scalacOptionsPostProcess(isDotty.value, scalacOptions.value).distinct
-      , Compile / doc / scalacOptions := ((Compile / doc / scalacOptions).value.filterNot(
+      name := prefixedProjectName(projectName),
+      addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full),
+      addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
+      resolvers += hedgehogRepo,
+      testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
+      libraryDependencies ++= hedgehogLibs,
+      scalacOptions := scalacOptionsPostProcess(isDotty.value, scalacOptions.value).distinct,
+      Compile / doc / scalacOptions := ((Compile / doc / scalacOptions).value.filterNot(
         if (isDotty.value) {
           Set(
             "-source:3.0-migration",
@@ -131,8 +131,8 @@ def subProject(projectName: String, path: File): Project =
         } else {
           Set.empty[String]
         }
-      ))
-      , unmanagedSourceDirectories in Compile ++= {
+      )),
+      unmanagedSourceDirectories in Compile ++= {
         val sharedSourceDir = baseDirectory.value / "src/main"
         if (scalaVersion.value.startsWith("3."))
           Seq(
@@ -144,21 +144,21 @@ def subProject(projectName: String, path: File): Project =
           )
         else
           Seq.empty
-      }
+      },
       /* WartRemover and scalacOptions { */
 //      , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
 //      , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
-      , wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
+      wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
 //            , wartremoverErrors ++= Warts.all
-      , Compile / console / wartremoverErrors := List.empty
-      , Compile / console / wartremoverWarnings := List.empty
-      , Compile / console / scalacOptions :=
+      Compile / console / wartremoverErrors := List.empty,
+      Compile / console / wartremoverWarnings := List.empty,
+      Compile / console / scalacOptions :=
         (console / scalacOptions).value
           .distinct
-          .filterNot(option =>option.contains("wartremover") || option.contains("import"))
-      , Test / console / wartremoverErrors := List.empty
-      , Test / console / wartremoverWarnings := List.empty
-      , Test / console / scalacOptions :=
+          .filterNot(option =>option.contains("wartremover") || option.contains("import")),
+      Test / console / wartremoverErrors := List.empty,
+      Test / console / wartremoverWarnings := List.empty,
+      Test / console / scalacOptions :=
         (console / scalacOptions).value
           .distinct
           .filterNot( option => option.contains("wartremover") || option.contains("import"))
@@ -167,7 +167,9 @@ def subProject(projectName: String, path: File): Project =
       /* } WartRemover and scalacOptions */
     )
     .settings(
-      Seq(addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
+      Seq(
+        addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
+      ),
     )
 
 lazy val core = subProject("core", file("core"))
@@ -203,7 +205,7 @@ lazy val core = subProject("core", file("core"))
     /* } publish */
   )
 
-lazy val pirateVersion = "78d5406f68962bb3077cf5394967c771b64f14cb"
+lazy val pirateVersion = "main"
 lazy val pirateUri = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
 lazy val pirate = ProjectRef(pirateUri, "pirate")
 
@@ -227,13 +229,7 @@ lazy val cli = subProject("cli", file("cli"))
 //      "--initialize-at-build-time=scala.runtime.Statics",
 //      "--initialize-at-build-time=scala.Enumeration.populateNameMap",
 //      "--initialize-at-build-time=scala.Enumeration.getFields$1",
-      )
-//    , nativeImageCommand := {
-//      val theCommand = nativeImageCommand.value
-//      sys.props.get("os.name")
-//        .filter(_.toLowerCase.startsWith("windows"))
-//        .fold[Seq[String]](theCommand)(_ => List("native-image.cmd"))
-//    }
+      ),
   )
   .settings(noPublish)
   .dependsOn(core, pirate)
