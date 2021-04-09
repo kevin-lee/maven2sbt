@@ -10,6 +10,30 @@ import scala.annotation.tailrec
  */
 object TestUtils {
 
+  /**
+   * Find and return range pairs from List[Int]
+   * @example
+   * {{{
+   *   findRange(List(0)))
+   *   // List((0,0))
+   *
+   *   findRange(List(0, 1, 2))
+   *   // List((0,2))
+   *
+   *   findRange(List(0, 2))
+   *   // List((0,0), (2,2))
+   *
+   *   findRange(
+   *     List(
+   *       0, 1, 2,
+   *       4, 5,
+   *       20, 21, 22, 23, 24, 25,
+   *       35
+   *     )
+   *   )
+   *   // List((0,2), (4,5), (20,25), (35,35))
+   * }}}
+   */
   def findRange(ns: List[Int]): List[(Int, Int)] = {
     @tailrec
     def collectRange(ns: List[Int], rangeFound: (Int, Int), acc: List[(Int, Int)]): List[(Int, Int)] =
@@ -22,7 +46,7 @@ object TestUtils {
               else
                 collectRange(xs, x -> x, rangeFound :: acc)
             case Nil =>
-              acc
+              rangeFound :: acc
           }
       }
     ns.headOption.toList.flatMap(start => collectRange(ns.drop(1), start -> start, Nil)).reverse
