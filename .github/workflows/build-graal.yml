@@ -31,7 +31,7 @@ jobs:
             run-binary: maven2sbt-cli
     steps:
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
       - uses: olafurpg/setup-scala@v10
         with:
           java-version: "graalvm-ce-java11@"
@@ -78,7 +78,7 @@ jobs:
       - name: Configure git
         run: "git config --global core.autocrlf false"
         shell: bash
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
       - uses: olafurpg/setup-scala@v10
         with:
           java-version: "graalvm-ce-java11@"

@@ -5,9 +5,10 @@ on:
     branches:
       - "**"
 
-#  pull_request:
-#    branches:
-#      - main
+  pull_request:
+    branches:
+      - main
+
 
 jobs:
 

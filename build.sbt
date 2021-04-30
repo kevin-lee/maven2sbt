@@ -4,7 +4,6 @@ import just.semver.SemVer
 import SemVer.{Major, Minor}
 
 ThisBuild / organization := "io.kevinlee"
-ThisBuild / version := ProjectVersion
 ThisBuild / scalaVersion := props.ProjectScalaVersion
 ThisBuild / developers := List(
   Developer(

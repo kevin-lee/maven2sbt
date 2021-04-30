@@ -5,7 +5,7 @@ set -x
 if [ -z "$1" ]
   then
     echo "Missing parameters. Please enter the [Scala version]."
-    echo "sbt-build.sh 2.13.4"
+    echo "sbt-build.sh 2.13.5"
     exit 1
 else
   : ${CURRENT_BRANCH_NAME:?"CURRENT_BRANCH_NAME is missing."}
@@ -26,6 +26,7 @@ else
 #    sbt -J-Xmx2048m ++${scala_version}! -v coveralls
 #    sbt -J-Xmx2048m ++${scala_version}! -v clean; packagedArtifacts
     sbt \
+      -J-XX:MaxMetaspaceSize=1024m \
       -J-Xmx2048m \
       ++${scala_version}! \
       -v \
@@ -40,6 +41,7 @@ else
     then
       echo "sbt -J-Xmx2048m ++${scala_version}! -v clean coverage test coverageReport coverageAggregate coveralls"
       sbt \
+        -J-XX:MaxMetaspaceSize=1024m \
         -J-Xmx2048m \
         ++${scala_version}! \
         -v \
@@ -53,6 +55,7 @@ else
 
   else
     sbt \
+      -J-XX:MaxMetaspaceSize=1024m \
       -J-Xmx2048m \
       ++${scala_version}! \
       -v \
