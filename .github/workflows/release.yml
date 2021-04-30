@@ -7,8 +7,8 @@ on:
 
 env:
   GH_JAVA_VERSION: "adopt@1.11"
-  CLI_SCALA_VERSION: "3.0.0-RC1"
-  CLI_SCALA_BINARY_VERSION: "3.0.0-RC1"
+  CLI_SCALA_VERSION: "3.0.0-RC3"
+  CLI_SCALA_BINARY_VERSION: "3.0.0-RC3"
   GRAALVM_BIN_DIR_NAME: "native-image"
 
 jobs:
@@ -50,8 +50,8 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.12.12",   binary-version: "2.12",      java-version: "adopt@1.11", cli: "" }
-          - { name: "Scala 2", version: "2.13.3",    binary-version: "2.13",      java-version: "adopt@1.11", cli: "" }
+          - { name: "Scala 2", version: "2.12.13",   binary-version: "2.12",      java-version: "adopt@1.11", cli: "" }
+          - { name: "Scala 2", version: "2.13.5",    binary-version: "2.13",      java-version: "adopt@1.11", cli: "" }
           - { name: "Scala 3", version: "3.0.0-RC1", binary-version: "3.0.0-RC1", java-version: "adopt@1.11", cli: "" }
           - { name: "Scala 3", version: "3.0.0-RC2", binary-version: "3.0.0-RC2", java-version: "adopt@1.11", cli: "" }
           - { name: "Scala 3", version: "3.0.0-RC3", binary-version: "3.0.0-RC3", java-version: "adopt@1.11", cli: "cli" }

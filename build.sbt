@@ -27,7 +27,7 @@ lazy val maven2sbt = (project in file("."))
   .settings(
     name := props.RepoName,
     libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value)),
-    libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     /* GitHub Release { */
     devOopsPackagedArtifacts := List(
       s"cli/target/universal/${name.value}*.zip",
@@ -64,7 +64,7 @@ lazy val core = subProject("core", file("core"))
       libs.effectieScalazEffect,
     ),
     libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value)),
-    libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     wartremoverExcluded += sourceManaged.value,
     /* Build Info { */
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
@@ -80,7 +80,7 @@ lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging, NativeImagePlugin)
   .settings(
     libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value)),
-    libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     scalaVersion := (ThisBuild / scalaVersion).value,
     maintainer := "Kevin Lee <kevin.code@kevinlee.io>",
     packageSummary := "Maven2Sbt",
@@ -128,7 +128,7 @@ lazy val props =
     //val ProjectScalaVersion = "2.13.5"
     val ProjectScalaVersion = DottyVersion
     val CrossScalaVersions  =
-      List("2.12.12", "2.13.5", ProjectScalaVersion, "3.0.0-RC1", "3.0.0-RC2", DottyVersion).distinct
+      List("2.12.13", "2.13.5", ProjectScalaVersion, "3.0.0-RC1", "3.0.0-RC2", DottyVersion).distinct
 
     val hedgehogVersion       = "0.6.6"
     val hedgehogLatestVersion = "0.6.7"
@@ -184,16 +184,15 @@ def paradisePlugin(
 }
 
 def libraryDependenciesPostProcess(
-  isDotty: Boolean,
+  scalaVersion: String,
   libraries: Seq[ModuleID]
 ): Seq[ModuleID] =
-  (
-    if (isDotty) {
-      libraries
-        .filterNot(removeDottyIncompatible)
-    } else
-      libraries
-  )
+  if (scalaVersion.startsWith("3.0")) {
+    libraries
+      .filterNot(removeDottyIncompatible)
+  } else {
+    libraries
+  }
 
 lazy val scala3cLanguageOptions =
   "-language:" + List(
@@ -205,8 +204,8 @@ lazy val scala3cLanguageOptions =
     "implicitConversions",
   ).mkString(",")
 
-def scalacOptionsPostProcess(isDotty: Boolean, options: Seq[String]): Seq[String] =
-  if (isDotty) {
+def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[String] =
+  if (scalaVersion.startsWith("3.0")) {
     Seq(
       "-source:3.0-migration",
       scala3cLanguageOptions,
@@ -226,7 +225,7 @@ def subProject(projectName: String, path: File): Project =
       addCompilerPlugin("com.olegpy"   %% "better-monadic-for" % "0.3.1"),
       testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
       libraryDependencies ++= libs.hedgehogLibs(scalaVersion.value),
-      scalacOptions := scalacOptionsPostProcess(isDotty.value, scalacOptions.value).distinct,
+      scalacOptions := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
       reporterConfig := reporterConfig
         .value
         .withColumnNumbers(true)
@@ -234,7 +233,7 @@ def subProject(projectName: String, path: File): Project =
       Compile / doc / scalacOptions := ((Compile / doc / scalacOptions)
         .value
         .filterNot(
-          if (isDotty.value) {
+          if (scalaVersion.value.startsWith("3.0")) {
             Set(
               "-source:3.0-migration",
               "-scalajs",
