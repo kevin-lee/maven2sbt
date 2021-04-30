@@ -6,6 +6,7 @@ on:
       - '*'
 
 env:
+  GH_JAVA_VERSION: "adopt@1.11"
   CLI_SCALA_VERSION: "3.0.0-RC1"
   CLI_SCALA_BINARY_VERSION: "3.0.0-RC1"
   GRAALVM_BIN_DIR_NAME: "native-image"
@@ -16,9 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
+      - uses: olafurpg/setup-scala@v10
         with:
-          java-version: "11"
+          java-version: ${{ env.GH_JAVA_VERSION }}
 
       - name: Cache SBT
         uses: actions/cache@v2
@@ -49,15 +50,15 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.12.12",   binary-version: "2.12",      java-version: "11", cli: "" }
-          - { name: "Scala 2", version: "2.13.3",    binary-version: "2.13",      java-version: "11", cli: "" }
-          - { name: "Scala 3", version: "3.0.0-RC1", binary-version: "3.0.0-RC1", java-version: "11", cli: "" }
-          - { name: "Scala 3", version: "3.0.0-RC2", binary-version: "3.0.0-RC2", java-version: "11", cli: "" }
-          - { name: "Scala 3", version: "3.0.0-RC3", binary-version: "3.0.0-RC3", java-version: "11", cli: "cli" }
+          - { name: "Scala 2", version: "2.12.12",   binary-version: "2.12",      java-version: "adopt@1.11", cli: "" }
+          - { name: "Scala 2", version: "2.13.3",    binary-version: "2.13",      java-version: "adopt@1.11", cli: "" }
+          - { name: "Scala 3", version: "3.0.0-RC1", binary-version: "3.0.0-RC1", java-version: "adopt@1.11", cli: "" }
+          - { name: "Scala 3", version: "3.0.0-RC2", binary-version: "3.0.0-RC2", java-version: "adopt@1.11", cli: "" }
+          - { name: "Scala 3", version: "3.0.0-RC3", binary-version: "3.0.0-RC3", java-version: "adopt@1.11", cli: "cli" }
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
+      - uses: olafurpg/setup-scala@v10
         with:
           java-version: ${{ matrix.scala.java-version }}
 
