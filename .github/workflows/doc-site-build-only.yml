@@ -1,4 +1,4 @@
-name: "Doc Site Build Only"
+name: "[Doc][A] Build Only"
 
 on:
   push:
