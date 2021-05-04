@@ -25,7 +25,6 @@ lazy val maven2sbt = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin, DocusaurPlugin)
   .settings(
     name := props.RepoName,
-    libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value)),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     /* GitHub Release { */
     devOopsPackagedArtifacts := List(
@@ -62,7 +61,6 @@ lazy val core = subProject("core", file("core"))
       libs.effectieCatsEffect,
       libs.effectieScalazEffect,
     ),
-    libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value)),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     wartremoverExcluded += sourceManaged.value,
     /* Build Info { */
@@ -78,7 +76,6 @@ lazy val pirate = ProjectRef(props.pirateUri, "pirate")
 lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging, NativeImagePlugin)
   .settings(
-    libraryDependencies := paradisePlugin(libraryDependencies.value, SemVer.parseUnsafe(scalaVersion.value)),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     scalaVersion := (ThisBuild / scalaVersion).value,
     maintainer := "Kevin Lee <kevin.code@kevinlee.io>",
@@ -170,18 +167,6 @@ lazy val libs =
     lazy val newTypeLib: ModuleID = "io.estatico" %% "newtype" % "0.4.4"
   }
 
-def paradisePlugin(
-  allLibs: Seq[ModuleID],
-  version: SemVer
-): Seq[ModuleID] = version match {
-  case SemVer(Major(3), _, _, _, _) | SemVer(Major(2), Minor(13), _, _, _) =>
-    allLibs.filterNot { x =>
-      s"${x.organization}:${x.name}" == "org.scalamacros:paradise"
-    }
-  case _                                                                   =>
-    allLibs
-}
-
 def libraryDependenciesPostProcess(
   scalaVersion: String,
   libraries: Seq[ModuleID]
@@ -220,8 +205,6 @@ def subProject(projectName: String, path: File): Project =
   Project(projectName, path)
     .settings(
       name := prefixedProjectName(projectName),
-      addCompilerPlugin("org.typelevel" % "kind-projector"     % "0.11.3" cross CrossVersion.full),
-      addCompilerPlugin("com.olegpy"   %% "better-monadic-for" % "0.3.1"),
       testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
       libraryDependencies ++= libs.hedgehogLibs(scalaVersion.value),
       scalacOptions := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
@@ -288,13 +271,4 @@ def subProject(projectName: String, path: File): Project =
 //      , Test / compile / wartremoverExcluded += sourceManaged.value
       /* } WartRemover and scalacOptions */
       licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
-    )
-    .settings(
-      libraryDependencies ++= (if (scalaVersion.value.startsWith("2.13") || scalaVersion.value.startsWith("3.0")) {
-                                 List.empty[ModuleID]
-                               } else {
-                                 List(
-                                   compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
-                                 )
-                               }),
     )
