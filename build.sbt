@@ -1,7 +1,4 @@
-import kevinlee.sbt.SbtCommon.crossVersionProps
 import SbtProjectInfo._
-import just.semver.SemVer
-import SemVer.{Major, Minor}
 
 ThisBuild / organization := "io.kevinlee"
 ThisBuild / scalaVersion := props.ProjectScalaVersion
@@ -48,21 +45,19 @@ lazy val core = subProject("core", file("core"))
     crossScalaVersions := props.CrossScalaVersions,
     libraryDependencies ++= {
       val scalaV = scalaVersion.value
-      if (scalaV == "3.0.0-RC1")
-        List(libs.cats, libs.catsEffect, libs.scalaXmlLatest)
-      else if (scalaV.startsWith("3.0"))
-        List(libs.catsLatest, libs.catsEffectLatest, libs.scalaXmlLatest)
+      if (scalaV.startsWith("3.0"))
+        List(libs.catsLibs, libs.catsEffectLibs, libs.scalaXmlLatest)
       else if (scalaV.startsWith("2.11"))
         List(libs.newTypeLib, libs.cats_2_0_0, libs.catsEffect_2_0_0, libs.scalaXml)
       else
-        List(libs.newTypeLib, libs.catsLatest, libs.catsEffectLatest, libs.scalaXmlLatest)
+        List(libs.newTypeLib, libs.catsLibs, libs.catsEffectLibs, libs.scalaXmlLatest)
     },
     libraryDependencies ++= Seq(
       libs.effectieCatsEffect,
       libs.effectieScalazEffect,
     ),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
-    wartremoverExcluded += sourceManaged.value,
+    wartremoverExcluded ++= (if (scalaVersion.value.startsWith("3.")) List.empty else List(sourceManaged.value)),
     /* Build Info { */
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoObject := "Maven2SbtBuildInfo",
@@ -116,55 +111,52 @@ val removeDottyIncompatible: ModuleID => Boolean =
 lazy val props =
   new {
 
-    val GitHubUsername       = "Kevin-Lee"
-    val RepoName             = "maven2sbt"
-    val ExecutableScriptName = RepoName
+    final val GitHubUsername       = "Kevin-Lee"
+    final val RepoName             = "maven2sbt"
+    final val ExecutableScriptName = RepoName
 
-    val DottyVersion        = "3.0.0-RC3"
-    //val ProjectScalaVersion = "2.13.5"
-    val ProjectScalaVersion = DottyVersion
-    val CrossScalaVersions  =
-      List("2.12.13", "2.13.5", ProjectScalaVersion, "3.0.0-RC1", "3.0.0-RC2", DottyVersion).distinct
+    final val DottyVersion        = "3.0.0"
+    //final val ProjectScalaVersion = "2.13.5"
+    final val ProjectScalaVersion = DottyVersion
+    final val CrossScalaVersions  = List("2.12.14", "2.13.6", ProjectScalaVersion, DottyVersion).distinct
 
-    val hedgehogVersion       = "0.6.6"
-    val hedgehogLatestVersion = "0.6.7"
+    final val hedgehogVersion = "0.7.0"
 
-    val EffectieVersion = "1.10.0"
+    final val canEqualVersion = "0.1.0"
 
-    lazy val pirateVersion = "main"
-    lazy val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
+    final val EffectieVersion = "1.11.0"
+
+    final val pirateVersion = "main"
+    final val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
+
+    final val scalaXml1 = "1.3.0"
+    final val scalaXml2 = "2.0.0"
 
   }
 
 lazy val libs =
   new {
-    def hedgehogLibs(scalaVersion: String): Seq[ModuleID] = {
-      val hedgehogV =
-        if (scalaVersion == "3.0.0-RC1")
-          props.hedgehogVersion
-        else
-          props.hedgehogLatestVersion
-      List(
-        "qa.hedgehog" %% "hedgehog-core"   % hedgehogV % Test,
-        "qa.hedgehog" %% "hedgehog-runner" % hedgehogV % Test,
-        "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogV % Test,
-      )
-    }
+    lazy val hedgehogLibs: List[ModuleID] = List(
+      "qa.hedgehog" %% "hedgehog-core"   % props.hedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-runner" % props.hedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-sbt"    % props.hedgehogVersion % Test,
+    )
 
-    lazy val scalaXmlLatest = "org.scala-lang.modules" %% "scala-xml" % "2.0.0-RC1"
-    lazy val scalaXml       = "org.scala-lang.modules" %% "scala-xml" % "1.3.0"
+    lazy val canEqual = "io.kevinlee" %% "can-equal" % props.canEqualVersion
 
-    lazy val catsLatest: ModuleID       = "org.typelevel" %% "cats-core"   % "2.6.0"
-    lazy val cats: ModuleID             = "org.typelevel" %% "cats-core"   % "2.5.0"
-    lazy val cats_2_0_0: ModuleID       = "org.typelevel" %% "cats-core"   % "2.0.0"
-    lazy val catsEffectLatest: ModuleID = "org.typelevel" %% "cats-effect" % "2.5.0"
-    lazy val catsEffect: ModuleID       = "org.typelevel" %% "cats-effect" % "2.4.1"
-    lazy val catsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
+    lazy val scalaXmlLatest = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml2
+    lazy val scalaXml       = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml1
 
-    lazy val effectieCatsEffect: ModuleID   = "io.kevinlee" %% "effectie-cats-effect"   % props.EffectieVersion
-    lazy val effectieScalazEffect: ModuleID = "io.kevinlee" %% "effectie-scalaz-effect" % props.EffectieVersion
+    lazy val catsLibs   = "org.typelevel" %% "cats-core" % "2.6.1"
+    lazy val cats_2_0_0 = "org.typelevel" %% "cats-core" % "2.0.0"
 
-    lazy val newTypeLib: ModuleID = "io.estatico" %% "newtype" % "0.4.4"
+    lazy val catsEffectLibs   = "org.typelevel" %% "cats-effect" % "2.5.1"
+    lazy val catsEffect_2_0_0 = "org.typelevel" %% "cats-effect" % "2.0.0"
+
+    lazy val effectieCatsEffect   = "io.kevinlee" %% "effectie-cats-effect"   % props.EffectieVersion
+    lazy val effectieScalazEffect = "io.kevinlee" %% "effectie-scalaz-effect" % props.EffectieVersion
+
+    lazy val newTypeLib = "io.estatico" %% "newtype" % "0.4.4"
   }
 
 def libraryDependenciesPostProcess(
@@ -191,7 +183,7 @@ lazy val scala3cLanguageOptions =
 def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[String] =
   if (scalaVersion.startsWith("3.0")) {
     Seq(
-      "-source:3.0-migration",
+//      "-source:3.0-migration",
       scala3cLanguageOptions,
       "-Ykind-projector",
       "-siteroot",
@@ -206,42 +198,11 @@ def subProject(projectName: String, path: File): Project =
     .settings(
       name := prefixedProjectName(projectName),
       testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
-      libraryDependencies ++= libs.hedgehogLibs(scalaVersion.value),
+      libraryDependencies ++= libs.hedgehogLibs,
       scalacOptions := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
-      reporterConfig := reporterConfig
-        .value
-        .withColumnNumbers(true)
-        .withSourcePathColor(scala.Console.MAGENTA + scala.Console.UNDERLINED),
-      Compile / doc / scalacOptions := ((Compile / doc / scalacOptions)
-        .value
-        .filterNot(
-          if (scalaVersion.value.startsWith("3.0")) {
-            Set(
-              "-source:3.0-migration",
-              "-scalajs",
-              "-deprecation",
-              "-explain-types",
-              "-explain",
-              "-feature",
-              scala3cLanguageOptions,
-              "-unchecked",
-              "-Xfatal-warnings",
-              "-Ykind-projector",
-              "-from-tasty",
-              "-encoding",
-              "utf8",
-            )
-          } else {
-            Set.empty[String]
-          }
-        )),
       Compile / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src/main"
-        if (scalaVersion.value.startsWith("3.0"))
-          Seq(
-            sharedSourceDir / "scala-3.0",
-          )
-        else if (scalaVersion.value.startsWith("2."))
+        if (scalaVersion.value.startsWith("2."))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
           )
