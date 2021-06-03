@@ -6,8 +6,6 @@ import cats.syntax.all._
 
 import scala.xml.Elem
 
-import scala.language.implicitConversions
-
 /**
   * @author Kevin Lee
   * @since 2019-04-21
@@ -24,8 +22,7 @@ object Repository extends RepositoryPlus {
     
     extension (repoId: RepoId) def value: String = repoId
 
-    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    implicit final val show: Show[RepoId] = _.toString
+    given show: Show[RepoId] = _.toString
   }
   
   opaque type RepoName = String
@@ -37,8 +34,7 @@ object Repository extends RepositoryPlus {
 
     extension (repoName: RepoName) def value: String = repoName
 
-    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    implicit final val show: Show[RepoName] = _.toString
+    given show: Show[RepoName] = _.toString
   }
   
   opaque type RepoUrl = String

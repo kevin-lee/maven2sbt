@@ -4,7 +4,6 @@ import cats.Show
 import cats.syntax.all._
 import io.estatico.newtype.macros.newtype
 
-import scala.language.implicitConversions
 
 /**
   * @author Kevin Lee

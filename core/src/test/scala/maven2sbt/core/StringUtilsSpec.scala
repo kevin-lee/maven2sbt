@@ -72,7 +72,7 @@ object StringUtilsSpec extends Properties {
 
   def testRenderWithProps: Property =
     for {
-      propsName <- Gen.string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 10)).log("propsName")
+      propsName <- Gen.string(Gen.choice1(Gen.alphaNum, Gen.constant('_')), Range.linear(1, 10)).log("propsName")
         .map(Props.PropsName.apply)
       names <- Gens.genMavenPropertyNameWithPropNamePair
         .list(Range.linear(1, 5))

@@ -2,7 +2,6 @@ package maven2sbt.core
 
 import io.estatico.newtype.macros.newtype
 
-import scala.language.implicitConversions
 
 /**
   * @author Kevin Lee
