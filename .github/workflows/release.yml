@@ -92,8 +92,7 @@ jobs:
           clean \
           +test \
           +packagedArtifacts \
-          ci-release \
-          devOopsGitHubReleaseUploadArtifacts
+          ci-release
 
 
   packager-gh-release:
