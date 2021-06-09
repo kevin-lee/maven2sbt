@@ -39,9 +39,9 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.
 
 #### Debian Package (JVM)
 
-If you use Debian or Unbuntu Linux you can download [maven2sbt-cli_1.2.0_all.deb](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.2.0/maven2sbt-cli_1.2.0_all.deb) and install it.
+If you use Debian or Unbuntu Linux you can download [maven2sbt-cli_1.4.0_all.deb](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.4.0/maven2sbt-cli_1.4.0_all.deb) and install it.
 ```shell
-$ dpkg -i maven2sbt-cli_1.2.0_all.deb 
+dpkg -i maven2sbt-cli_1.4.0_all.deb 
 ```
 `maven2sbt` should be available.
 e.g.)
@@ -65,11 +65,11 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.sc
 
 #### Or do it manually (not recommended)
   
-Download [maven2sbt-cli-1.2.0.zip](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.2.0/maven2sbt-cli-1.2.0.zip) or [maven2sbt-cli-1.2.0.tgz](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.2.0/maven2sbt-cli-1.2.0.tgz) and unzip it.
+Download [maven2sbt-cli-1.4.0.zip](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.4.0/maven2sbt-cli-1.4.0.zip) or [maven2sbt-cli-1.4.0.tgz](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.4.0/maven2sbt-cli-1.4.0.tgz) and unzip it.
   
 Add an alias for convenience to `~/.zshrc` or `~/.bashrc` or `~/.bash_profile` or the run commands file for your shell. 
 ```shell
-alias maven2sbt='/path/to/maven2sbt-cli-1.2.0/bin/maven2sbt'
+alias maven2sbt='/path/to/maven2sbt-cli-1.4.0/bin/maven2sbt'
 ```
 
 
@@ -80,10 +80,10 @@ alias maven2sbt='/path/to/maven2sbt-cli-1.2.0/bin/maven2sbt'
 Download maven2sbt-cli-windows-latest.exe blow. Sorry, there's no installation script for Windows yet.
 
 :::tip Recommended
-Download: [maven2sbt-cli-windows-latest.exe](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.2.0/maven2sbt-cli-windows-latest.exe)
+Download: [maven2sbt-cli-windows-latest.exe](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.4.0/maven2sbt-cli-windows-latest.exe)
 :::
 
 #### Java Package (JVM)
-Download and unzip the `maven2sbt-cli-1.2.0.zip` or `maven2sbt-cli-1.2.0.tgz` just like Linux or macOS.
+Download and unzip the `maven2sbt-cli-1.4.0.zip` or `maven2sbt-cli-1.4.0.tgz` just like Linux or macOS.
 
-You can run `maven2sbt-cli-1.2.0/bin/maven2sbt.bat` file but it hasn't been tested.
+You can run `maven2sbt-cli-1.4.0/bin/maven2sbt.bat` file but it hasn't been tested.
