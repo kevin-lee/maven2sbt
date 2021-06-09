@@ -4,8 +4,7 @@ import just.fp.Named
 
 import cats.*
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-22
   */
 package object core {
@@ -17,6 +16,7 @@ package object core {
     def apply(groupId: String): GroupId = groupId
 
     given canEqualGroupId: CanEqual[GroupId, GroupId] = CanEqual.derived
+
     given eq: Eq[GroupId] = Eq.fromUniversalEquals[GroupId]
 
     extension (groupId: GroupId) {
@@ -40,7 +40,6 @@ package object core {
       Some(groupId.value)
 
   }
-
 
   opaque type ArtifactId = String
   object ArtifactId {
@@ -149,8 +148,8 @@ package object core {
     def toQuotedString: String = StringUtils.quoteRenderedString(s)
 
     def innerValue: String = s match {
-      case RenderedString.WithProps(s) => s
-      case RenderedString.WithoutProps(s) => s
+      case RenderedString.WithProps(s)        => s
+      case RenderedString.WithoutProps(s)     => s
       case RenderedString.NoQuotesRequired(s) => s
     }
   }
