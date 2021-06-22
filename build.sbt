@@ -46,15 +46,14 @@ lazy val core = subProject("core", file("core"))
     libraryDependencies ++= {
       val scalaV = scalaVersion.value
       if (scalaV.startsWith("3.0"))
-        List(libs.catsLibs, libs.catsEffectLibs, libs.scalaXmlLatest)
+        List(libs.catsLib, libs.scalaXmlLatest)
       else if (scalaV.startsWith("2.11"))
-        List(libs.newTypeLib, libs.cats_2_0_0, libs.catsEffect_2_0_0, libs.scalaXml)
+        List(libs.newTypeLib, libs.cats_2_0_0, libs.scalaXml)
       else
-        List(libs.newTypeLib, libs.catsLibs, libs.catsEffectLibs, libs.scalaXmlLatest)
+        List(libs.newTypeLib, libs.catsLib, libs.scalaXmlLatest)
     },
     libraryDependencies ++= Seq(
       libs.effectieCatsEffect,
-      libs.effectieScalazEffect,
     ),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     wartremoverExcluded ++= (if (scalaVersion.value.startsWith("3.")) List.empty else List(sourceManaged.value)),
@@ -147,10 +146,10 @@ lazy val libs =
     lazy val scalaXmlLatest = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml2
     lazy val scalaXml       = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml1
 
-    lazy val catsLibs   = "org.typelevel" %% "cats-core" % "2.6.1"
+    lazy val catsLib   = "org.typelevel" %% "cats-core" % "2.6.1"
     lazy val cats_2_0_0 = "org.typelevel" %% "cats-core" % "2.0.0"
 
-    lazy val catsEffectLibs   = "org.typelevel" %% "cats-effect" % "2.5.1"
+    lazy val catsEffectLib   = "org.typelevel" %% "cats-effect" % "2.5.1"
     lazy val catsEffect_2_0_0 = "org.typelevel" %% "cats-effect" % "2.0.0"
 
     lazy val effectieCatsEffect   = "io.kevinlee" %% "effectie-cats-effect"   % props.EffectieVersion
