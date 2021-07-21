@@ -10,16 +10,22 @@ final case class MavenProperty(key: MavenProperty.Name, value: MavenProperty.Val
 
 object MavenProperty extends MavenPropertyPlus {
 
-  opaque type Name = String
+  type Name = Name.Name
   object Name {
+    opaque type Name = String
     def apply(name: String): Name = name
+
+    given nameCanEqual: CanEqual[Name, Name] = CanEqual.derived
 
     extension (name: Name) def value: String = name
   }
 
-  opaque type Value = String
+  type Value = Value.Value
   object Value {
+    opaque type Value = String
     def apply(value: String): Value = value
+
+    given valueCanEqual: CanEqual[Value, Value] = CanEqual.derived
 
     extension (value: Value) def value: String = value
 

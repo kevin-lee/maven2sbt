@@ -6,16 +6,23 @@ package maven2sbt.core
 final case class Libs(dependencies: List[(Libs.LibValName, Dependency)])
 
 object Libs extends LibsPlus {
-  opaque type LibsName = String
+
+  type LibsName = LibsName.LibsName
   object LibsName {
+    opaque type LibsName = String
     def apply(libsName: String): LibsName = libsName
+
+    given libsNameCanEqual: CanEqual[LibsName, LibsName] = CanEqual.derived
 
     extension (libsName: LibsName) def value: String = libsName
   }
 
-  opaque type LibValName = String
+  type LibValName = LibValName.LibValName
   object LibValName {
+    opaque type LibValName = String
     def apply(libValName: String): LibValName = libValName
+
+    given libValNameCanEqual: CanEqual[LibValName, LibValName] = CanEqual.derived
 
     extension (libValName: LibValName) def value: String = libValName
   }

@@ -12,21 +12,28 @@ import scala.xml.Elem
 final case class Repository(id: Option[RepoId], name: Option[RepoName], url: RepoUrl)
 
 object Repository extends RepositoryPlus {
-  opaque type RepoId = String
+
+  type RepoId = RepoId.RepoId
   object RepoId {
+    opaque type RepoId = String
     def apply(repoId: String): RepoId = repoId
 
     def unapply(repoId: RepoId): Option[String] =
       repoId.value.some
+
+    given repoIdCanEqual: CanEqual[RepoId, RepoId] = CanEqual.derived
 
     extension (repoId: RepoId) def value: String = repoId
 
     given show: Show[RepoId] = _.toString
   }
 
-  opaque type RepoName = String
+  type RepoName = RepoName.RepoName
   object RepoName {
+    opaque type RepoName = String
     def apply(repoName: String): RepoName = repoName
+
+    given repoNameCanEqual: CanEqual[RepoName, RepoName] = CanEqual.derived
 
     def unapply(repoName: RepoName): Option[String] =
       repoName.value.some
@@ -36,9 +43,12 @@ object Repository extends RepositoryPlus {
     given show: Show[RepoName] = _.toString
   }
 
-  opaque type RepoUrl = String
+  type RepoUrl = RepoUrl.RepoUrl
   object RepoUrl {
+    opaque type RepoUrl = String
     def apply(repoUrl: String): RepoUrl = repoUrl
+
+    given repoUrlCanEqual: CanEqual[RepoUrl, RepoUrl] = CanEqual.derived
 
     extension (repoUrl: RepoUrl) def value: String = repoUrl
   }
