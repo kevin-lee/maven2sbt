@@ -9,9 +9,9 @@ import cats.*
   */
 package object core {
 
-  opaque type GroupId = String
-
+  type GroupId = GroupId.GroupId
   object GroupId {
+    opaque type GroupId = String
 
     def apply(groupId: String): GroupId = groupId
 
@@ -41,9 +41,12 @@ package object core {
 
   }
 
-  opaque type ArtifactId = String
+  type ArtifactId = ArtifactId.ArtifactId
   object ArtifactId {
+    opaque type ArtifactId = String
     def apply(artifactId: String): ArtifactId = artifactId
+
+    given artifactIdCanEqual: CanEqual[ArtifactId, ArtifactId] = CanEqual.derived
 
     extension (artifactId: ArtifactId) {
       def value: String = artifactId
@@ -73,9 +76,12 @@ package object core {
 
   }
 
-  opaque type Version = String
+  type Version = Version.Version
   object Version {
+    opaque type Version = String
     def apply(version: String): Version = version
+
+    given versionCanEqual: CanEqual[Version, Version] = CanEqual.derived
 
     extension (version: Version) {
       def value: String = version
@@ -101,9 +107,12 @@ package object core {
 
   }
 
-  opaque type ScalaVersion = String
+  type ScalaVersion = ScalaVersion.ScalaVersion
   object ScalaVersion {
+    opaque type ScalaVersion = String
     def apply(scalaVersion: String): ScalaVersion = scalaVersion
+
+    given scalaVersionCanEqual: CanEqual[ScalaVersion, ScalaVersion] = CanEqual.derived
 
     extension (scalaVersion: ScalaVersion) {
       def value: String = scalaVersion
@@ -129,15 +138,21 @@ package object core {
 
   }
 
-  opaque type ScalaBinaryVersion = String
+  type ScalaBinaryVersion = ScalaBinaryVersion.ScalaBinaryVersion
   object ScalaBinaryVersion {
+    opaque type ScalaBinaryVersion = String
     def apply(scalaBinaryVersion: String): ScalaBinaryVersion = scalaBinaryVersion
+
+    given scalaBinaryVersionCanEqual: CanEqual[ScalaBinaryVersion, ScalaBinaryVersion] = CanEqual.derived
 
     extension (scalaBinaryVersion: ScalaBinaryVersion) def value: String = scalaBinaryVersion
 
-    opaque type Name = String
+    type Name = Name.Name
     object Name {
+      opaque type Name = String
       def apply(name: String): Name = name
+
+      given nameCanEqual: CanEqual[Name, Name] = CanEqual.derived
 
       extension (name: Name) def value: String = name
 
