@@ -114,7 +114,7 @@ lazy val props =
     final val RepoName             = "maven2sbt"
     final val ExecutableScriptName = RepoName
 
-    final val DottyVersion        = "3.0.0"
+    final val DottyVersion        = "3.0.1"
     //final val ProjectScalaVersion = "2.13.5"
     final val ProjectScalaVersion = DottyVersion
     final val CrossScalaVersions  = List("2.12.14", "2.13.6", ProjectScalaVersion, DottyVersion).distinct
@@ -123,7 +123,7 @@ lazy val props =
 
     final val canEqualVersion = "0.1.0"
 
-    final val EffectieVersion = "1.11.0"
+    final val EffectieVersion = "1.14.0"
 
     final val pirateVersion = "main"
     final val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
