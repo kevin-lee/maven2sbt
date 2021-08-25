@@ -42,6 +42,7 @@ lazy val maven2sbt = (project in file("."))
 lazy val core = subProject("core", file("core"))
   .enablePlugins(BuildInfoPlugin)
   .settings(
+//    resolvers += Resolver.sonatypeRepo("snapshots"),
     crossScalaVersions := props.CrossScalaVersions,
     libraryDependencies ++= {
       val scalaV = scalaVersion.value
@@ -54,7 +55,7 @@ lazy val core = subProject("core", file("core"))
     },
     libraryDependencies ++= Seq(
       libs.effectieCatsEffect,
-    ),
+    ) ++ List(libs.extrasCats),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     wartremoverExcluded ++= (if (scalaVersion.value.startsWith("3.")) List.empty else List(sourceManaged.value)),
     /* Build Info { */
@@ -115,7 +116,7 @@ lazy val props =
     final val ExecutableScriptName = RepoName
 
     final val DottyVersion        = "3.0.1"
-    //final val ProjectScalaVersion = "2.13.5"
+//    final val ProjectScalaVersion = "2.13.5"
     final val ProjectScalaVersion = DottyVersion
     final val CrossScalaVersions  = List("2.12.14", "2.13.6", ProjectScalaVersion, DottyVersion).distinct
 
@@ -130,6 +131,8 @@ lazy val props =
 
     final val scalaXml1 = "1.3.0"
     final val scalaXml2 = "2.0.0"
+
+    final val ExtrasVersion = "0.1.0"
 
   }
 
@@ -156,6 +159,8 @@ lazy val libs =
     lazy val effectieScalazEffect = "io.kevinlee" %% "effectie-scalaz-effect" % props.EffectieVersion
 
     lazy val newTypeLib = "io.estatico" %% "newtype" % "0.4.4"
+
+    lazy val extrasCats = "io.kevinlee" %% "extras-cats" % props.ExtrasVersion
   }
 
 def libraryDependenciesPostProcess(

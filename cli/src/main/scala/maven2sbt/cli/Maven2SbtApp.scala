@@ -1,21 +1,18 @@
 package maven2sbt.cli
 
-import cats.data._
 import cats.effect._
 import cats.syntax.all._
 import effectie.cats.ConsoleEffect
-import effectie.cats.EitherTSupport._
+import extras.cats.syntax.all._
 import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError}
 import pirate._
 import piratex._
 
 import java.io.{BufferedWriter, File, FileWriter}
 
-
-/**
- * @author Kevin Lee
- * @since 2019-12-08
- */
+/** @author Kevin Lee
+  * @since 2019-12-08
+  */
 @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
 object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
@@ -34,9 +31,9 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
   override def runApp(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
     case Maven2SbtArgs.FileArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, out, overwrite, pomPath) =>
       for {
-        pom <- IO(toCanonicalFile(pomPath))
+        pom          <- IO(toCanonicalFile(pomPath))
         buildSbtPath <- IO(toCanonicalFile(out))
-        result <-
+        result       <-
           (buildSbtPath.exists, overwrite) match {
             case (true, Overwrite.DoNotOverwrite) =>
               IO(Maven2SbtError.outputFileAlreadyExist(buildSbtPath).asLeft)
@@ -45,29 +42,36 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
               IO(new BufferedWriter(new FileWriter(buildSbtPath)))
                 .bracket { writer =>
                   (for {
-                    buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, scalaBinaryVersionName, pom))
-                    buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt, propsName, libsName)))
-                    _ <- eitherTRightF(IO(writer.write(buildSbtString)))
-                    _ <- eitherTRightF[Maven2SbtError](
-                        ConsoleEffect[IO].putStrLn(
-                          s"""Success] The sbt config file has been successfully written at
-                             |  ${buildSbtPath.getCanonicalPath}
-                             |""".stripMargin
-                        )
-                      )
+                    buildSbt       <- maven2SbtIo
+                                        .buildSbtFromPomFile(
+                                          scalaVersion,
+                                          propsName,
+                                          scalaBinaryVersionName,
+                                          pom
+                                        )
+                                        .eitherT
+                    buildSbtString <- IO(BuildSbt.render(buildSbt, propsName, libsName)).rightT
+                    _              <- IO(writer.write(buildSbtString)).rightT
+                    _              <- ConsoleEffect[IO]
+                                        .putStrLn(
+                                          s"""Success] The sbt config file has been successfully written at
+                                             |  ${buildSbtPath.getCanonicalPath}
+                                             |""".stripMargin
+                                        )
+                                        .rightTF[IO, Maven2SbtError]
+
                   } yield ()).value
-                } (writer => IO(writer.close()))
+                }(writer => IO(writer.close()))
           }
       } yield result
 
     case Maven2SbtArgs.PrintArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, pomPath) =>
       (for {
-        pom <- eitherTRightF(IO(toCanonicalFile(pomPath)))
-        buildSbt <- EitherT(maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, scalaBinaryVersionName, pom))
-        buildSbtString <- eitherTRightF(IO(BuildSbt.render(buildSbt, propsName, libsName)))
-        _ <- eitherTRightF[Maven2SbtError](
-              ConsoleEffect[IO].putStrLn(buildSbtString)
-            )
+        pom            <- IO(toCanonicalFile(pomPath)).rightT
+        buildSbt       <- maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, scalaBinaryVersionName, pom).eitherT
+        buildSbtString <- IO(BuildSbt.render(buildSbt, propsName, libsName)).rightT
+        _              <- ConsoleEffect[IO].putStrLn(buildSbtString).rightT[Maven2SbtError]
+
       } yield ()).value
   }
 
