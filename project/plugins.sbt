@@ -12,4 +12,4 @@ addSbtPlugin("io.kevinlee" % "sbt-devoops-sbt-extra" % "2.6.0")
 addSbtPlugin("io.kevinlee" % "sbt-devoops-github"    % "2.6.0")
 
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
-addSbtPlugin("io.kevinlee"  % "sbt-docusaur"  % "0.5.0")
+addSbtPlugin("io.kevinlee"  % "sbt-docusaur"  % "0.6.0")
