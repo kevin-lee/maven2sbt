@@ -32,8 +32,6 @@ lazy val maven2sbt = (project in file("."))
     /* Website { */
     docusaurDir := (ThisBuild / baseDirectory).value / "website",
     docusaurBuildDir := docusaurDir.value / "build",
-    gitHubPagesOrgName := props.GitHubUsername,
-    gitHubPagesRepoName := props.RepoName
     /* } Website */
   )
   .settings(noPublish)
