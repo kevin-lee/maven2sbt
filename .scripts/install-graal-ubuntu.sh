@@ -45,8 +45,20 @@ echo ""
 echo "ln -s $installed_app_bin_path $app_bin_path"
 ln -s $installed_app_bin_path $app_bin_path || true
 
+current_shell="$SHELL"
+
+echo ""
+if [[ $current_shell == *zsh ]]; then
+  { echo $PATH | grep -q "${usr_local_bin_path}" ; } || { echo "export PATH=${usr_local_bin_path}"':$PATH' >> ~/.zshrc ; echo "${usr_local_bin_path} is not found in PATH so added to ~/.zshrc" ; }
+elif [[ $current_shell == *bash ]]; then
+  { echo $PATH | grep -q "${usr_local_bin_path}" ; } || { echo "export PATH=${usr_local_bin_path}"':$PATH' >> ~/.bashrc ; echo "${usr_local_bin_path} is not found in PATH so added to ~/.bashrc" ; }
+else
+  { echo $PATH | grep -q "${usr_local_bin_path}" ; } || { echo -e "$usr_local_bin_path is not found in \$PATH\nAdd the following line to PATH.\nexport PATH=$usr_local_bin_path:\$PATH\n" ; }
+fi
+
 echo -e "\nmaven2sbt is ready to use. Try"
 echo -e "\n  ${app_executable_name} --help\n"
-echo -e "\nIf it does not work, add ${usr_local_bin_path} to PATH"
+echo ""
+echo -e "\nIf it does not work, make sure ${usr_local_bin_path} is in PATH"
 echo "e.g.)"
-echo -e "PATH=$usr_local_bin_path:\$PATH\n"
+echo -e "export PATH=$usr_local_bin_path:\$PATH\n"
