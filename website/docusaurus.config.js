@@ -11,7 +11,7 @@ const hasGoogleAnalytics = !isEmptyObject(googleAnalyticsConfig);
 
 const websiteConfig = {
   title: 'maven2sbt',
-  tagline: 'Convert Maven&apos;s <code>pom.xml</code> into <code>build.sbt</code>',
+  tagline: 'Convert Maven&apos;s <code class="front-code">pom.xml</code> into <code class="front-code">build.sbt</code>',
   url: 'https://maven2sbt.kevinly.dev',
   baseUrl: '/',
   favicon: 'img/favicon.png',
@@ -19,9 +19,9 @@ const websiteConfig = {
   projectName: 'maven2sbt', // Usually your repo name.
   themeConfig: {
     prism: {
-      theme: require('prism-react-renderer/themes/nightOwl'),
-      darkTheme: require('prism-react-renderer/themes/nightOwl'),
-      additionalLanguages: ['scala'],
+      theme: require('prism-react-renderer/themes/nightOwlLight'),
+      darkTheme: require('prism-react-renderer/themes/palenight'),
+      additionalLanguages: [ 'java', 'scala'],
     },
     navbar: {
       title: 'maven2sbt',
