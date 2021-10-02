@@ -19,7 +19,7 @@ Just run the following one in the terminal then it installs maven2sbt GraalVM Na
 :::tip Recommended
 
 ```shell
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-macos.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-macos.sh)"
 ```
 :::
 
@@ -32,7 +32,7 @@ Just run the following one in the terminal then it installs maven2sbt GraalVM Na
 :::tip Recommended
 
 ```shell
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-ubuntu.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-ubuntu.sh)"
 ```
 
 :::
@@ -40,13 +40,13 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.
 ### Linux / macOS (JVM)
 #### Use `curl`
 ```shell
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install.sh)" 
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install.sh)" 
 ```
 ***
 
 #### Or use `wget`
 ```shell
-sh -c "$(wget -O- https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install.sh)" 
+bash -c "$(wget -O- https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install.sh)" 
 ```
 ***
 
