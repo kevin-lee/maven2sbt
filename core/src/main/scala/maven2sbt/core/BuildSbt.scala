@@ -99,7 +99,7 @@ object BuildSbt {
   final case class GlobalSettings(globalSettings: Settings) extends AnyVal
   object GlobalSettings {
 
-    def empty: GlobalSettings =
+    lazy val empty: GlobalSettings =
       GlobalSettings(Settings(
           none[GroupId]
         , none[ArtifactId]
