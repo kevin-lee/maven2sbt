@@ -8,8 +8,7 @@ import scala.util.Random
 
 import maven2sbt.core.{Prop => M2sProp}
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-21
   */
 object StringUtilsSpec extends Properties {
@@ -38,13 +37,14 @@ object StringUtilsSpec extends Properties {
   def testCapitalizeAfterIgnoringNonAlphaNumUnderscore1: Property =
     for {
       name <- Gen
-        .string(
-          Gens.genCharByRange(TestUtils.ExpectedLetters),
-          Range.linear(1, 10)
-        )
-        .log("name")
+                .string(
+                  Gens.genCharByRange(TestUtils.ExpectedLetters),
+                  Range.linear(1, 10)
+                )
+                .log("name")
     } yield {
-      val expected = name.headOption
+      val expected = name
+        .headOption
         .map { c =>
           if (c.isUpper || c.isLower || c === '_')
             c.toString
@@ -52,45 +52,52 @@ object StringUtilsSpec extends Properties {
             s"_${c.toString}"
         }
         .getOrElse("") + name.drop(1)
-      val actual =
+      val actual   =
         StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(name)
       actual ==== expected
     }
 
   def testCapitalizeAfterIgnoringNonAlphaNumUnderscoreMore: Property =
     for {
-      mavenPropNameAndPropName <- Gens.genMavenPropertyNameWithPropNamePair
-        .log("(mavenPropName, propName)")
+      mavenPropNameAndPropName <- Gens
+                                    .genMavenPropertyNameWithPropNamePair
+                                    .log("(mavenPropName, propName)")
     } yield {
       val (mavenPropName, propName) = mavenPropNameAndPropName
-      val actual = StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(
+      val actual                    = StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(
         mavenPropName.value
       )
-      val expected = propName.propName
+      val expected                  = propName.propName
       actual ==== expected
     }
 
   def testRenderWithProps: Property =
     for {
-      propsName <- Gen.string(Gen.choice1(Gen.alphaNum, Gen.constant('_')), Range.linear(1, 10)).log("propsName")
-        .map(Props.PropsName.apply)
-      names <- Gens.genMavenPropertyNameWithPropNamePair
-        .list(Range.linear(1, 5))
-        .log("propNames")
-      values <- Gen
-        .string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 10))
-        .list(Range.singleton(names.length))
-        .log("values")
-      nameValuePairs = names.zip(values)
-      (valuesWithProps, valueWithExpectedProp) = Random
-        .shuffle(nameValuePairs)
-        .foldLeft(
-          List.empty[((MavenProperty.Name, String), (M2sProp.PropName, String))]
-        ) {
-          case (acc, ((mavenPropName, propName), value)) =>
-            ((mavenPropName, value), (propName, value)) :: acc
-        }
-        .unzip
+      propsNameHead <- Gen.string(Gen.choice1(Gen.alpha, Gen.constant('_')), Range.singleton(1)).log("propsNameHead")
+      propsName     <- Gen
+                         .string(Gen.choice1(Gen.alphaNum, Gen.constant('_')), Range.linear(1, 10))
+                         .map(name => s"$propsNameHead$name")
+                         .map(Props.PropsName.apply)
+                         .log("propsName")
+      names         <- Gens
+                         .genMavenPropertyNameWithPropNamePair
+                         .list(Range.linear(1, 5))
+                         .log("propNames")
+      values        <- Gen
+                         .string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 10))
+                         .list(Range.singleton(names.length))
+                         .log("values")
+      nameValuePairs                           = names.zip(values)
+      (valuesWithProps, valueWithExpectedProp) =
+        Random
+          .shuffle(nameValuePairs)
+          .foldLeft(
+            List.empty[((MavenProperty.Name, String), (M2sProp.PropName, String))]
+          ) {
+            case (acc, ((mavenPropName, propName), value)) =>
+              ((mavenPropName, value), (propName, value)) :: acc
+          }
+          .unzip
     } yield {
       val input = valuesWithProps
         .foldLeft(List.empty[String]) {
@@ -98,6 +105,7 @@ object StringUtilsSpec extends Properties {
         }
         .reverse
         .mkString
+
       val expected = RenderedString.withProps(
         valueWithExpectedProp
           .foldLeft(List.empty[String]) {
@@ -106,6 +114,7 @@ object StringUtilsSpec extends Properties {
           .reverse
           .mkString
       )
+
       val actual = StringUtils.renderWithProps(propsName, input)
       actual ==== expected
     }
@@ -113,8 +122,8 @@ object StringUtilsSpec extends Properties {
   def testQuoteRenderedString: Property = for {
     renderedStringQuoted <- Gens.genRenderedStringWithQuotedString.log("(renderedString, quoted)")
   } yield {
-    val (renderedString, quoted) = renderedStringQuoted 
-    val actual = StringUtils.quoteRenderedString(renderedString)
+    val (renderedString, quoted) = renderedStringQuoted
+    val actual                   = StringUtils.quoteRenderedString(renderedString)
     actual ==== quoted
   }
 
