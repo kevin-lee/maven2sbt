@@ -65,7 +65,7 @@ lazy val core = subProject("core", file("core"))
     /* } Build Info */
   )
 
-lazy val pirate = ProjectRef(props.pirateUri, "scalaz")
+lazy val pirate = ProjectRef(props.pirateUri, "pirate-scalaz")
 
 lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging, NativeImagePlugin)
@@ -125,7 +125,7 @@ lazy val props =
 
     final val EffectieVersion = "1.14.0"
 
-    final val pirateVersion = "main"
+    final val pirateVersion = "4e8177ec1548780cbf62b0352e58bceb7a99bfd6"
     final val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
 
     final val scalaXml1 = "1.3.0"
