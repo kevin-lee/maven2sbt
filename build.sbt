@@ -17,6 +17,7 @@ ThisBuild / scmInfo :=
     s"https://github.com/${props.GitHubUsername}/${props.RepoName}.git"
   ).some
 ThisBuild / licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
+ThisBuild / useAggressiveScalacOptions := true
 
 lazy val maven2sbt = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin, DocusaurPlugin)
@@ -44,7 +45,7 @@ lazy val core = subProject("core", file("core"))
     crossScalaVersions := props.CrossScalaVersions,
     libraryDependencies ++= {
       val scalaV = scalaVersion.value
-      if (scalaV.startsWith("3.0"))
+      if (scalaV.startsWith("3"))
         List(libs.catsLib, libs.scalaXmlLatest)
       else if (scalaV.startsWith("2.11"))
         List(libs.newTypeLib, libs.cats_2_0_0, libs.scalaXml)
@@ -64,7 +65,7 @@ lazy val core = subProject("core", file("core"))
     /* } Build Info */
   )
 
-lazy val pirate = ProjectRef(props.pirateUri, "pirate")
+lazy val pirate = ProjectRef(props.pirateUri, "scalaz")
 
 lazy val cli = subProject("cli", file("cli"))
   .enablePlugins(JavaAppPackaging, NativeImagePlugin)
@@ -120,7 +121,7 @@ lazy val props =
 
     final val hedgehogVersion = "0.7.0"
 
-    final val canEqualVersion = "0.1.0"
+//    final val canEqualVersion = "0.1.0"
 
     final val EffectieVersion = "1.14.0"
 
@@ -142,7 +143,7 @@ lazy val libs =
       "qa.hedgehog" %% "hedgehog-sbt"    % props.hedgehogVersion % Test,
     )
 
-    lazy val canEqual = "io.kevinlee" %% "can-equal" % props.canEqualVersion
+//    lazy val canEqual = "io.kevinlee" %% "can-equal" % props.canEqualVersion
 
     lazy val scalaXmlLatest = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml2
     lazy val scalaXml       = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml1
