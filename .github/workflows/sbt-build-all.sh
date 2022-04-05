@@ -35,7 +35,7 @@ else
       packagedArtifacts \
       universal:packageBin
 
-    ls -ld cli/target/universal/maven2sbt-cli*
+    ls -ld modules/${PROJECT_NAME}-cli/target/universal/maven2sbt-cli*
 
     if [ "$2" == "report" ]
     then

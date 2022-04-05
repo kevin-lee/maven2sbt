@@ -1,8 +1,8 @@
 import SbtProjectInfo._
 
-ThisBuild / organization := "io.kevinlee"
-ThisBuild / scalaVersion := props.ProjectScalaVersion
-ThisBuild / developers := List(
+ThisBuild / organization               := "io.kevinlee"
+ThisBuild / scalaVersion               := props.ProjectScalaVersion
+ThisBuild / developers                 := List(
   Developer(
     props.GitHubUsername,
     "Kevin Lee",
@@ -10,39 +10,39 @@ ThisBuild / developers := List(
     url(s"https://github.com/${props.GitHubUsername}")
   )
 )
-ThisBuild / homepage := url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}").some
-ThisBuild / scmInfo :=
+ThisBuild / homepage                   := url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}").some
+ThisBuild / scmInfo                    :=
   ScmInfo(
     url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"),
     s"https://github.com/${props.GitHubUsername}/${props.RepoName}.git"
   ).some
-ThisBuild / licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
+ThisBuild / licenses                   := List("MIT" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / useAggressiveScalacOptions := true
 
 lazy val maven2sbt = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin, DocusaurPlugin)
   .settings(
-    name := props.RepoName,
-    libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
+    name                     := props.RepoName,
+    libraryDependencies      := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     /* GitHub Release { */
     devOopsPackagedArtifacts := List(
-      s"cli/target/universal/${name.value}*.zip",
-      "cli/target/native-image/maven2sbt-cli-*",
+      s"modules/${props.RepoName}-cli/target/universal/${name.value}*.zip",
+      s"modules/${props.RepoName}-cli/target/native-image/maven2sbt-cli-*",
     ),
     /* } GitHub Release */
     /* Website { */
-    docusaurDir := (ThisBuild / baseDirectory).value / "website",
-    docusaurBuildDir := docusaurDir.value / "build",
+    docusaurDir              := (ThisBuild / baseDirectory).value / "website",
+    docusaurBuildDir         := docusaurDir.value / "build",
     /* } Website */
   )
   .settings(noPublish)
   .aggregate(core, cli)
 
-lazy val core = subProject("core", file("core"))
+lazy val core = subProject("core")
   .enablePlugins(BuildInfoPlugin)
   .settings(
 //    resolvers += Resolver.sonatypeRepo("snapshots"),
-    crossScalaVersions := props.CrossScalaVersions,
+    crossScalaVersions  := props.CrossScalaVersions,
     libraryDependencies ++= {
       val scalaV = scalaVersion.value
       if (scalaV.startsWith("3"))
@@ -58,23 +58,23 @@ lazy val core = subProject("core", file("core"))
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     wartremoverExcluded ++= (if (scalaVersion.value.startsWith("3.")) List.empty else List(sourceManaged.value)),
     /* Build Info { */
-    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoObject := "Maven2SbtBuildInfo",
-    buildInfoPackage := s"${props.RepoName}.info",
+    buildInfoKeys       := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoObject     := "Maven2SbtBuildInfo",
+    buildInfoPackage    := s"${props.RepoName}.info",
     buildInfoOptions += BuildInfoOption.ToJson,
     /* } Build Info */
   )
 
 lazy val pirate = ProjectRef(props.pirateUri, "pirate-scalaz")
 
-lazy val cli = subProject("cli", file("cli"))
+lazy val cli = subProject("cli")
   .enablePlugins(JavaAppPackaging, NativeImagePlugin)
   .settings(
-    libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
-    scalaVersion := (ThisBuild / scalaVersion).value,
-    maintainer := "Kevin Lee <kevin.code@kevinlee.io>",
-    packageSummary := "Maven2Sbt",
-    packageDescription := "A tool to convert Maven pom.xml into sbt build.sbt",
+    libraryDependencies  := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
+    scalaVersion         := (ThisBuild / scalaVersion).value,
+    maintainer           := "Kevin Lee <kevin.code@kevinlee.io>",
+    packageSummary       := "Maven2Sbt",
+    packageDescription   := "A tool to convert Maven pom.xml into sbt build.sbt",
     executableScriptName := props.ExecutableScriptName,
     //    nativeImageVersion := "21.1.0",
     //    nativeImageJvm := "graalvm-java11",
@@ -148,10 +148,10 @@ lazy val libs =
     lazy val scalaXmlLatest = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml2
     lazy val scalaXml       = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml1
 
-    lazy val catsLib   = "org.typelevel" %% "cats-core" % "2.6.1"
+    lazy val catsLib    = "org.typelevel" %% "cats-core" % "2.6.1"
     lazy val cats_2_0_0 = "org.typelevel" %% "cats-core" % "2.0.0"
 
-    lazy val catsEffectLib   = "org.typelevel" %% "cats-effect" % "2.5.1"
+    lazy val catsEffectLib    = "org.typelevel" %% "cats-effect" % "2.5.1"
     lazy val catsEffect_2_0_0 = "org.typelevel" %% "cats-effect" % "2.0.0"
 
     lazy val effectieCatsEffect   = "io.kevinlee" %% "effectie-cats-effect"   % props.EffectieVersion
@@ -196,13 +196,14 @@ def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[St
     options
   }
 
-def subProject(projectName: String, path: File): Project =
-  Project(projectName, path)
+def subProject(projectName: String): Project = {
+  val prefixedName = prefixedProjectName(projectName)
+  Project(projectName, file(s"modules/$prefixedName"))
     .settings(
-      name := prefixedProjectName(projectName),
+      name                                    := prefixedName,
       testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
       libraryDependencies ++= libs.hedgehogLibs,
-      scalacOptions := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
+      scalacOptions                           := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
       Compile / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src/main"
         if (scalaVersion.value.startsWith("2."))
@@ -213,26 +214,27 @@ def subProject(projectName: String, path: File): Project =
           Seq.empty
       },
       /* WartRemover and scalacOptions { */
-//      , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
-//      , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
+      //      , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
+      //      , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
       wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
-//            , wartremoverErrors ++= Warts.all
-      Compile / console / wartremoverErrors := List.empty,
+      //            , wartremoverErrors ++= Warts.all
+      Compile / console / wartremoverErrors   := List.empty,
       Compile / console / wartremoverWarnings := List.empty,
-      Compile / console / scalacOptions :=
+      Compile / console / scalacOptions       :=
         (console / scalacOptions)
           .value
           .distinct
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
-      Test / console / wartremoverErrors := List.empty,
-      Test / console / wartremoverWarnings := List.empty,
-      Test / console / scalacOptions :=
+      Test / console / wartremoverErrors      := List.empty,
+      Test / console / wartremoverWarnings    := List.empty,
+      Test / console / scalacOptions          :=
         (console / scalacOptions)
           .value
           .distinct
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
-//      , Compile / compile / wartremoverExcluded += sourceManaged.value
-//      , Test / compile / wartremoverExcluded += sourceManaged.value
+      //      , Compile / compile / wartremoverExcluded += sourceManaged.value
+      //      , Test / compile / wartremoverExcluded += sourceManaged.value
       /* } WartRemover and scalacOptions */
-      licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
+      licenses                                := List("MIT" -> url("http://opensource.org/licenses/MIT"))
     )
+}

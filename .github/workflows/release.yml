@@ -13,6 +13,7 @@ env:
   CLI_SCALA_BINARY_VERSION: "3"
   GRAALVM_JAVA_VERSION: "adopt@1.11"
   GRAALVM_BIN_DIR_NAME: "native-image"
+  PROJECT_NAME: "maven2sbt"
 
 jobs:
   gh-release:
@@ -180,12 +181,12 @@ jobs:
             test \
             nativeImage
 
-          rm -f */target/scala-*/*.jar
+          rm -f modules/${{ env.PROJECT_NAME }}-*/target/scala-*/*.jar
 
-          ls -lGh cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
-          sh -c "cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --help"
+          ls -lGh modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
+          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --help"
 
-          mv cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }}-${{ matrix.os }}
+          mv modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }}-${{ matrix.os }}
 
           sbt \
             -J-XX:MaxMetaspaceSize=1024m \
@@ -239,12 +240,12 @@ jobs:
             test \
             nativeImage
 
-          rm -f */target/scala-*/*.jar
+          rm -f modules/${{ env.PROJECT_NAME }}-*/target/scala-*/*.jar
 
-          ls -lGh cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
-          sh -c "cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --help"
+          ls -lGh modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
+          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --help"
 
-          mv cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }}.${{ matrix.run-binary-ext }} cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }}-${{ matrix.os }}.${{ matrix.run-binary-ext }}
+          mv modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }}.${{ matrix.run-binary-ext }} modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }}-${{ matrix.os }}.${{ matrix.run-binary-ext }}
 
           sbt \
             -J-XX:MaxMetaspaceSize=1024m \
