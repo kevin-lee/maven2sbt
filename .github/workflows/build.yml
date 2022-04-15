@@ -23,7 +23,7 @@ jobs:
         scala:
           - { name: "Scala 2", version: "2.12.14", binary-version: "2.12", java-version: "adopt@1.11", report: "" }
           - { name: "Scala 2", version: "2.13.6",  binary-version: "2.13", java-version: "adopt@1.11", report: "report" }
-          - { name: "Scala 3", version: "3.0.0",   binary-version: "3",    java-version: "adopt@1.11", report: "" }
+          - { name: "Scala 3", version: "3.1.2",   binary-version: "3",    java-version: "adopt@1.11", report: "" }
 
     steps:
       - uses: actions/checkout@v2
