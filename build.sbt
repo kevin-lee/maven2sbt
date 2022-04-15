@@ -114,24 +114,24 @@ lazy val props =
     final val RepoName             = "maven2sbt"
     final val ExecutableScriptName = RepoName
 
-    final val DottyVersion        = "3.0.1"
+    final val DottyVersion        = "3.1.2"
 //    final val ProjectScalaVersion = "2.13.5"
     final val ProjectScalaVersion = DottyVersion
     final val CrossScalaVersions  = List("2.12.14", "2.13.6", ProjectScalaVersion, DottyVersion).distinct
 
-    final val hedgehogVersion = "0.7.0"
+    final val hedgehogVersion = "0.8.0"
 
 //    final val canEqualVersion = "0.1.0"
 
-    final val EffectieVersion = "1.14.0"
+    final val EffectieVersion = "1.16.0"
 
     final val pirateVersion = "4e8177ec1548780cbf62b0352e58bceb7a99bfd6"
     final val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
 
     final val scalaXml1 = "1.3.0"
-    final val scalaXml2 = "2.0.0"
+    final val scalaXml2 = "2.1.0"
 
-    final val ExtrasVersion = "0.1.0"
+    final val ExtrasVersion = "0.13.0"
 
   }
 
@@ -148,10 +148,10 @@ lazy val libs =
     lazy val scalaXmlLatest = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml2
     lazy val scalaXml       = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml1
 
-    lazy val catsLib    = "org.typelevel" %% "cats-core" % "2.6.1"
+    lazy val catsLib    = "org.typelevel" %% "cats-core" % "2.7.0"
     lazy val cats_2_0_0 = "org.typelevel" %% "cats-core" % "2.0.0"
 
-    lazy val catsEffectLib    = "org.typelevel" %% "cats-effect" % "2.5.1"
+    lazy val catsEffectLib    = "org.typelevel" %% "cats-effect" % "2.5.4"
     lazy val catsEffect_2_0_0 = "org.typelevel" %% "cats-effect" % "2.0.0"
 
     lazy val effectieCatsEffect   = "io.kevinlee" %% "effectie-cats-effect"   % props.EffectieVersion
@@ -184,7 +184,7 @@ lazy val scala3cLanguageOptions =
   ).mkString(",")
 
 def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[String] =
-  if (scalaVersion.startsWith("3.0")) {
+  if (scalaVersion.startsWith("3.")) {
     Seq(
 //      "-source:3.0-migration",
       scala3cLanguageOptions,
