@@ -25,7 +25,7 @@ object Repository extends RepositoryPlus {
 
     extension (repoId: RepoId) def value: String = repoId
 
-    given show: Show[RepoId] = _.toString
+    given show: Show[RepoId] = _.value
   }
 
   type RepoName = RepoName.RepoName
@@ -40,7 +40,7 @@ object Repository extends RepositoryPlus {
 
     extension (repoName: RepoName) def value: String = repoName
 
-    given show: Show[RepoName] = _.toString
+    given show: Show[RepoName] = _.value
   }
 
   type RepoUrl = RepoUrl.RepoUrl
