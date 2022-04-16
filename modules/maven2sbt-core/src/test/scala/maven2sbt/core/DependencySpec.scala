@@ -184,7 +184,6 @@ object DependencySpec extends Properties {
          |""".stripMargin)
   }
 
-
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   private def generatePom(dependencies: List[Dependency], scalaBinaryVersionName: ScalaBinaryVersion.Name): Elem =
     <project>

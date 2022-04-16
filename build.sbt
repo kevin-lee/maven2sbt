@@ -56,7 +56,7 @@ lazy val core = subProject("core")
       libs.effectieCatsEffect,
     ) ++ List(libs.extrasCats),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
-    wartremoverExcluded ++= (if (scalaVersion.value.startsWith("3.")) List.empty else List(sourceManaged.value)),
+    wartremoverExcluded ++= List(sourceManaged.value),
     /* Build Info { */
     buildInfoKeys       := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoObject     := "Maven2SbtBuildInfo",
@@ -101,7 +101,7 @@ def prefixedProjectName(name: String) =
 
 val removeDottyIncompatible: ModuleID => Boolean =
   m =>
-    m.name == "wartremover" ||
+//    m.name == "wartremover" ||
       m.name == "ammonite" ||
       m.name == "kind-projector" ||
       m.name == "mdoc" ||
@@ -166,7 +166,7 @@ def libraryDependenciesPostProcess(
   scalaVersion: String,
   libraries: Seq[ModuleID]
 ): Seq[ModuleID] =
-  if (scalaVersion.startsWith("3.0")) {
+  if (scalaVersion.startsWith("3.")) {
     libraries
       .filterNot(removeDottyIncompatible)
   } else {
@@ -189,9 +189,9 @@ def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[St
 //      "-source:3.0-migration",
       scala3cLanguageOptions,
       "-Ykind-projector",
-      "-siteroot",
+//      "-siteroot",
       "./dotty-docs",
-    )
+    ) ++ options
   } else {
     options
   }
@@ -216,7 +216,7 @@ def subProject(projectName: String): Project = {
       /* WartRemover and scalacOptions { */
       //      , Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
       //      , Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value)
-      wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
+      wartremoverErrors ++= commonWarts((update / scalaVersion).value),
       //            , wartremoverErrors ++= Warts.all
       Compile / console / wartremoverErrors   := List.empty,
       Compile / console / wartremoverWarnings := List.empty,

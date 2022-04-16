@@ -173,9 +173,11 @@ package object core {
     def stringsMkString: String =
       stringList.mkString
 
+    @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
     def stringsMkString(sep: String): String =
       stringList.mkString(sep)
 
+    @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
     def stringsMkString(start: String, sep: String, end: String): String =
       stringList.mkString(start, sep, end)
   }
