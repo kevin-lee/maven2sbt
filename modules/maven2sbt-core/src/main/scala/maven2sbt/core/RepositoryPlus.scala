@@ -7,10 +7,9 @@ import maven2sbt.core.Repository.{RepoId, RepoName, RepoUrl}
 
 import scala.xml.Elem
 
-/**
- * @author Kevin Lee
- * @since 2021-03-11
- */
+/** @author Kevin Lee
+  * @since 2021-03-11
+  */
 trait RepositoryPlus {
 
   implicit val namedRepository: Named[Repository] = Named.named("resolvers")
@@ -20,27 +19,27 @@ trait RepositoryPlus {
 
   def from(pom: Elem): Seq[Repository] = for {
     repositories <- pom \ "repositories"
-    repository <- repositories.child
-    url = (repository \ "url").text
+    repository   <- repositories.child
+    url      = (repository \ "url").text
     if url.nonEmpty
-    idSeq = (repository \ "id")
-    repoId =
-    if (idSeq.isEmpty)
-      none[RepoId]
-    else
-      Option(idSeq.text)
-        .map(id => RepoId(id.trim))
-    nameSeq = (repository \ "name")
+    idSeq    = (repository \ "id")
+    repoId   =
+      if (idSeq.isEmpty)
+        none[RepoId]
+      else
+        Option(idSeq.text)
+          .map(id => RepoId(id.trim))
+    nameSeq  = (repository \ "name")
     repoName =
-    if (nameSeq.isEmpty)
-      none[RepoName]
-    else
-      Option(nameSeq.text)
-        .map(name => RepoName(name.trim))
+      if (nameSeq.isEmpty)
+        none[RepoName]
+      else
+        Option(nameSeq.text)
+          .map(name => RepoName(name.trim))
   } yield Repository(repoId, repoName, RepoUrl(url))
 
   def render(propsName: Props.PropsName, repository: Repository): RenderedString = {
-    val repoUrlStr = StringUtils.renderWithProps(propsName, repository.url.value)
+    val repoUrlStr  = StringUtils.renderWithProps(propsName, repository.url.value)
     val repoNameStr = (repository.id.filter(_.value.nonEmpty), repository.name.filter(_.value.nonEmpty)) match {
       case (_, Some(repoName)) =>
         repoName.value

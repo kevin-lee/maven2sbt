@@ -6,10 +6,9 @@ import maven2sbt.core.Maven2SbtError
 import pirate.{ExitCode => PirateExitCode, _}
 import scalaz._
 
-/**
- * @author Kevin Lee
- * @since 2019-12-09
- */
+/** @author Kevin Lee
+  * @since 2019-12-09
+  */
 @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
 trait MainIo[A] extends IOApp {
 
@@ -30,15 +29,15 @@ trait MainIo[A] extends IOApp {
   def getArgs(args: List[String], command: Command[A], prefs: Prefs): IO[PirateExitCode \/ A] =
     IO(Runners.runWithExit[A](args, command, prefs).unsafePerformIO())
 
-
   override def run(args: List[String]): IO[ExitCode] = for {
-    codeOrA <- getArgs(args, command, prefs)
+    codeOrA       <- getArgs(args, command, prefs)
     errorOrResult <- codeOrA.fold[IO[Either[Maven2SbtError, Unit]]](exitWithPirate, runApp)
-    exitCode <- errorOrResult.fold(
-      err => ConsoleEffect[IO].putErrStrLn(Maven2SbtError.render(err)) *>
-        exitWith(ExitCode.Error)
-      , _ => IO(ExitCode.Success)
-    )
+    exitCode      <- errorOrResult.fold(
+                       err =>
+                         ConsoleEffect[IO].putErrStrLn(Maven2SbtError.render(err)) *>
+                           exitWith(ExitCode.Error),
+                       _ => IO(ExitCode.Success)
+                     )
   } yield exitCode
 
 }

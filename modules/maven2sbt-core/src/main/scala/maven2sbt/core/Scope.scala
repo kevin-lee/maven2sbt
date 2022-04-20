@@ -4,8 +4,7 @@ import cats.Show
 import cats.kernel.Eq
 import cats.syntax.all._
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-21
   */
 sealed trait Scope
@@ -18,12 +17,12 @@ object Scope {
   case object System extends Scope
   case object Default extends Scope
 
-  def compile: Scope = Compile
-  def test: Scope = Test
+  def compile: Scope  = Compile
+  def test: Scope     = Test
   def provided: Scope = Provided
-  def runtime: Scope = Runtime
-  def system: Scope = System
-  def default: Scope = Default
+  def runtime: Scope  = Runtime
+  def system: Scope   = System
+  def default: Scope  = Default
 
   def all: List[Scope] = List(compile, test, provided, runtime, system)
 

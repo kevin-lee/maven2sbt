@@ -1,7 +1,6 @@
 package maven2sbt.core
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-21
   */
 sealed trait Dependency
@@ -39,7 +38,6 @@ object Dependency extends DependencyPlus {
     scope: Scope,
     exclusions: List[Exclusion]
   ): Dependency = Java(groupId, artifactId, version, scope, exclusions)
-
 
   implicit final class DependencyOps(val dependency: Dependency) extends AnyVal {
     def artifactId: ArtifactId = Dependency.artifactId(dependency)

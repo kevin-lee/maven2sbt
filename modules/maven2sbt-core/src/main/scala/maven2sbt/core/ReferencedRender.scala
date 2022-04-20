@@ -1,9 +1,8 @@
 package maven2sbt.core
 
-/**
- * @author Kevin Lee
- * @since 2020-03-14
- */
+/** @author Kevin Lee
+  * @since 2020-03-14
+  */
 trait ReferencedRender[A] {
   def render(propsName: Props.PropsName, libsName: Libs.LibsName, libs: Libs, a: A): RenderedString
 }
@@ -25,4 +24,3 @@ object ReferencedRender {
       f(propsName, libsName, libs, a)
   }
 }
-

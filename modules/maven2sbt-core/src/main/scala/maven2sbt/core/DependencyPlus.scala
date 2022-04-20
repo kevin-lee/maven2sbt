@@ -7,10 +7,9 @@ import just.fp.Named
 import scala.language.postfixOps
 import scala.xml.Node
 
-/**
- * @author Kevin Lee
- * @since 2021-03-11
- */
+/** @author Kevin Lee
+  * @since 2021-03-11
+  */
 trait DependencyPlus { self =>
 
   implicit val show: Show[Dependency] = {
@@ -56,8 +55,7 @@ trait DependencyPlus { self =>
         (groupId, artifactId, version, scope, exclusions)
     }
 
-
-  implicit val namedDependency: Named[Dependency] = Named.named("libraryDependencies")
+  implicit val namedDependency: Named[Dependency]             = Named.named("libraryDependencies")
   implicit val renderDependency: ReferencedRender[Dependency] =
     ReferencedRender.namedReferencedRender(
       "dependency",
@@ -66,13 +64,13 @@ trait DependencyPlus { self =>
 
   def from(pom: Node, scalaBinaryVersionName: Option[ScalaBinaryVersion.Name]): Seq[Dependency] =
     pom \ "dependencies" \ "dependency" map { dependency =>
-      val groupId = dependency \ "groupId" text
+      val groupId    = dependency \ "groupId" text
       val artifactId = dependency \ "artifactId" text
-      val version = dependency \ "version" text
-      val scope = dependency \ "scope" text
+      val version    = dependency \ "version" text
+      val scope      = dependency \ "scope" text
 
       val exclusions: List[Exclusion] = (dependency \ "exclusions" \ "exclusion").map { exclusion =>
-        val groupId = (exclusion \ "groupId").text
+        val groupId    = (exclusion \ "groupId").text
         val artifactId = (exclusion \ "artifactId").text
 
         Exclusion(GroupId(groupId), ArtifactId(artifactId))
@@ -99,7 +97,7 @@ trait DependencyPlus { self =>
             )
           }
         case None =>
-          Dependency.java (
+          Dependency.java(
             GroupId(groupId),
             ArtifactId(artifactId),
             Version(version),
@@ -110,45 +108,59 @@ trait DependencyPlus { self =>
       }
     }
 
-  def render(propsName: Props.PropsName, libsName: Libs.LibsName, libs: Libs, dependency: Dependency): RenderedString = {
+  def render(
+    propsName: Props.PropsName,
+    libsName: Libs.LibsName,
+    libs: Libs,
+    dependency: Dependency
+  ): RenderedString = {
 
     def renderWithoutLibs(propsName: Props.PropsName, dependency: Dependency): RenderedString =
       dependency match {
         case Dependency.Scala(groupId, artifactId, version, scope, exclusions) =>
-          val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
+          val groupIdStr    = Render[GroupId].render(propsName, groupId).toQuotedString
           val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
-          val versionStr = Render[Version].render(propsName, version).toQuotedString
+          val versionStr    = Render[Version].render(propsName, version).toQuotedString
           RenderedString.noQuotesRequired(
-            s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope.renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+            s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope
+                .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
+                .render(propsName, exclusions)
+                .toQuotedString}"""
           )
 
         case Dependency.Java(groupId, artifactId, version, scope, exclusions) =>
-          val groupIdStr = Render[GroupId].render(propsName, groupId).toQuotedString
+          val groupIdStr    = Render[GroupId].render(propsName, groupId).toQuotedString
           val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
-          val versionStr = Render[Version].render(propsName, version).toQuotedString
+          val versionStr    = Render[Version].render(propsName, version).toQuotedString
           RenderedString.noQuotesRequired(
-            s"""$groupIdStr % $artifactIdStr % $versionStr${Scope.renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+            s"""$groupIdStr % $artifactIdStr % $versionStr${Scope
+                .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
+                .render(propsName, exclusions)
+                .toQuotedString}"""
           )
       }
 
-    val refLibFound = libs.dependencies.find { case (_, dep) =>
-      val (libGroupId, libArtifactId, _, _, _) = dep.tupled
-      val (groupId, artifactId, _, _, _) = dependency.tupled
-      libGroupId === groupId && libArtifactId === artifactId
+    val refLibFound = libs.dependencies.find {
+      case (_, dep) =>
+        val (libGroupId, libArtifactId, _, _, _) = dep.tupled
+        val (groupId, artifactId, _, _, _)       = dependency.tupled
+        libGroupId === groupId && libArtifactId === artifactId
     }
 
     refLibFound match {
       case Some((libValName, libDep)) =>
         (libDep.tupled, dependency.tupled) match {
           case (
-            (_, _, libVersion, Scope.Compile | Scope.Default, libExclusions),
-            (_, _, version, scope, exclusions)
-            ) if version.value.isBlank || libVersion === version =>
+                (_, _, libVersion, Scope.Compile | Scope.Default, libExclusions),
+                (_, _, version, scope, exclusions)
+              ) if version.value.isBlank || libVersion === version =>
             if ((scope === Scope.Compile || scope === Scope.Default)) {
               if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
                 RenderedString.noQuotesRequired(s"${libsName.value}.${libValName.value}")
               else if (libExclusions.isEmpty)
-                RenderedString.noQuotesRequired(s"${libsName.value}.${libValName.value}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}")
+                RenderedString.noQuotesRequired(
+                  s"${libsName.value}.${libValName.value}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"
+                )
               else
                 renderWithoutLibs(propsName, dependency)
             } else {
@@ -157,7 +169,10 @@ trait DependencyPlus { self =>
                   s"""${libsName.value}.${libValName.value}${Scope.renderNonCompileWithPrefix(" % ", scope)}"""
                 )
               else if (libExclusions.isEmpty)
-                RenderedString.noQuotesRequired(s"${libsName.value}.${libValName.value}${Scope.renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}")
+                RenderedString.noQuotesRequired(
+                  s"${libsName.value}.${libValName.value}${Scope
+                      .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"
+                )
               else
                 renderWithoutLibs(propsName, dependency)
             }
@@ -165,13 +180,16 @@ trait DependencyPlus { self =>
           case ((_, _, _, Scope.Compile | Scope.Default, _), (_, _, _, _, _)) =>
             renderWithoutLibs(propsName, dependency)
 
-          case ((_, _, libVersion, libScope, libExclusions), (_, _, version, scope, exclusions)) if version.value.isBlank || libVersion === version =>
+          case ((_, _, libVersion, libScope, libExclusions), (_, _, version, scope, exclusions))
+              if version.value.isBlank || libVersion === version =>
             if (libScope === scope) {
               if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
                 RenderedString.noQuotesRequired(s"${libsName.value}.${libValName.value}")
               else if (libExclusions.isEmpty)
                 RenderedString.noQuotesRequired(
-                  s"""${libsName.value}.${libValName.value}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}"""
+                  s"""${libsName.value}.${libValName.value}${Render[List[Exclusion]]
+                      .render(propsName, exclusions)
+                      .toQuotedString}"""
                 )
               else
                 renderWithoutLibs(propsName, dependency)
@@ -187,6 +205,5 @@ trait DependencyPlus { self =>
         renderWithoutLibs(propsName, dependency)
     }
   }
-
 
 }

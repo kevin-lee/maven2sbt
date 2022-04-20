@@ -7,21 +7,18 @@ import scala.util.matching.Regex
 
 import cats.syntax.all._
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-21
   */
 sealed trait StringUtils {
 
-  /**
-    * @example
+  /** @example
     *
     * &#36;{whatever-is-here.blahBlah}
     */
   val propertyUsagePattern: Regex = """\$\{([^\{^\}]+)\}""".r
 
-  /**
-    * @example
+  /** @example
     * {{{
     *   capitalizeAfterIgnoringNonAlphaNumUnderscore("abc.def")
     *   // abcDef
@@ -45,9 +42,7 @@ sealed trait StringUtils {
     }
 
     @tailrec
-    def toCapitalized(s: List[Char],
-                      shouldBeUpper: Boolean,
-                      acc: List[Char]): List[Char] = s match {
+    def toCapitalized(s: List[Char], shouldBeUpper: Boolean, acc: List[Char]): List[Char] = s match {
       case Nil =>
         acc
 
@@ -67,7 +62,8 @@ sealed trait StringUtils {
         else
           toCapitalized(cs, true, acc)
     }
-    val cs = value.headOption
+    val cs                                                                                = value
+      .headOption
       .map { c =>
         if (c.isUpper || c.isLower || c === '_')
           c.toString
@@ -80,9 +76,8 @@ sealed trait StringUtils {
 
   def toPropertyNameOrItself(propsName: Props.PropsName, name: String): String =
     findPropertyName(name)
-      .fold(s""""$name"""")(
-        dotSeparated =>
-          s"${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(dotSeparated)}"
+      .fold(s""""$name"""")(dotSeparated =>
+        s"${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(dotSeparated)}"
       )
 
   def renderWithProps(propsName: Props.PropsName, value: String): RenderedString = {

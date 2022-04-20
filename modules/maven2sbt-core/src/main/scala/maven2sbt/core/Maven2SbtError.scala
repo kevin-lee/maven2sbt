@@ -2,10 +2,9 @@ package maven2sbt.core
 
 import java.io.File
 
-/**
- * @author Kevin Lee
- * @since 2019-12-09
- */
+/** @author Kevin Lee
+  * @since 2019-12-09
+  */
 sealed trait Maven2SbtError
 
 object Maven2SbtError {
@@ -14,8 +13,8 @@ object Maven2SbtError {
   case object NoPomInputStream extends Maven2SbtError
   final case class OutputFileAlreadyExist(output: File) extends Maven2SbtError
 
-  def pomFileNotExist(pomFile: File): Maven2SbtError = PomFileNotExist(pomFile)
-  def noPomInputStream: Maven2SbtError = NoPomInputStream
+  def pomFileNotExist(pomFile: File): Maven2SbtError       = PomFileNotExist(pomFile)
+  def noPomInputStream: Maven2SbtError                     = NoPomInputStream
   def outputFileAlreadyExist(output: File): Maven2SbtError = OutputFileAlreadyExist(output)
 
   def render(maven2SbtError: Maven2SbtError): String = maven2SbtError match {
