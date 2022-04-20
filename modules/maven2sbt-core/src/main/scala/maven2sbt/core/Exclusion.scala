@@ -4,16 +4,16 @@ import StringUtils._
 import cats._
 import cats.syntax.show._
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-22
   */
 final case class Exclusion(groupId: GroupId, artifactId: ArtifactId)
 
 object Exclusion {
 
-  implicit val eq: Eq[Exclusion] = Eq.fromUniversalEquals[Exclusion]
-  implicit val show: Show[Exclusion] = excl => s"Exclusion(groupId: ${excl.groupId.show}, artifactId: ${excl.artifactId.show})"
+  implicit val eq: Eq[Exclusion]     = Eq.fromUniversalEquals[Exclusion]
+  implicit val show: Show[Exclusion] = excl =>
+    s"Exclusion(groupId: ${excl.groupId.show}, artifactId: ${excl.artifactId.show})"
 
   implicit final val exclusionRender: Render[Exclusion] =
     Render.namedRender("exclusion", Exclusion.renderExclusionRule)
@@ -23,7 +23,7 @@ object Exclusion {
 
   def renderExclusionRule(propsName: Props.PropsName, exclusion: Exclusion): RenderedString = exclusion match {
     case Exclusion(groupId, artifactId) =>
-      val groupIdStr = StringUtils.renderWithProps(propsName, groupId.value).toQuotedString
+      val groupIdStr    = StringUtils.renderWithProps(propsName, groupId.value).toQuotedString
       val artifactIdStr = StringUtils.renderWithProps(propsName, artifactId.value).toQuotedString
       RenderedString.noQuotesRequired(
         s"""ExclusionRule(organization = $groupIdStr, name = $artifactIdStr)"""

@@ -163,8 +163,8 @@ package object core {
     def toQuotedString: String = StringUtils.quoteRenderedString(s)
 
     def innerValue: String = s match {
-      case RenderedString.WithProps(s)        => s
-      case RenderedString.WithoutProps(s)     => s
+      case RenderedString.WithProps(s) => s
+      case RenderedString.WithoutProps(s) => s
       case RenderedString.NoQuotesRequired(s) => s
     }
   }

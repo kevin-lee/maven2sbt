@@ -5,15 +5,14 @@ import StringUtils._
 
 import scala.xml.Elem
 
-/**
- * @author Kevin Lee
- * @since 2021-03-11
- */
+/** @author Kevin Lee
+  * @since 2021-03-11
+  */
 trait MavenPropertyPlus {
 
   def from(pom: Elem): Seq[MavenProperty] = for {
     properties <- pom \ "properties"
-    property <- properties.child
+    property   <- properties.child
     label = property.label
     if !label.startsWith("#PCDATA")
   } yield MavenProperty(Name(label), Value(property.text))

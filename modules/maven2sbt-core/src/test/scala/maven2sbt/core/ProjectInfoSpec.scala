@@ -5,8 +5,7 @@ import hedgehog.runner._
 
 import scala.xml._
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-22
   */
 object ProjectInfoSpec extends Properties {
@@ -17,25 +16,26 @@ object ProjectInfoSpec extends Properties {
   )
 
   def testFrom: Property = for {
-    groupId <- Gens.genGroupId.log("groupId")
+    groupId    <- Gens.genGroupId.log("groupId")
     artifactId <- Gens.genArtifactId.log("artifactId")
-    version <- Gens.genVersion.log("version")
+    version    <- Gens.genVersion.log("version")
   } yield {
-    val pom = generatePom(groupId, artifactId, version)
+    val pom      = generatePom(groupId, artifactId, version)
     val expected = ProjectInfo(groupId, artifactId, version)
-    val actual = ProjectInfo.from(pom)
+    val actual   = ProjectInfo.from(pom)
     actual ==== expected
   }
 
   def testFromWithParent: Property = for {
     parentGroupId <- Gens.genGroupId.log("groupId")
-    groupId <- Gens.genGroupId.option.log("groupId")
-    artifactId <- Gens.genArtifactId.log("artifactId")
-    version <- Gens.genVersion.log("version")
+    groupId       <- Gens.genGroupId.option.log("groupId")
+    artifactId    <- Gens.genArtifactId.log("artifactId")
+    version       <- Gens.genVersion.log("version")
   } yield {
-    val pom = generatePomWithParent(parentGroupId, groupId, artifactId, version)
-    val expected = ProjectInfo(groupId.fold(parentGroupId)(g => if (g.value.isBlank) parentGroupId else g), artifactId, version)
-    val actual = ProjectInfo.from(pom)
+    val pom      = generatePomWithParent(parentGroupId, groupId, artifactId, version)
+    val expected =
+      ProjectInfo(groupId.fold(parentGroupId)(g => if (g.value.isBlank) parentGroupId else g), artifactId, version)
+    val actual   = ProjectInfo.from(pom)
     actual ==== expected
   }
 

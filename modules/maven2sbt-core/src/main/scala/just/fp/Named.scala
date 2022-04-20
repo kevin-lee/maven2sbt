@@ -1,9 +1,8 @@
 package just.fp
 
-/**
- * @author Kevin Lee
- * @since 2020-03-14
- */
+/** @author Kevin Lee
+  * @since 2020-03-14
+  */
 trait Named[A] {
   def name: String
 }

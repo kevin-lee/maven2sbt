@@ -13,33 +13,34 @@ object PropSpec extends Properties {
 
   def testFromMavenProperty: Property =
     for {
-      propsName <- Gen
-        .string(
-          Gens.genCharByRange(TestUtils.NonWhitespaceCharRange),
-          Range.linear(1, 10)
-        )
-        .map(Props.PropsName.apply)
-        .log("propsName")
-      mavenProperties <- Gens.genMavenPropertyAndPropPair
-        .list(Range.linear(0, 10))
-        .log("mavenProperties")
+      propsName       <- Gen
+                           .string(
+                             Gens.genCharByRange(TestUtils.NonWhitespaceCharRange),
+                             Range.linear(1, 10)
+                           )
+                           .map(Props.PropsName.apply)
+                           .log("propsName")
+      mavenProperties <- Gens
+                           .genMavenPropertyAndPropPair
+                           .list(Range.linear(0, 10))
+                           .log("mavenProperties")
     } yield {
       val (input, expected) = mavenProperties.map {
         case (mavenProperty, expectedProp) =>
           (mavenProperty, expectedProp)
       }.unzip
-      val actual = input.map(mavenProperty => M2sProp.fromMavenProperty(mavenProperty))
+      val actual            = input.map(mavenProperty => M2sProp.fromMavenProperty(mavenProperty))
       actual ==== expected
     }
 
   def testRender: Property = for {
-    propsName <- Gen
-      .string(
-        Gens.genCharByRange(TestUtils.NonWhitespaceCharRange),
-        Range.linear(1, 10)
-      )
-      .map(Props.PropsName.apply)
-      .log("propsName")
+    propsName     <- Gen
+                       .string(
+                         Gens.genCharByRange(TestUtils.NonWhitespaceCharRange),
+                         Range.linear(1, 10)
+                       )
+                       .map(Props.PropsName.apply)
+                       .log("propsName")
     mavenProperty <- Gens.genMavenPropertyAndPropPair.log("mavenProperty")
   } yield {
     val (input, expected) =
@@ -48,12 +49,14 @@ object PropSpec extends Properties {
           (
             mavenProperty,
             RenderedString.noQuotesRequired(
-              s"""val ${expectedProp.name.propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}"""
+              s"""val ${expectedProp
+                  .name
+                  .propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}"""
             )
           )
       }
-    val prop = M2sProp.fromMavenProperty(input)
-    val actual = M2sProp.render(propsName, prop)
+    val prop              = M2sProp.fromMavenProperty(input)
+    val actual            = M2sProp.render(propsName, prop)
     actual ==== expected
   }
 

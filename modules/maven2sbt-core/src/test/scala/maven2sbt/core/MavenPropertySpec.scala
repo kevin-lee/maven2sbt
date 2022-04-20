@@ -5,8 +5,7 @@ import hedgehog.runner._
 
 import scala.xml.{Elem, Null, Text, TopScope}
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-22
   */
 object MavenPropertySpec extends Properties {
@@ -19,13 +18,13 @@ object MavenPropertySpec extends Properties {
       <project>
         <properties>
           {
-            properties.map { case MavenProperty(key, value)  =>
-              Elem(null, key.value, Null, TopScope, true, Text(value.value))
-            }
-          }
+        properties.map {
+          case MavenProperty(key, value) =>
+            Elem(null, key.value, Null, TopScope, true, Text(value.value))
+        }
+      }
         </properties>
       </project>
-
 
   override def tests: List[Test] = List(
     property("test from", testFrom)

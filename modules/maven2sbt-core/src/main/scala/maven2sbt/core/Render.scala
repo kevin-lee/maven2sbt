@@ -1,7 +1,6 @@
 package maven2sbt.core
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2020-03-14
   */
 trait Render[A] {
