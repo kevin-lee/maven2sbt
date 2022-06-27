@@ -40,6 +40,7 @@ mkdir -p $opt_location
 rm -R $app_location || true
 mv $versioned_app_name $app_location
 
+mkdir -p $usr_local_bin_path
 echo ""
 { rm $app_bin_path && { echo "The existing $app_bin_path was found so it was removed." ; } } || { echo "No existing $app_bin_path was found. It's OK. Please ignore the 'No such file or directory' message." ; }
 echo ""
