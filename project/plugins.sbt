@@ -5,7 +5,7 @@ addSbtPlugin("org.wartremover"  % "sbt-wartremover"     % "3.0.6")
 addSbtPlugin("org.scoverage"    % "sbt-scoverage"       % "1.6.1")
 addSbtPlugin("org.scoverage"    % "sbt-coveralls"       % "1.2.7")
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.1")
-addSbtPlugin("org.scalameta"    % "sbt-native-image"    % "0.3.0")
+addSbtPlugin("org.scalameta"    % "sbt-native-image"    % "0.3.2")
 
 val sbtDevOopsVersion = "2.23.0"
 addSbtPlugin("io.kevinlee" % "sbt-devoops-scala"     % sbtDevOopsVersion)
