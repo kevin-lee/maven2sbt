@@ -1,8 +1,8 @@
 package maven2sbt
 
-import cats._
-import io.estatico.newtype.macros._
-import io.estatico.newtype.ops._
+import cats.*
+import io.estatico.newtype.macros.*
+import io.estatico.newtype.ops.*
 import just.fp.Named
 
 

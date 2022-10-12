@@ -1,9 +1,9 @@
 package maven2sbt.cli
 
-import scalaz._
-import Scalaz._
-import pirate._
-import Pirate._
+import scalaz.*
+import Scalaz.*
+import pirate.*
+import Pirate.*
 import maven2sbt.core.{Libs, Props, ScalaBinaryVersion, ScalaVersion}
 import maven2sbt.info.Maven2SbtBuildInfo
 

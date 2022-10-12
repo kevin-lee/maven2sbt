@@ -1,9 +1,9 @@
 package maven2sbt.core
 
-import hedgehog._
-import cats.syntax.all._
+import hedgehog.*
+import cats.syntax.all.*
 import maven2sbt.core.Repository.{RepoId, RepoName, RepoUrl}
-import maven2sbt.core.{Prop => M2sProp}
+import maven2sbt.core.Prop as M2sProp
 
 import scala.util.Random
 

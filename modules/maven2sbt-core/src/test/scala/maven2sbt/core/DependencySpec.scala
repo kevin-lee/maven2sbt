@@ -1,8 +1,8 @@
 package maven2sbt.core
 
-import cats.syntax.all._
-import hedgehog._
-import hedgehog.runner._
+import cats.syntax.all.*
+import hedgehog.*
+import hedgehog.runner.*
 
 import scala.xml.Elem
 

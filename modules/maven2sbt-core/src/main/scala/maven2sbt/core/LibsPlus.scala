@@ -1,11 +1,11 @@
 package maven2sbt.core
 
 import cats.Show
-import cats.syntax.show._
+import cats.syntax.show.*
 
 import scala.xml.Node
 
-import Libs._
+import Libs.*
 
 /** @author Kevin Lee
   * @since 2021-03-10

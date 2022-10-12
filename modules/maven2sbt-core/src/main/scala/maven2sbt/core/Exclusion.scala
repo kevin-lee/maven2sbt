@@ -1,8 +1,8 @@
 package maven2sbt.core
 
-import StringUtils._
-import cats._
-import cats.syntax.show._
+import StringUtils.*
+import cats.*
+import cats.syntax.show.*
 
 /** @author Kevin Lee
   * @since 2019-04-22

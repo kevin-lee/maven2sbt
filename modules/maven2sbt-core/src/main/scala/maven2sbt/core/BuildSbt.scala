@@ -1,7 +1,7 @@
 package maven2sbt.core
 
-import BuildSbt._
-import cats.syntax.all._
+import BuildSbt.*
+import cats.syntax.all.*
 import just.fp.Named
 
 /** @author Kevin Lee
@@ -16,7 +16,7 @@ final case class BuildSbt(
 )
 
 object BuildSbt {
-  import StringUtils._
+  import StringUtils.*
 
   final case class Settings(
     groupId: Option[GroupId],
