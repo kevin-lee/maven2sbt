@@ -1,7 +1,7 @@
 package maven2sbt.core
 
 import cats.Show
-import cats.syntax.all._
+import cats.syntax.all.*
 import just.fp.Named
 
 import scala.language.postfixOps

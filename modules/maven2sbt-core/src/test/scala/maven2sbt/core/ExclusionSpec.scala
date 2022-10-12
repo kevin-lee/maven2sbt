@@ -1,7 +1,7 @@
 package maven2sbt.core
 
-import hedgehog._
-import hedgehog.runner._
+import hedgehog.*
+import hedgehog.runner.*
 
 /** @author Kevin Lee
   * @since 2019-04-22

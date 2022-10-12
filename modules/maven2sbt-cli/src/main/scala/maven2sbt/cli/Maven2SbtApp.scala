@@ -1,12 +1,14 @@
 package maven2sbt.cli
 
-import cats.effect._
-import cats.syntax.all._
-import effectie.cats.ConsoleEffect
-import extras.cats.syntax.all._
+import cats.effect.*
+import cats.syntax.all.*
+import effectie.core.*
+import effectie.ce2.fx.ioFx
+import effectie.syntax.console.consoleEffectF
+import extras.cats.syntax.all.*
 import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError}
-import pirate._
-import piratex._
+import pirate.*
+import piratex.*
 
 import java.io.{BufferedWriter, File, FileWriter}
 

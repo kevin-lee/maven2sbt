@@ -1,7 +1,7 @@
 package maven2sbt.core
 
-import hedgehog._
-import hedgehog.runner._
+import hedgehog.*
+import hedgehog.runner.*
 
 import scala.xml.{Elem, Null, Text, TopScope}
 

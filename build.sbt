@@ -52,9 +52,12 @@ lazy val core = subProject("core")
       else
         List(libs.newTypeLib, libs.catsLib, libs.scalaXmlLatest)
     },
-    libraryDependencies ++= Seq(
-      libs.effectieCatsEffect,
-    ) ++ List(libs.extrasCats),
+    libraryDependencies ++= List(
+      libs.effectieCore,
+      libs.effectieSyntax,
+      libs.effectieCatsEffect2,
+      libs.extrasCats,
+    ),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     wartremoverExcluded ++= List(sourceManaged.value),
     /* Build Info { */
@@ -102,7 +105,7 @@ def prefixedProjectName(name: String) =
 val removeDottyIncompatible: ModuleID => Boolean =
   m =>
 //    m.name == "wartremover" ||
-      m.name == "ammonite" ||
+    m.name == "ammonite" ||
       m.name == "kind-projector" ||
       m.name == "mdoc" ||
       m.name == "better-monadic-for"
@@ -110,28 +113,29 @@ val removeDottyIncompatible: ModuleID => Boolean =
 lazy val props =
   new {
 
-    final val GitHubUsername       = "Kevin-Lee"
-    final val RepoName             = "maven2sbt"
-    final val ExecutableScriptName = RepoName
+    val GitHubUsername       = "Kevin-Lee"
+    val RepoName             = "maven2sbt"
+    val ExecutableScriptName = RepoName
 
-    final val DottyVersion        = "3.1.2"
-//    final val ProjectScalaVersion = "2.13.5"
-    final val ProjectScalaVersion = DottyVersion
-    final val CrossScalaVersions  = List("2.12.14", "2.13.6", ProjectScalaVersion, DottyVersion).distinct
+    val Scala2Version       = "2.13.10"
+    val DottyVersion        = "3.1.2"
+    val CrossScalaVersions  = List("2.12.17", Scala2Version, DottyVersion).distinct
+    val ProjectScalaVersion = Scala2Version
 
-    final val hedgehogVersion = "0.8.0"
+    val hedgehogVersion = "0.9.0"
 
-//    final val canEqualVersion = "0.1.0"
+//    val canEqualVersion = "0.1.0"
 
-    final val EffectieVersion = "1.16.0"
+    val EffectieVersion = "2.0.0-beta2"
+    val LoggerFVersion  = "2.0.0-beta2"
 
-    final val pirateVersion = "4e8177ec1548780cbf62b0352e58bceb7a99bfd6"
-    final val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
+    val pirateVersion = "4e8177ec1548780cbf62b0352e58bceb7a99bfd6"
+    val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
 
-    final val scalaXml1 = "1.3.0"
-    final val scalaXml2 = "2.1.0"
+    val scalaXml1 = "1.3.0"
+    val scalaXml2 = "2.1.0"
 
-    final val ExtrasVersion = "0.13.0"
+    val ExtrasVersion = "0.20.0"
 
   }
 
@@ -148,14 +152,15 @@ lazy val libs =
     lazy val scalaXmlLatest = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml2
     lazy val scalaXml       = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml1
 
-    lazy val catsLib    = "org.typelevel" %% "cats-core" % "2.7.0"
+    lazy val catsLib    = "org.typelevel" %% "cats-core" % "2.8.0"
     lazy val cats_2_0_0 = "org.typelevel" %% "cats-core" % "2.0.0"
 
-    lazy val catsEffectLib    = "org.typelevel" %% "cats-effect" % "2.5.4"
+    lazy val catsEffectLib    = "org.typelevel" %% "cats-effect" % "2.5.5"
     lazy val catsEffect_2_0_0 = "org.typelevel" %% "cats-effect" % "2.0.0"
 
-    lazy val effectieCatsEffect   = "io.kevinlee" %% "effectie-cats-effect"   % props.EffectieVersion
-    lazy val effectieScalazEffect = "io.kevinlee" %% "effectie-scalaz-effect" % props.EffectieVersion
+    lazy val effectieCore        = "io.kevinlee" %% "effectie-core"         % props.EffectieVersion
+    lazy val effectieSyntax      = "io.kevinlee" %% "effectie-syntax"       % props.EffectieVersion
+    lazy val effectieCatsEffect2 = "io.kevinlee" %% "effectie-cats-effect2" % props.EffectieVersion
 
     lazy val newTypeLib = "io.estatico" %% "newtype" % "0.4.4"
 
@@ -193,17 +198,17 @@ def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[St
       "./dotty-docs",
     ) ++ options
   } else {
-    options
+    "-Xsource:3" +: options
   }
 
 def subProject(projectName: String): Project = {
   val prefixedName = prefixedProjectName(projectName)
   Project(projectName, file(s"modules/$prefixedName"))
     .settings(
-      name                                    := prefixedName,
+      name          := prefixedName,
       testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
       libraryDependencies ++= libs.hedgehogLibs,
-      scalacOptions                           := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
+      scalacOptions := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
       Compile / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src/main"
         if (scalaVersion.value.startsWith("2."))

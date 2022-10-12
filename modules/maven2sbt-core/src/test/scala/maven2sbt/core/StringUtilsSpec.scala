@@ -1,12 +1,12 @@
 package maven2sbt.core
 
-import hedgehog._
-import hedgehog.runner._
-import cats.syntax.all._
+import hedgehog.*
+import hedgehog.runner.*
+import cats.syntax.all.*
 
 import scala.util.Random
 
-import maven2sbt.core.{Prop => M2sProp}
+import maven2sbt.core.Prop as M2sProp
 
 /** @author Kevin Lee
   * @since 2019-04-21

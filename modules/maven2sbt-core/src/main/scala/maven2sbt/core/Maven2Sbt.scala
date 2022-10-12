@@ -1,15 +1,13 @@
 package maven2sbt.core
 
-import cats._
-import cats.syntax.all._
-
-import effectie.cats.Effectful._
-import effectie.cats._
-
-import extras.cats.syntax.all._
+import cats.*
+import cats.syntax.all.*
+import effectie.core.*
+import effectie.syntax.fx.*
+import extras.cats.syntax.all.*
 
 import java.io.{File, InputStream}
-import scala.xml._
+import scala.xml.*
 
 /** @author Kevin Lee
   * @since 2017-04-03
@@ -103,6 +101,8 @@ object Maven2Sbt {
     ): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         pomFile        <- Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)).eitherT[F]
+//        mavenXpp3Reader = new MavenXpp3Reader()
+//        pomElem        <- effectOf(mavenXpp3Reader.read(new FileReader((pomFile)))).rightT
         pomElem        <- effectOf(XML.loadFile(pomFile)).rightT
         buildSbtString <- buildSbt(scalaVersion, propsName, scalaBinaryVersionName, pomElem).eitherT
       } yield buildSbtString).value

@@ -1,8 +1,8 @@
 package maven2sbt.core
 
-import hedgehog._
-import hedgehog.runner._
-import cats.syntax.all._
+import hedgehog.*
+import hedgehog.runner.*
+import cats.syntax.all.*
 
 /** @author Kevin Lee
   * @since 2019-04-21

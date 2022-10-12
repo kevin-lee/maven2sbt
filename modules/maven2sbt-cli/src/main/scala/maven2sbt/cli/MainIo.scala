@@ -1,10 +1,12 @@
 package maven2sbt.cli
 
-import cats.effect._
-import effectie.cats.ConsoleEffect
+import cats.effect.*
+import effectie.core.ConsoleEffect
+import effectie.ce2.fx.ioFx
+import effectie.syntax.all.consoleEffectF
 import maven2sbt.core.Maven2SbtError
-import pirate.{ExitCode => PirateExitCode, _}
-import scalaz._
+import pirate.{ExitCode as PirateExitCode, *}
+import scalaz.*
 
 /** @author Kevin Lee
   * @since 2019-12-09
