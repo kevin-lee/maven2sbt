@@ -4,6 +4,7 @@ import scalaz.*
 import Scalaz.*
 import pirate.*
 import Pirate.*
+import cats.Show
 import maven2sbt.core.{Libs, Props, ScalaBinaryVersion, ScalaVersion}
 import maven2sbt.info.Maven2SbtBuildInfo
 
@@ -112,5 +113,22 @@ object Maven2SbtArgsParser {
         )
       )) <* version(Maven2SbtBuildInfo.version)
     )
+
+  sealed trait ArgParseFailureResult
+  object ArgParseFailureResult {
+    final case class JustMessageOrHelp(messages: List[String]) extends ArgParseFailureResult
+    object JustMessageOrHelp {
+      implicit val justMessageOrHelpShow: Show[JustMessageOrHelp] = Show.show(_.messages.mkString("\n"))
+    }
+
+    final case class ArgParseError(errors: List[String]) extends ArgParseFailureResult
+    object ArgParseError {
+      implicit val argParseErrorShow: Show[ArgParseError] = Show.show(_.errors.mkString("\n"))
+    }
+
+    def justMessageOrHelp(messages: List[String]): ArgParseFailureResult = JustMessageOrHelp(messages)
+    def argParseError(errors: List[String]): ArgParseFailureResult       = ArgParseError(errors)
+
+  }
 
 }
