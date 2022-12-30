@@ -78,7 +78,7 @@ lazy val cli = subProject("cli")
     packageSummary       := "Maven2Sbt",
     packageDescription   := "A tool to convert Maven pom.xml into sbt build.sbt",
     executableScriptName := props.ExecutableScriptName,
-    nativeImageVersion   := "22.2.0",
+    nativeImageVersion   := "22.3.0",
     nativeImageJvm       := "graalvm-java17",
     nativeImageOptions ++= Seq(
       "-H:+ReportExceptionStackTraces",
