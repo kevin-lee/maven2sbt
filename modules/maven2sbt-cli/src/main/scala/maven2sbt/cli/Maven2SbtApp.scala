@@ -3,8 +3,8 @@ package maven2sbt.cli
 import cats.effect.*
 import cats.syntax.all.*
 import effectie.core.*
-import effectie.ce2.fx.ioFx
-import effectie.syntax.console.consoleEffectF
+import effectie.instances.ce3.fx.ioFx
+import effectie.instances.console.consoleEffectF
 import extras.cats.syntax.all.*
 import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError}
 import pirate.*

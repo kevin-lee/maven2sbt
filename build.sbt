@@ -46,17 +46,16 @@ lazy val core = subProject("core")
     libraryDependencies ++= {
       val scalaV = scalaVersion.value
       if (scalaV.startsWith("3"))
-        List(libs.catsLib, libs.scalaXmlLatest)
-      else if (scalaV.startsWith("2.11"))
-        List(libs.newTypeLib, libs.cats_2_0_0, libs.scalaXml)
+        List(libs.catsLib, libs.scalaXml)
       else
-        List(libs.newTypeLib, libs.catsLib, libs.scalaXmlLatest)
+        List(libs.newTypeLib, libs.catsLib, libs.scalaXml)
     },
     libraryDependencies ++= List(
       libs.effectieCore,
       libs.effectieSyntax,
       libs.effectieCatsEffect2,
       libs.extrasCats,
+      libs.extrasScalaIo,
     ),
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
     wartremoverExcluded ++= List(sourceManaged.value),
@@ -118,53 +117,53 @@ lazy val props =
     val ExecutableScriptName = RepoName
 
     val Scala2Version       = "2.13.10"
-    val DottyVersion        = "3.1.2"
+    val DottyVersion        = "3.2.1"
     val CrossScalaVersions  = List("2.12.17", Scala2Version, DottyVersion).distinct
     val ProjectScalaVersion = Scala2Version
 
-    val hedgehogVersion = "0.9.0"
+    val CatsVersion       = "2.9.0"
+    val CatsEffectVersion = "3.4.3"
+
+    val HedgehogVersion = "0.10.1"
 
 //    val canEqualVersion = "0.1.0"
 
-    val EffectieVersion = "2.0.0-beta2"
-    val LoggerFVersion  = "2.0.0-beta2"
+    val EffectieVersion = "2.0.0-beta4"
+    val LoggerFVersion  = "2.0.0-beta4"
 
-    val pirateVersion = "4e8177ec1548780cbf62b0352e58bceb7a99bfd6"
-    val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$pirateVersion")
+    val PirateVersion = "7797fb3884bdfdda7751d8f75accf622b30a53ed"
+    val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$PirateVersion")
 
-    val scalaXml1 = "1.3.0"
-    val scalaXml2 = "2.1.0"
+    val ScalaXml2Version = "2.1.0"
 
-    val ExtrasVersion = "0.20.0"
+    val ExtrasVersion = "0.26.0"
 
   }
 
 lazy val libs =
   new {
     lazy val hedgehogLibs: List[ModuleID] = List(
-      "qa.hedgehog" %% "hedgehog-core"   % props.hedgehogVersion % Test,
-      "qa.hedgehog" %% "hedgehog-runner" % props.hedgehogVersion % Test,
-      "qa.hedgehog" %% "hedgehog-sbt"    % props.hedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-core"   % props.HedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-runner" % props.HedgehogVersion % Test,
+      "qa.hedgehog" %% "hedgehog-sbt"    % props.HedgehogVersion % Test,
     )
 
 //    lazy val canEqual = "io.kevinlee" %% "can-equal" % props.canEqualVersion
 
-    lazy val scalaXmlLatest = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml2
-    lazy val scalaXml       = "org.scala-lang.modules" %% "scala-xml" % props.scalaXml1
+    lazy val scalaXml = "org.scala-lang.modules" %% "scala-xml" % props.ScalaXml2Version
 
-    lazy val catsLib    = "org.typelevel" %% "cats-core" % "2.8.0"
-    lazy val cats_2_0_0 = "org.typelevel" %% "cats-core" % "2.0.0"
+    lazy val catsLib = "org.typelevel" %% "cats-core" % props.CatsVersion
 
-    lazy val catsEffectLib    = "org.typelevel" %% "cats-effect" % "2.5.5"
-    lazy val catsEffect_2_0_0 = "org.typelevel" %% "cats-effect" % "2.0.0"
+    lazy val catsEffectLib = "org.typelevel" %% "cats-effect" % props.CatsEffectVersion
 
     lazy val effectieCore        = "io.kevinlee" %% "effectie-core"         % props.EffectieVersion
     lazy val effectieSyntax      = "io.kevinlee" %% "effectie-syntax"       % props.EffectieVersion
-    lazy val effectieCatsEffect2 = "io.kevinlee" %% "effectie-cats-effect2" % props.EffectieVersion
+    lazy val effectieCatsEffect2 = "io.kevinlee" %% "effectie-cats-effect3" % props.EffectieVersion
 
     lazy val newTypeLib = "io.estatico" %% "newtype" % "0.4.4"
 
-    lazy val extrasCats = "io.kevinlee" %% "extras-cats" % props.ExtrasVersion
+    lazy val extrasCats    = "io.kevinlee" %% "extras-cats"     % props.ExtrasVersion
+    lazy val extrasScalaIo = "io.kevinlee" %% "extras-scala-io" % props.ExtrasVersion
   }
 
 def libraryDependenciesPostProcess(
