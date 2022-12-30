@@ -2,9 +2,8 @@ package maven2sbt.cli
 
 import cats.effect.*
 import cats.syntax.all.*
-import effectie.core.*
-import effectie.ce2.fx.ioFx
-import effectie.syntax.console.consoleEffectF
+import effectie.instances.ce3.fx.ioFx
+import effectie.instances.console.consoleEffectF
 import extras.cats.syntax.all.*
 import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError}
 import pirate.*
@@ -27,10 +26,12 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
   override def command: Command[Maven2SbtArgs] = cmd
 
+  override def prefs: Prefs = DefaultPrefs().copy(width = 100)
+
   def toCanonicalFile(file: File): File =
     if (file.isAbsolute) file else file.getCanonicalFile
 
-  override def runApp(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Unit]] = args match {
+  override def runApp(args: Maven2SbtArgs): IO[Either[Maven2SbtError, Option[String]]] = args match {
     case Maven2SbtArgs.FileArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, out, overwrite, pomPath) =>
       for {
         pom          <- IO(toCanonicalFile(pomPath))
@@ -38,7 +39,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
         result       <-
           (buildSbtPath.exists, overwrite) match {
             case (true, Overwrite.DoNotOverwrite) =>
-              IO(Maven2SbtError.outputFileAlreadyExist(buildSbtPath).asLeft)
+              IO(Maven2SbtError.outputFileAlreadyExist(buildSbtPath).asLeft[Option[String]])
 
             case (false, Overwrite.DoNotOverwrite) | (_, Overwrite.DoOverwrite) =>
               IO(new BufferedWriter(new FileWriter(buildSbtPath)))
@@ -53,16 +54,13 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
                                         )
                                         .eitherT
                     buildSbtString <- IO(BuildSbt.render(buildSbt, propsName, libsName)).rightT
-                    _              <- IO(writer.write(buildSbtString)).rightT
-                    _              <- ConsoleEffect[IO]
-                                        .putStrLn(
-                                          s"""Success] The sbt config file has been successfully written at
+                    _              <- IO(writer.write(buildSbtString)).rightT[Maven2SbtError]
+                    result =
+                      s"""Success] The sbt config file has been successfully written at
                                              |  ${buildSbtPath.getCanonicalPath}
                                              |""".stripMargin
-                                        )
-                                        .rightTF[IO, Maven2SbtError]
 
-                  } yield ()).value
+                  } yield result.some).value
                 }(writer => IO(writer.close()))
           }
       } yield result
@@ -71,10 +69,9 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
       (for {
         pom            <- IO(toCanonicalFile(pomPath)).rightT
         buildSbt       <- maven2SbtIo.buildSbtFromPomFile(scalaVersion, propsName, scalaBinaryVersionName, pom).eitherT
-        buildSbtString <- IO(BuildSbt.render(buildSbt, propsName, libsName)).rightT
-        _              <- ConsoleEffect[IO].putStrLn(buildSbtString).rightT[Maven2SbtError]
+        buildSbtString <- IO(BuildSbt.render(buildSbt, propsName, libsName)).rightT[Maven2SbtError]
 
-      } yield ()).value
+      } yield buildSbtString.some).value
   }
 
 }
