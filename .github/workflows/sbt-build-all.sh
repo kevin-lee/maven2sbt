@@ -49,8 +49,7 @@ else
         coverage \
         test \
         coverageReport \
-        coverageAggregate \
-        coveralls
+        coverageAggregate
     fi
 
   else
