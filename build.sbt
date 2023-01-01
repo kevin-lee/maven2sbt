@@ -180,26 +180,23 @@ def libraryDependenciesPostProcess(
   }
 
 lazy val scala3cLanguageOptions =
-  "-language:" + List(
+  List(
     "dynamics",
     "existentials",
     "higherKinds",
     "reflectiveCalls",
     "experimental.macros",
     "implicitConversions",
-  ).mkString(",")
+  ).map("-language:" + _)
 
 def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[String] =
   if (scalaVersion.startsWith("3.")) {
-    Seq(
-//      "-source:3.0-migration",
-      scala3cLanguageOptions,
-      "-Ykind-projector",
-//      "-siteroot",
-      "./dotty-docs",
-    ) ++ options
+    scala3cLanguageOptions ++
+      options.filterNot(o =>
+        o == "-language:dynamics,existentials,higherKinds,reflectiveCalls,experimental.macros,implicitConversions" || o == "UTF-8"
+      )
   } else {
-    "-Xsource:3" +: options
+    "-Xsource:3" +: options.filterNot(_ == "UTF-8")
   }
 
 def subProject(projectName: String): Project = {
