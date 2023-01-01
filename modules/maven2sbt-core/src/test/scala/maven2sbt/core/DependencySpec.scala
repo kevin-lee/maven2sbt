@@ -167,7 +167,7 @@ object DependencySpec extends Properties {
         dep.copy(exclusions = List.empty[Exclusion])
     }
     val libs              = Libs(List((Libs.LibValName("myLib"), myLib)))
-    val (GroupId(groupId), ArtifactId(artifactId), Version(version), scope, exclusions) = dependency.tupled
+    val (GroupId(_), ArtifactId(_), Version(_), _, exclusions) = dependency.tupled
     val expected                                                                        =
       RenderedString.noQuotesRequired(
         s"""${libsName.value}.myLib${Exclusion.renderExclusions(propsName, exclusions).toQuotedString}"""

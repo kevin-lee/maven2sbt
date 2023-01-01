@@ -94,6 +94,8 @@ sealed trait StringUtils {
                   each,
                   s"$${${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup.trim)}}"
                 )
+            case noMatch =>
+              sys.error(s"Unmatched propsFound: $noMatch")
           }
         )
       )
@@ -115,6 +117,8 @@ sealed trait StringUtils {
                 valueInGroup
               else
                 s"""s"$value""""
+            case noMatch =>
+              sys.error(s"Unmatched onlyValue: $noMatch")
           }
 
         case _ =>

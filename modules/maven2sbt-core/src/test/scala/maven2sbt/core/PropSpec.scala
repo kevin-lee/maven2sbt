@@ -13,7 +13,7 @@ object PropSpec extends Properties {
 
   def testFromMavenProperty: Property =
     for {
-      propsName       <- Gen
+      _       <- Gen
                            .string(
                              Gens.genCharByRange(TestUtils.NonWhitespaceCharRange),
                              Range.linear(1, 10)

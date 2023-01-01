@@ -37,9 +37,9 @@ trait Maven2Sbt[F[*]] {
 
 object Maven2Sbt {
 
-  def apply[F[*]: Monad: Fx: ConsoleEffect]: Maven2Sbt[F] = new Maven2SbtF[F]
+  def apply[F[*]: Monad: Fx]: Maven2Sbt[F] = new Maven2SbtF[F]
 
-  final class Maven2SbtF[F[*]: Monad: Fx: ConsoleEffect] extends Maven2Sbt[F] {
+  final class Maven2SbtF[F[*]: Monad: Fx] extends Maven2Sbt[F] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def buildSbt(

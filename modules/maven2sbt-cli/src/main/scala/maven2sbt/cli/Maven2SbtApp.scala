@@ -3,7 +3,6 @@ package maven2sbt.cli
 import cats.effect.*
 import cats.syntax.all.*
 import effectie.instances.ce3.fx.ioFx
-import effectie.instances.console.consoleEffectF
 import extras.cats.syntax.all.*
 import maven2sbt.core.{BuildSbt, Maven2Sbt, Maven2SbtError}
 import pirate.*
@@ -21,7 +20,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
 
   val cmd: Command[Maven2SbtArgs] =
     Metavar.rewriteCommand(
-      Help.rewriteCommand(Maven2SbtArgsParser.rawCmd)
+      Help.rewriteCommand(Maven2SbtArgsParser.rawCmd),
     )
 
   override def command: Command[Maven2SbtArgs] = cmd
@@ -50,7 +49,7 @@ object Maven2SbtApp extends MainIo[Maven2SbtArgs] {
                                           scalaVersion,
                                           propsName,
                                           scalaBinaryVersionName,
-                                          pom
+                                          pom,
                                         )
                                         .eitherT
                     buildSbtString <- IO(BuildSbt.render(buildSbt, propsName, libsName)).rightT
