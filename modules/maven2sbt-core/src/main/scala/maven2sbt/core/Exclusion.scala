@@ -40,10 +40,11 @@ object Exclusion {
       )
     case x :: xs =>
       val idt = indent(8)
+      import maven2sbt.core.syntax.render.*
       RenderedString.noQuotesRequired(
         s""" excludeAll(
-           |$idt  ${Render[Exclusion].render(propsName, x).toQuotedString},
-           |$idt  ${xs.map(Render[Exclusion].render(propsName, _).toQuotedString).stringsMkString(s",\n$idt  ")}
+           |$idt  ${x.render(propsName).toQuotedString},
+           |$idt  ${xs.map(_.render(propsName).toQuotedString).stringsMkString(s",\n$idt  ")}
            |$idt)""".stripMargin
       )
   }

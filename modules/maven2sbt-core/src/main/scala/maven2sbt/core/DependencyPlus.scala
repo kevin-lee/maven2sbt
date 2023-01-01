@@ -118,9 +118,10 @@ trait DependencyPlus { self =>
     def renderWithoutLibs(propsName: Props.PropsName, dependency: Dependency): RenderedString =
       dependency match {
         case Dependency.Scala(groupId, artifactId, version, scope, exclusions) =>
-          val groupIdStr    = Render[GroupId].render(propsName, groupId).toQuotedString
-          val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
-          val versionStr    = Render[Version].render(propsName, version).toQuotedString
+          import maven2sbt.core.syntax.render.*
+          val groupIdStr    = groupId.render(propsName).toQuotedString
+          val artifactIdStr = artifactId.render(propsName).toQuotedString
+          val versionStr    = version.render(propsName).toQuotedString
           RenderedString.noQuotesRequired(
             s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope
                 .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
@@ -129,9 +130,10 @@ trait DependencyPlus { self =>
           )
 
         case Dependency.Java(groupId, artifactId, version, scope, exclusions) =>
-          val groupIdStr    = Render[GroupId].render(propsName, groupId).toQuotedString
-          val artifactIdStr = Render[ArtifactId].render(propsName, artifactId).toQuotedString
-          val versionStr    = Render[Version].render(propsName, version).toQuotedString
+          import maven2sbt.core.syntax.render.*
+          val groupIdStr    = groupId.render(propsName).toQuotedString
+          val artifactIdStr = artifactId.render(propsName).toQuotedString
+          val versionStr    = version.render(propsName).toQuotedString
           RenderedString.noQuotesRequired(
             s"""$groupIdStr % $artifactIdStr % $versionStr${Scope
                 .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
