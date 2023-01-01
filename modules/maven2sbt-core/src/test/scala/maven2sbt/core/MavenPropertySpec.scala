@@ -20,7 +20,7 @@ object MavenPropertySpec extends Properties {
           {
         properties.map {
           case MavenProperty(key, value) =>
-            Elem(null, key.value, Null, TopScope, true, Text(value.value))
+            Elem(null, key.value, Null, TopScope, true, Text(value.value)) // scalafix:ok DisableSyntax.null
         }
       }
         </properties>

@@ -18,7 +18,7 @@ package object core {
 
     implicit val eq: Eq[GroupId] = deriving
 
-    implicit val show: Show[GroupId] = deriving
+    implicit val groupIdShow: Show[GroupId] = deriving
 
     implicit val named: Named[GroupId] = Named.named("organization")
 
@@ -31,7 +31,7 @@ package object core {
     def unapply(groupId: GroupId): Some[String] =
       Some(groupId.coerce)
 
-    implicit final class GroupIdOps(val groupId: GroupId) extends AnyVal {
+    implicit final class GroupIdOps(private val groupId: GroupId) extends AnyVal {
       def render(propsName: Props.PropsName): RenderedString =
         GroupId.render(propsName, groupId)
     }
@@ -46,7 +46,7 @@ package object core {
 
     implicit val eq: Eq[ArtifactId] = deriving
 
-    implicit val show: Show[ArtifactId] = deriving
+    implicit val artifactIdShow: Show[ArtifactId] = deriving
 
     implicit val named: Named[ArtifactId] = Named.named("name")
 
@@ -70,7 +70,7 @@ package object core {
 
     implicit val eq: Eq[Version] = deriving
 
-    implicit val show: Show[Version] = deriving
+    implicit val versionShow: Show[Version] = deriving
 
     implicit val named: Named[Version] = Named.named("version")
 
@@ -94,7 +94,7 @@ package object core {
 
     implicit val eq: Eq[ScalaVersion] = deriving
 
-    implicit val show: Show[ScalaVersion] = deriving
+    implicit val scalaVersionShow: Show[ScalaVersion] = deriving
 
     implicit val named: Named[ScalaVersion] = Named.named("scalaVersion")
 
@@ -114,7 +114,7 @@ package object core {
     @newtype case class Name(value: String)
   }
 
-  implicit final class RenderedStringOps(val s: RenderedString) extends AnyVal {
+  implicit final class RenderedStringOps(private val s: RenderedString) extends AnyVal {
     def toQuotedString: String =
       StringUtils.quoteRenderedString(s)
 
@@ -126,7 +126,7 @@ package object core {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
-  implicit final class MkStringForOnlyStrings(val stringList: Seq[String]) extends AnyVal {
+  implicit final class MkStringForOnlyStrings(private val stringList: Seq[String]) extends AnyVal {
     def stringsMkString: String =
       stringList.mkString
 

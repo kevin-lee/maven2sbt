@@ -26,9 +26,9 @@ object Scope {
 
   def all: List[Scope] = List(compile, test, provided, runtime, system)
 
-  implicit final val eq: Eq[Scope] = Eq.fromUniversalEquals[Scope]
+  implicit val eq: Eq[Scope] = Eq.fromUniversalEquals[Scope]
 
-  implicit val show: Show[Scope] = render(_)
+  implicit val scopeShow: Show[Scope] = render(_)
 
   def render(scope: Scope): String = scope match {
     case Compile => "Compile"

@@ -12,13 +12,13 @@ final case class Exclusion(groupId: GroupId, artifactId: ArtifactId)
 object Exclusion {
 
   implicit val eq: Eq[Exclusion]     = Eq.fromUniversalEquals[Exclusion]
-  implicit val show: Show[Exclusion] = excl =>
+  implicit val exclusionShow: Show[Exclusion] = excl =>
     s"Exclusion(groupId: ${excl.groupId.show}, artifactId: ${excl.artifactId.show})"
 
-  implicit final val exclusionRender: Render[Exclusion] =
+  implicit val exclusionRender: Render[Exclusion] =
     Render.namedRender("exclusion", Exclusion.renderExclusionRule)
 
-  implicit final val exclusionsRender: Render[List[Exclusion]] =
+  implicit val exclusionsRender: Render[List[Exclusion]] =
     Render.namedRender("exclusion", Exclusion.renderExclusions)
 
   def renderExclusionRule(propsName: Props.PropsName, exclusion: Exclusion): RenderedString = exclusion match {

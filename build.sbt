@@ -19,6 +19,13 @@ ThisBuild / scmInfo :=
 ThisBuild / licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
 ThisBuild / useAggressiveScalacOptions := true
 
+ThisBuild / scalafixConfig := (
+  if (scalaVersion.value.startsWith("3"))
+    ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
+  else
+    ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
+)
+
 lazy val maven2sbt = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin, DocusaurPlugin)
   .settings(
@@ -38,7 +45,7 @@ lazy val maven2sbt = (project in file("."))
   .settings(noPublish)
   .aggregate(core, cli)
 
-lazy val core = subProject("core")
+lazy val core = module("core")
   .enablePlugins(BuildInfoPlugin)
   .settings(
 //    resolvers += Resolver.sonatypeRepo("snapshots"),
@@ -65,7 +72,7 @@ lazy val core = subProject("core")
 
 lazy val pirate = ProjectRef(props.pirateUri, "pirate-scalaz")
 
-lazy val cli = subProject("cli")
+lazy val cli = module("cli")
   .enablePlugins(JavaAppPackaging, NativeImagePlugin)
   .settings(
     libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, libraryDependencies.value),
@@ -193,13 +200,13 @@ def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[St
   if (scalaVersion.startsWith("3.")) {
     scala3cLanguageOptions ++
       options.filterNot(o =>
-        o == "-language:dynamics,existentials,higherKinds,reflectiveCalls,experimental.macros,implicitConversions" || o == "UTF-8"
+        o == "-language:dynamics,existentials,higherKinds,reflectiveCalls,experimental.macros,implicitConversions" || o == "UTF-8",
       )
   } else {
     "-Xsource:3" +: options.filterNot(_ == "UTF-8")
   }
 
-def subProject(projectName: String): Project = {
+def module(projectName: String): Project = {
   val prefixedName = prefixedProjectName(projectName)
   Project(projectName, file(s"modules/$prefixedName"))
     .settings(
@@ -207,6 +214,12 @@ def subProject(projectName: String): Project = {
       testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
       libraryDependencies ++= libs.hedgehogLibs,
       scalacOptions := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
+      scalafixConfig := (
+        if (scalaVersion.value.startsWith("3"))
+          ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
+        else
+          ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
+      ),
       Compile / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src/main"
         if (scalaVersion.value.startsWith("2."))

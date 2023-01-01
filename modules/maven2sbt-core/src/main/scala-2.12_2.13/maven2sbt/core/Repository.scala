@@ -18,7 +18,7 @@ object Repository extends RepositoryPlus {
       repoId.value.some
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    implicit final val show: Show[RepoId] = _.toString
+    implicit val repoIdShow: Show[RepoId] = _.toString
   }
   @newtype case class RepoName(value: String)
   object RepoName {
@@ -26,7 +26,7 @@ object Repository extends RepositoryPlus {
       repoName.value.some
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    implicit final val show: Show[RepoName] = _.toString
+    implicit val repoNameShow: Show[RepoName] = _.toString
   }
   @newtype case class RepoUrl(value: String)
 
