@@ -12,7 +12,7 @@ import Libs.*
   */
 trait LibsPlus {
 
-  implicit val show: Show[Libs] = libs =>
+  implicit val libsShow: Show[Libs] = libs =>
     s"""Libs(dependencies =
        |  ${libs
         .dependencies

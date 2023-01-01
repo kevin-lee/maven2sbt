@@ -74,7 +74,7 @@ object TestUtils {
         .toList
     )
 
-  final val NonWhitespaceCharRange: List[(Int, Int)] =
+  val NonWhitespaceCharRange: List[(Int, Int)] =
     List(
       0     -> 8,
       14    -> 27,

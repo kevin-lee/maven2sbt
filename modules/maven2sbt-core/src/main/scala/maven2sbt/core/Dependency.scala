@@ -39,7 +39,7 @@ object Dependency extends DependencyPlus {
     exclusions: List[Exclusion]
   ): Dependency = Java(groupId, artifactId, version, scope, exclusions)
 
-  implicit final class DependencyOps(val dependency: Dependency) extends AnyVal {
+  implicit final class DependencyOps(private val dependency: Dependency) extends AnyVal {
     def artifactId: ArtifactId = Dependency.artifactId(dependency)
 
     def scope: Scope = Dependency.scope(dependency)

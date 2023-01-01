@@ -19,7 +19,7 @@ object Prop {
     )
   }
 
-  implicit final val propRender: Render[Prop] =
+  implicit val propRender: Render[Prop] =
     Render.namedRender("prop", (propsName, prop) => Prop.render(propsName, prop))
 
 }

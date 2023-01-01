@@ -54,5 +54,5 @@ trait RepositoryPlus {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-  implicit final val show: Show[Repository] = _.toString
+  implicit val repositoryShow: Show[Repository] = _.toString
 }

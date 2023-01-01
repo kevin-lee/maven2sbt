@@ -12,7 +12,7 @@ import scala.xml.Node
   */
 trait DependencyPlus { self =>
 
-  implicit val show: Show[Dependency] = {
+  implicit val dependencyShow: Show[Dependency] = {
     case Dependency.Scala(groupId, artifactId, version, scope, exclusions) =>
       show"Dependency.Scala($groupId, $artifactId, $version, $scope, ${exclusions.show})"
     case Dependency.Java(groupId, artifactId, version, scope, exclusions) =>
