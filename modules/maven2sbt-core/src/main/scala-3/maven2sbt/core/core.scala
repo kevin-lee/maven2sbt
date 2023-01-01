@@ -22,8 +22,8 @@ package object core {
     extension (groupId: GroupId) {
       def value: String = groupId
 
-      def render(propsName: Props.PropsName): RenderedString =
-        StringUtils.renderWithProps(propsName, groupId.value)
+//      def render(propsName: Props.PropsName): RenderedString =
+//        StringUtils.renderWithProps(propsName, groupId.value)
     }
 
     given show: Show[GroupId] = _.value
@@ -31,7 +31,7 @@ package object core {
     given named: Named[GroupId] = Named.named("organization")
 
     given groupIdRender: Render[GroupId] =
-      Render.namedRender("groupId", (propsName, groupId) => groupId.render(propsName))
+      Render.namedRender("groupId", (propsName, groupId) => StringUtils.renderWithProps(propsName, groupId.value))
 
     // The reason to have `Some[String]` as a return type here is
     // https://github.com/scala/bug/issues/12232

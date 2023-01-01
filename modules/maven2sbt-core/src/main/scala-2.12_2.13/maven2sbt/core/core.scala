@@ -31,10 +31,10 @@ package object core {
     def unapply(groupId: GroupId): Some[String] =
       Some(groupId.coerce)
 
-    implicit final class GroupIdOps(private val groupId: GroupId) extends AnyVal {
-      def render(propsName: Props.PropsName): RenderedString =
-        GroupId.render(propsName, groupId)
-    }
+//    implicit final class GroupIdOps(private val groupId: GroupId) extends AnyVal {
+//      def render(propsName: Props.PropsName): RenderedString =
+//        GroupId.render(propsName, groupId)
+//    }
 
     def render(propsName: Props.PropsName, groupId: GroupId): RenderedString =
       StringUtils.renderWithProps(propsName, groupId.value)

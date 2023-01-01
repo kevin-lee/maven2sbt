@@ -3,6 +3,7 @@ package maven2sbt.core
 import BuildSbt.*
 import cats.syntax.all.*
 import just.fp.Named
+import maven2sbt.core.syntax.render.*
 
 /** @author Kevin Lee
   * @since 2020-01-29
@@ -12,7 +13,7 @@ final case class BuildSbt(
   thisBuildSettings: ThisBuildSettings,
   projectSettings: ProjectSettings,
   props: List[Prop],
-  libs: Libs
+  libs: Libs,
 )
 
 object BuildSbt {
@@ -24,16 +25,16 @@ object BuildSbt {
     version: Option[Version],
     scalaVersion: Option[ScalaVersion],
     repositories: List[Repository],
-    dependencies: List[Dependency]
+    dependencies: List[Dependency],
   )
 
   def toFieldValue[A: Named: Render](prefix: Option[String], propsName: Props.PropsName, a: A): String =
-    s"""${prefix.getOrElse("")}${Named[A].name} := ${Render[A].render(propsName, a).toQuotedString}"""
+    s"""${prefix.getOrElse("")}${Named[A].name} := ${a.render(propsName).toQuotedString}"""
 
   def renderListOfFieldValue[A: Named](
     prefix: Option[String],
     as: List[A],
-    indentSize: Int
+    indentSize: Int,
   )(render: A => RenderedString): Option[String] =
     as match {
       case Nil =>
@@ -58,7 +59,7 @@ object BuildSbt {
       libsName: Libs.LibsName,
       libs: Libs,
       delimiter: String,
-      indentSize: Int
+      indentSize: Int,
     ): String =
       (
         settings.groupId.map(groupId => toFieldValue(prefix, propsName, groupId)).toList ++
@@ -66,10 +67,10 @@ object BuildSbt {
           settings.scalaVersion.map(scalaVersion => toFieldValue(prefix, propsName, scalaVersion)).toList ++
           settings.artifactId.map(artifactId => toFieldValue(prefix, propsName, artifactId)).toList ++
           renderListOfFieldValue(prefix, settings.repositories, indentSize)(repo =>
-            Render[Repository].render(propsName, repo)
+            repo.render(propsName),
           ).toList ++
           renderListOfFieldValue(prefix, settings.dependencies, indentSize)(dependency =>
-            ReferencedRender[Dependency].render(propsName, libsName, libs, dependency)
+            ReferencedRender[Dependency].render(propsName, libsName, libs, dependency),
           ).toList
       )
         .stringsMkString(delimiter)
@@ -81,7 +82,7 @@ object BuildSbt {
       propsName: Props.PropsName,
       libsName: Libs.LibsName,
       libs: Libs,
-      projectSettings: ProjectSettings
+      projectSettings: ProjectSettings,
     ): String =
       Settings.render(projectSettings.projectSettings, none[String], propsName, libsName, libs, s",\n${indent(4)}", 4)
 
@@ -96,7 +97,7 @@ object BuildSbt {
         libsName,
         Libs(List.empty[(Libs.LibValName, Dependency)]),
         "\n",
-        2
+        2,
       )
   }
   final case class GlobalSettings(globalSettings: Settings) extends AnyVal
@@ -110,8 +111,8 @@ object BuildSbt {
           none[Version],
           none[ScalaVersion],
           List.empty[Repository],
-          List.empty[Dependency]
-        )
+          List.empty[Dependency],
+        ),
       )
 
     def render(propsName: Props.PropsName, libsName: Libs.LibsName, globalSettings: GlobalSettings): String =
@@ -122,7 +123,7 @@ object BuildSbt {
         libsName,
         Libs(List.empty[(Libs.LibValName, Dependency)]),
         "\n",
-        2
+        2,
       )
   }
 
@@ -132,7 +133,7 @@ object BuildSbt {
           thisBuildSettings,
           projectSettings,
           props,
-          libs
+          libs,
         ) =>
       val globalSettingsRendered    = GlobalSettings.render(propsName, libsName, globalSettings)
       val thisBuildSettingsRendered = ThisBuildSettings.render(propsName, libsName, thisBuildSettings)
