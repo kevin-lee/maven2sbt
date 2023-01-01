@@ -12,7 +12,7 @@ import scala.xml.*
 /** @author Kevin Lee
   * @since 2017-04-03
   */
-trait Maven2Sbt[F[_]] {
+trait Maven2Sbt[F[*]] {
   def buildSbt(
     scalaVersion: ScalaVersion,
     propsName: Props.PropsName,
@@ -37,9 +37,9 @@ trait Maven2Sbt[F[_]] {
 
 object Maven2Sbt {
 
-  def apply[F[_]: Monad: Fx: ConsoleEffect]: Maven2Sbt[F] = new Maven2SbtF[F]
+  def apply[F[*]: Monad: Fx: ConsoleEffect]: Maven2Sbt[F] = new Maven2SbtF[F]
 
-  final class Maven2SbtF[F[_]: Monad: Fx: ConsoleEffect] extends Maven2Sbt[F] {
+  final class Maven2SbtF[F[*]: Monad: Fx: ConsoleEffect] extends Maven2Sbt[F] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def buildSbt(
