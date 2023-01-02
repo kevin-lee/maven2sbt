@@ -17,12 +17,14 @@ object MavenPropertySpec extends Properties {
     else
       <project>
         <properties>
+          <!-- blah -->
           {
         properties.map {
           case MavenProperty(key, value) =>
             Elem(null, key.value, Null, TopScope, true, Text(value.value)) // scalafix:ok DisableSyntax.null
         }
       }
+          <!-- blah -->
         </properties>
       </project>
 

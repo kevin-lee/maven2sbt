@@ -14,7 +14,7 @@ trait MavenPropertyPlus {
     properties <- pom \ "properties"
     property   <- properties.child
     label = property.label
-    if !label.startsWith("#PCDATA")
+    if !label.startsWith("#")
   } yield MavenProperty(Name(label), Value(property.text))
 
   def findPropertyName(name: String): Option[String] = name match {
