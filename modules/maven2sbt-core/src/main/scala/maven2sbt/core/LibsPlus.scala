@@ -31,7 +31,7 @@ trait LibsPlus {
       (for {
         dependencies <- (pom \ "dependencyManagement")
         dependency   <- Dependency.from(dependencies, scalaBinaryVersionName)
-      } yield (toValName(dependency), dependency)).toList
+      } yield (toValName(dependency), dependency)).toList,
     )
 
   def render(propsName: Props.PropsName, libsName: LibsName, indentSize: Int, libs: Libs): String = {
@@ -49,7 +49,7 @@ trait LibsPlus {
 
   def renderReusable(
     propsName: Props.PropsName,
-    dependencyWithValName: (Libs.LibValName, Dependency)
+    dependencyWithValName: (Libs.LibValName, Dependency),
   ): (Libs.LibValName, RenderedString) = dependencyWithValName match {
     case (libValName, Dependency.Scala(groupId, artifactId, version, scope, exclusions)) =>
       val groupIdStr    = Render[GroupId].render(propsName, groupId).toQuotedString
@@ -61,8 +61,8 @@ trait LibsPlus {
           s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope
               .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
               .render(propsName, exclusions)
-              .toQuotedString}"""
-        )
+              .toQuotedString}""",
+        ),
       )
     case (libValName, Dependency.Java(groupId, artifactId, version, scope, exclusions)) =>
       val groupIdStr    = Render[GroupId].render(propsName, groupId).toQuotedString
@@ -74,8 +74,8 @@ trait LibsPlus {
           s"""$groupIdStr % $artifactIdStr % $versionStr${Scope
               .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
               .render(propsName, exclusions)
-              .toQuotedString}"""
-        )
+              .toQuotedString}""",
+        ),
       )
   }
 

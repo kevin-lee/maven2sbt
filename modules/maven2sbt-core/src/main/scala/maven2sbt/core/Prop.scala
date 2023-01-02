@@ -9,13 +9,13 @@ object Prop {
   def fromMavenProperty(mavenProperty: MavenProperty): Prop =
     Prop(
       PropName(StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(mavenProperty.key.value)),
-      PropValue(mavenProperty.value.value)
+      PropValue(mavenProperty.value.value),
     )
 
   def render(propsName: Props.PropsName, prop: Prop): RenderedString = {
     val propValue = StringUtils.renderWithProps(propsName, prop.value.propValue).toQuotedString
     RenderedString.noQuotesRequired(
-      s"""val ${prop.name.propName} = $propValue"""
+      s"""val ${prop.name.propName} = $propValue""",
     )
   }
 

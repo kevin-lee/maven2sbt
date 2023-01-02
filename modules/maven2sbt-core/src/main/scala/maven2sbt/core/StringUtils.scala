@@ -51,7 +51,7 @@ sealed trait StringUtils {
           toCapitalized(
             Nil,
             false,
-            (if (shouldBeUpper) c.toUpper else c) :: acc
+            (if (shouldBeUpper) c.toUpper else c) :: acc,
           )
         else
           toCapitalized(Nil, false, acc)
@@ -77,7 +77,7 @@ sealed trait StringUtils {
   def toPropertyNameOrItself(propsName: Props.PropsName, name: String): String =
     findPropertyName(name)
       .fold(s""""$name"""")(dotSeparated =>
-        s"${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(dotSeparated)}"
+        s"${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(dotSeparated)}",
       )
 
   def renderWithProps(propsName: Props.PropsName, value: String): RenderedString = {
@@ -92,12 +92,12 @@ sealed trait StringUtils {
               else
                 acc.replace(
                   each,
-                  s"$${${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup.trim)}}"
+                  s"$${${propsName.value}.${capitalizeAfterIgnoringNonAlphaNumUnderscore(eachGroup.trim)}}",
                 )
             case noMatch =>
               sys.error(s"Unmatched propsFound: $noMatch")
-          }
-        )
+          },
+        ),
       )
     else
       RenderedString.withoutProps(value)

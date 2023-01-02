@@ -11,7 +11,7 @@ import scala.xml.Elem
 final case class ProjectInfo(
   groupId: GroupId,
   artifactId: ArtifactId,
-  version: Version
+  version: Version,
 )
 
 object ProjectInfo {

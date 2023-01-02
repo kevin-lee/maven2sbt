@@ -55,7 +55,7 @@ object TestUtils {
       (0.toChar to Char.MaxValue)
         .filter(c => c.isUpper || c.isLower || c.isDigit || c === '_')
         .map(_.toInt)
-        .toList
+        .toList,
     )
 
   lazy val ExpectedNonDigitLetters: List[(Int, Int)] =
@@ -63,7 +63,7 @@ object TestUtils {
       (0.toChar to Char.MaxValue)
         .filter(c => c.isUpper || c.isLower || c === '_')
         .map(_.toInt)
-        .toList
+        .toList,
     )
 
   lazy val ExpectedNonLetters: List[(Int, Int)] =
@@ -71,7 +71,7 @@ object TestUtils {
       (0.toChar to Char.MaxValue)
         .filterNot(c => c.isUpper || c.isLower || c.isDigit || c === '_')
         .map(_.toInt)
-        .toList
+        .toList,
     )
 
   val NonWhitespaceCharRange: List[(Int, Int)] =
@@ -84,7 +84,7 @@ object TestUtils {
       8203  -> 8231,
       8234  -> 8286,
       8288  -> 12287,
-      12289 -> Char.MaxValue.toInt
+      12289 -> Char.MaxValue.toInt,
     )
 
 }

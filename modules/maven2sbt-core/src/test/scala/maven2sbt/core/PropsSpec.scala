@@ -9,7 +9,7 @@ import maven2sbt.core.Prop as M2sProp
   */
 object PropsSpec extends Properties {
   override def tests: List[Test] = List(
-    property("test Props.render", testPropsRender)
+    property("test Props.render", testPropsRender),
   )
 
   def testPropsRender: Property = for {
@@ -26,7 +26,7 @@ object PropsSpec extends Properties {
           mavenProperty,
           s"""val ${expectedProp
               .name
-              .propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}"""
+              .propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}""",
         )
     }.unzip
     val indent                 = " " * indentSize

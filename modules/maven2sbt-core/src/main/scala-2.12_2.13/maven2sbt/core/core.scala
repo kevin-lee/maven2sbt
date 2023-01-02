@@ -5,9 +5,7 @@ import io.estatico.newtype.macros.*
 import io.estatico.newtype.ops.*
 import just.fp.Named
 
-
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-22
   */
 package object core {

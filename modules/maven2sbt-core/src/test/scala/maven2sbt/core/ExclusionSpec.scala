@@ -12,7 +12,7 @@ object ExclusionSpec extends Properties {
     example("test renderExclusions with no exclusion", testRenderExclusions0),
     property("test renderExclusions with 1 exclusion", testRenderExclusions1),
     property("test renderExclusions with two exclusions", testRenderExclusionsTwo),
-    property("test renderExclusions with more than two exclusions", testRenderExclusionsMoreThanTwo)
+    property("test renderExclusions with more than two exclusions", testRenderExclusionsMoreThanTwo),
   )
 
   private val propsName = Props.PropsName("testProps")

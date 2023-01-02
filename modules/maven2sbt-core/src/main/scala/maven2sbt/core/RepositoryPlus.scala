@@ -49,7 +49,7 @@ trait RepositoryPlus {
         repoUrlStr.innerValue
     }
     RenderedString.noQuotesRequired(
-      s""""$repoNameStr" at ${repoUrlStr.toQuotedString}"""
+      s""""$repoNameStr" at ${repoUrlStr.toQuotedString}""",
     )
   }
 

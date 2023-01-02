@@ -16,7 +16,7 @@ object RepositorySpec extends Properties {
     property("test Repository.from(xml) with empty RepoName", testRepositoryFromXmlWithEmptyRepoName),
     property(
       "test Repository.from(xml) with empty RepoId and empty RepoName",
-      testRepositoryFromXmlWithEmptyRepoIdEmptyRepoName
+      testRepositoryFromXmlWithEmptyRepoIdEmptyRepoName,
     ),
     property("test Repository.from(xml) with no RepoName", testRepositoryFromXmlWithNoRepoName),
     property("test Repository.from(xml) with no RepoId and no RepoName", testRepositoryFromXmlWithNoRepoIdNoRepoName),
@@ -25,9 +25,9 @@ object RepositorySpec extends Properties {
     property("test Repository.render(Repository) with no RepoName", testRenderRepositoryWithNoName),
     property(
       "test Repository.render(Repository) with empty id and empty RepoName",
-      testRenderRepositoryWithEmptyIdEmptyName
+      testRenderRepositoryWithEmptyIdEmptyName,
     ),
-    property("test Repository.render(Repository) with no id and no RepoName", testRenderRepositoryWithNoIdNoName)
+    property("test Repository.render(Repository) with no id and no RepoName", testRenderRepositoryWithNoIdNoName),
   )
 
   def testRepositoryFromXml: Property = for {
@@ -139,7 +139,7 @@ object RepositorySpec extends Properties {
   private def genRepo(
     repoId: Option[Repository.RepoId],
     maybeRepoName: Option[Repository.RepoName],
-    repoUrl: Repository.RepoUrl
+    repoUrl: Repository.RepoUrl,
   ): Elem =
     (repoId, maybeRepoName) match {
       case (Some(repoId), Some(repoName)) =>

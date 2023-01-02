@@ -27,7 +27,7 @@ object MavenPropertySpec extends Properties {
       </project>
 
   override def tests: List[Test] = List(
-    property("test from", testFrom)
+    property("test from", testFrom),
   )
 
   def testFrom: Property = for {
