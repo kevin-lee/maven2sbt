@@ -220,15 +220,22 @@ object DependencySpec extends Properties {
             } else {
               artifactId
             }
-            val excls         = exclusions.map {
-              case Exclusion(GroupId(groupId), ArtifactId(artifactId)) =>
-                <exclusions>
+            val excls         = exclusions
+              .map {
+                case Exclusion.Scala(GroupId(groupId), ArtifactId(artifactId)) =>
+                  (groupId, s"${artifactId}_$${${scalaBinaryVersionName.value}}")
+                case Exclusion.Java(GroupId(groupId), ArtifactId(artifactId)) =>
+                  (groupId, artifactId)
+              }
+              .map {
+                case (groupId, artifactId) =>
+                  <exclusions>
                     <exclusion>
                       <groupId>{groupId}</groupId>
                       <artifactId>{artifactId}</artifactId>
                     </exclusion>
                   </exclusions>
-            }
+              }
             val dep           =
               <dependency>
                   <groupId>{groupId}</groupId>

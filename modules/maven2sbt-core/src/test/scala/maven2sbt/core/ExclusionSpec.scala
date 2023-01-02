@@ -20,8 +20,12 @@ object ExclusionSpec extends Properties {
   def testRenderExclusionRule: Property = for {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
-    val expected =
-      s"""ExclusionRule(organization = "${exclusion.groupId.value}", name = "${exclusion.artifactId.value}")"""
+    val expected = exclusion match {
+      case Exclusion.Scala(groupId, artifactId) =>
+        s""""${groupId.value}" %% "${artifactId.value}""""
+      case Exclusion.Java(groupId, artifactId) =>
+        s""""${groupId.value}" % "${artifactId.value}""""
+    }
     val actual   = Exclusion.renderExclusionRule(propsName, exclusion).toQuotedString
     actual ==== expected
   }
@@ -35,7 +39,13 @@ object ExclusionSpec extends Properties {
   def testRenderExclusions1: Property = for {
     exclusion <- Gens.genExclusion.log("exclusion")
   } yield {
-    val expected = s""" exclude("${exclusion.groupId.value}", "${exclusion.artifactId.value}")"""
+    val expected =
+      exclusion match {
+        case Exclusion.Scala(groupId, artifactId) =>
+          s""" excludeAll("${groupId.value}" %% "${artifactId.value}")"""
+        case Exclusion.Java(groupId, artifactId) =>
+          s""" excludeAll("${groupId.value}" % "${artifactId.value}")"""
+      }
     val actual   = Exclusion.renderExclusions(propsName, List(exclusion)).toQuotedString
     actual ==== expected
   }
