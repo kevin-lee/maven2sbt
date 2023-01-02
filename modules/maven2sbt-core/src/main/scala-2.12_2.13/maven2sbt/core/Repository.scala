@@ -4,9 +4,7 @@ import cats.Show
 import cats.syntax.all.*
 import io.estatico.newtype.macros.newtype
 
-
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2019-04-21
   */
 final case class Repository(id: Option[Repository.RepoId], name: Option[Repository.RepoName], url: Repository.RepoUrl)

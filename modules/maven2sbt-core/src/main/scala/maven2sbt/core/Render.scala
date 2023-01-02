@@ -12,13 +12,13 @@ object Render {
 
   def namedRender[A](
     name: String,
-    f: (Props.PropsName, A) => RenderedString
+    f: (Props.PropsName, A) => RenderedString,
   ): Render[A] =
     NamedRender(name, f)
 
   final case class NamedRender[A](
     name: String,
-    f: (Props.PropsName, A) => RenderedString
+    f: (Props.PropsName, A) => RenderedString,
   ) extends Render[A] {
     override def render(propsName: Props.PropsName, a: A): RenderedString =
       f(propsName, a)

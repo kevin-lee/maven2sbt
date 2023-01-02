@@ -28,9 +28,9 @@ object LibsSpec extends Properties {
           libValNameAndDependencies.map {
             case (_, dependency) => dependency
           },
-          scalaBinaryVersionName
+          scalaBinaryVersionName,
         ),
-        scalaBinaryVersionName.some
+        scalaBinaryVersionName.some,
       )
       actual ==== expected
     }
@@ -55,13 +55,13 @@ object LibsSpec extends Properties {
           ArtifactId(artifactId),
           Version(version),
           scope,
-          exclusions
+          exclusions,
         )         = dependency.tupled
         depString = RenderedString.noQuotesRequired(
                       s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope
                           .renderNonCompileWithPrefix(" % ", scope)}${Exclusion
                           .renderExclusions(propsName, exclusions)
-                          .toQuotedString}"""
+                          .toQuotedString}""",
                     )
       } yield s"${indent}val ${libValName.value} = ${depString.toQuotedString}"
 

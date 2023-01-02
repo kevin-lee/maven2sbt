@@ -65,7 +65,7 @@ package object core {
     given artifactIdRender: Render[ArtifactId] =
       Render.namedRender(
         "artifactId",
-        (propsName, artifactId) => artifactId.render(propsName)
+        (propsName, artifactId) => artifactId.render(propsName),
       )
 
     // The reason to have `Some[String]` as a return type here is
@@ -130,7 +130,7 @@ package object core {
     given scalaVersionRender: Render[ScalaVersion] =
       Render.namedRender(
         "scalaVersion",
-        (propsName, scalaVersion) => scalaVersion.render(propsName)
+        (propsName, scalaVersion) => scalaVersion.render(propsName),
       )
 
     def unapply(scalaVersion: ScalaVersion): Option[String] =

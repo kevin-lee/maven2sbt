@@ -11,60 +11,60 @@ object BuildSbtSpec extends Properties {
   override def tests: List[Test] = List(
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List.empty[Repository], n)",
-      RenderRepositorySpec.testRenderToResolvers0
+      RenderRepositorySpec.testRenderToResolvers0,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository), n)",
-      RenderRepositorySpec.testRenderToResolvers1
+      RenderRepositorySpec.testRenderToResolvers1,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository with empty name), n)",
-      RenderRepositorySpec.testRenderToResolvers1WithEmptyName
+      RenderRepositorySpec.testRenderToResolvers1WithEmptyName,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository with no name (None)), n)",
-      RenderRepositorySpec.testRenderToResolvers1WithNoName
+      RenderRepositorySpec.testRenderToResolvers1WithNoName,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository with empty id and empty name), n)",
-      RenderRepositorySpec.testRenderToResolvers1WithEmptyIdEmptyName
+      RenderRepositorySpec.testRenderToResolvers1WithEmptyIdEmptyName,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository with no id (None) and no name (None)), n)",
-      RenderRepositorySpec.testRenderToResolvers1WithNoIdNoName
+      RenderRepositorySpec.testRenderToResolvers1WithNoIdNoName,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ...), n)",
-      RenderRepositorySpec.testRenderToResolversMany
+      RenderRepositorySpec.testRenderToResolversMany,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ... which may have empty names), n)",
-      RenderRepositorySpec.testRenderToResolversManyWithEmptyRepoNames
+      RenderRepositorySpec.testRenderToResolversManyWithEmptyRepoNames,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ... which may have empty id and empty names), n)",
-      RenderRepositorySpec.testRenderToResolversManyWithEmptyRepoIdEmptyRepoNames
+      RenderRepositorySpec.testRenderToResolversManyWithEmptyRepoIdEmptyRepoNames,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ... which may have no names), n)",
-      RenderRepositorySpec.testRenderToResolversManyWithNoRepoNames
+      RenderRepositorySpec.testRenderToResolversManyWithNoRepoNames,
     ),
     property(
       "[Render][Repository] test BuildSbt.renderListOfFieldValue(None, List(repository1, repository2, ... which may have no id and no names), n)",
-      RenderRepositorySpec.testRenderToResolversManyWithNoRepoIdNoRepoNames
+      RenderRepositorySpec.testRenderToResolversManyWithNoRepoIdNoRepoNames,
     ),
     property(
       "[Render][Dependency] test BuildSbt.renderListOfFieldValue(None, List.empty[Dependency], n)",
-      RenderDependencySpec.testRenderLibraryDependenciesEmpty
+      RenderDependencySpec.testRenderLibraryDependenciesEmpty,
     ),
     property(
       "[Render][Dependency] test BuildSbt.renderListOfFieldValue(None, List(dependency), n)",
-      RenderDependencySpec.testRenderLibraryDependencies1
+      RenderDependencySpec.testRenderLibraryDependencies1,
     ),
     property(
       "[Render][Dependency] test BuildSbt.renderListOfFieldValue(None, List(dependency1, dependency2, ...), n)",
-      RenderDependencySpec.testRenderLibraryDependenciesMany
-    )
+      RenderDependencySpec.testRenderLibraryDependenciesMany,
+    ),
   )
 
   object RenderRepositorySpec {
@@ -77,7 +77,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         List.empty[Repository],
-        n
+        n,
       )(repo => Render[Repository].render(propsName, repo))
       actual ==== expected
     }
@@ -93,7 +93,7 @@ object BuildSbtSpec extends Properties {
           val actual    = BuildSbt.renderListOfFieldValue(
             none[String],
             List(repository),
-            n
+            n,
           )(repo => Render[Repository].render(propsName, repo))
           actual ==== expected
 
@@ -125,7 +125,7 @@ object BuildSbtSpec extends Properties {
           val actual    = BuildSbt.renderListOfFieldValue(
             none[String],
             List(repository),
-            n
+            n,
           )(repo => Render[Repository].render(propsName, repo))
           actual ==== expected
         case (repoId, repoNmae) =>
@@ -150,7 +150,7 @@ object BuildSbtSpec extends Properties {
           val actual    = BuildSbt.renderListOfFieldValue(
             none[String],
             List(repository),
-            n
+            n,
           )(repo => Render[Repository].render(propsName, repo))
           actual ==== expected
         case (repoId, repoNmae) =>
@@ -175,7 +175,7 @@ object BuildSbtSpec extends Properties {
           val actual    = BuildSbt.renderListOfFieldValue(
             none[String],
             List(repository),
-            n
+            n,
           )(repo => Render[Repository].render(propsName, repo))
           actual ==== expected
         case (repoId, repoNmae) =>
@@ -200,7 +200,7 @@ object BuildSbtSpec extends Properties {
           val actual    = BuildSbt.renderListOfFieldValue(
             none[String],
             List(repository),
-            n
+            n,
           )(repo => Render[Repository].render(propsName, repo))
           actual ==== expected
         case (repoId, repoNmae) =>
@@ -229,7 +229,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         repositories,
-        n
+        n,
       )(repo => Render[Repository].render(propsName, repo))
       actual ==== expected
     }
@@ -255,7 +255,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         input,
-        n
+        n,
       )(repo => Render[Repository].render(propsName, repo))
       actual ==== expected
     }
@@ -281,7 +281,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         input,
-        n
+        n,
       )(repo => Render[Repository].render(propsName, repo))
       actual ==== expected
     }
@@ -307,7 +307,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         input,
-        n
+        n,
       )(repo => Render[Repository].render(propsName, repo))
       actual ==== expected
     }
@@ -333,7 +333,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         input,
-        n
+        n,
       )(repo => Render[Repository].render(propsName, repo))
       actual ==== expected
     }
@@ -352,7 +352,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         List.empty[Dependency],
-        n
+        n,
       )(dep => ReferencedRender[Dependency].render(propsName, libsName, libs, dep))
       actual ==== expected
     }
@@ -369,7 +369,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         List(dependency),
-        n
+        n,
       )(dep => ReferencedRender[Dependency].render(propsName, libsName, libs, dep))
       actual ==== expected
     }
@@ -391,7 +391,7 @@ object BuildSbtSpec extends Properties {
       val actual    = BuildSbt.renderListOfFieldValue(
         none[String],
         libraryDependencies,
-        n
+        n,
       )(dep => ReferencedRender[Dependency].render(propsName, libsName, libs, dep))
       actual ==== expected
     }

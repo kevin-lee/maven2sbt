@@ -16,14 +16,14 @@ object StringUtilsSpec extends Properties {
     property("test indent", testIndent),
     property(
       "test capitalizeAfterIgnoringNonAlphaNumUnderscore (a single name)",
-      testCapitalizeAfterIgnoringNonAlphaNumUnderscore1
+      testCapitalizeAfterIgnoringNonAlphaNumUnderscore1,
     ),
     property(
       "test capitalizeAfterIgnoringNonAlphaNumUnderscore (two or more names)",
-      testCapitalizeAfterIgnoringNonAlphaNumUnderscoreMore
+      testCapitalizeAfterIgnoringNonAlphaNumUnderscoreMore,
     ),
     property("test renderWithProps", testRenderWithProps),
-    property("test quoteRenderedString", testQuoteRenderedString)
+    property("test quoteRenderedString", testQuoteRenderedString),
   )
 
   def testIndent: Property =
@@ -39,7 +39,7 @@ object StringUtilsSpec extends Properties {
       name <- Gen
                 .string(
                   Gens.genCharByRange(TestUtils.ExpectedLetters),
-                  Range.linear(1, 10)
+                  Range.linear(1, 10),
                 )
                 .log("name")
     } yield {
@@ -65,7 +65,7 @@ object StringUtilsSpec extends Properties {
     } yield {
       val (mavenPropName, propName) = mavenPropNameAndPropName
       val actual                    = StringUtils.capitalizeAfterIgnoringNonAlphaNumUnderscore(
-        mavenPropName.value
+        mavenPropName.value,
       )
       val expected                  = propName.propName
       actual ==== expected
@@ -92,7 +92,7 @@ object StringUtilsSpec extends Properties {
         Random
           .shuffle(nameValuePairs)
           .foldLeft(
-            List.empty[((MavenProperty.Name, String), (M2sProp.PropName, String))]
+            List.empty[((MavenProperty.Name, String), (M2sProp.PropName, String))],
           ) {
             case (acc, ((mavenPropName, propName), value)) =>
               ((mavenPropName, value), (propName, value)) :: acc
@@ -112,7 +112,7 @@ object StringUtilsSpec extends Properties {
             case (acc, (prop, value)) => s"$${${propsName.value}.${prop.propName}}$value" :: acc
           }
           .reverse
-          .mkString
+          .mkString,
       )
 
       val actual = StringUtils.renderWithProps(propsName, input)

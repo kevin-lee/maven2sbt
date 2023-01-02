@@ -11,7 +11,7 @@ final case class Exclusion(groupId: GroupId, artifactId: ArtifactId)
 
 object Exclusion {
 
-  implicit val eq: Eq[Exclusion]     = Eq.fromUniversalEquals[Exclusion]
+  implicit val eq: Eq[Exclusion]              = Eq.fromUniversalEquals[Exclusion]
   implicit val exclusionShow: Show[Exclusion] = excl =>
     s"Exclusion(groupId: ${excl.groupId.show}, artifactId: ${excl.artifactId.show})"
 
@@ -26,7 +26,7 @@ object Exclusion {
       val groupIdStr    = StringUtils.renderWithProps(propsName, groupId.value).toQuotedString
       val artifactIdStr = StringUtils.renderWithProps(propsName, artifactId.value).toQuotedString
       RenderedString.noQuotesRequired(
-        s"""ExclusionRule(organization = $groupIdStr, name = $artifactIdStr)"""
+        s"""ExclusionRule(organization = $groupIdStr, name = $artifactIdStr)""",
       )
   }
 
@@ -36,7 +36,7 @@ object Exclusion {
     case Exclusion(groupId, artifactId) :: Nil =>
       RenderedString.noQuotesRequired(
         s""" exclude(${StringUtils.renderWithProps(propsName, groupId.value).toQuotedString}, """ +
-          s"""${StringUtils.renderWithProps(propsName, artifactId.value).toQuotedString})"""
+          s"""${StringUtils.renderWithProps(propsName, artifactId.value).toQuotedString})""",
       )
     case x :: xs =>
       val idt = indent(8)
@@ -45,7 +45,7 @@ object Exclusion {
         s""" excludeAll(
            |$idt  ${x.render(propsName).toQuotedString},
            |$idt  ${xs.map(_.render(propsName).toQuotedString).stringsMkString(s",\n$idt  ")}
-           |$idt)""".stripMargin
+           |$idt)""".stripMargin,
       )
   }
 }

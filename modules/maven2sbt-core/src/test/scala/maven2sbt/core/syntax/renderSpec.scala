@@ -9,7 +9,7 @@ import maven2sbt.core.{Props, Render, RenderedString}
   */
 object renderSpec extends Properties {
   override def tests: List[Test] = List(
-    property("test A.render", testRender)
+    property("test A.render", testRender),
   )
 
   def testRender: Property =
@@ -19,8 +19,8 @@ object renderSpec extends Properties {
     } yield {
       val something = Something(s)
       import maven2sbt.core.syntax.render.*
-      val expected = RenderedString.withProps(s"${propsName.value}=>$s")
-      val actual = something.render(propsName)
+      val expected  = RenderedString.withProps(s"${propsName.value}=>$s")
+      val actual    = something.render(propsName)
       actual ==== expected
     }
 

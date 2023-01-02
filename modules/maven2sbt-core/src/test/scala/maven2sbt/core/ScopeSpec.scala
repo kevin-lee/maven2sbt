@@ -15,7 +15,7 @@ object ScopeSpec extends Properties {
     (Scope.provided, "Provided"),
     (Scope.runtime, "Runtime"),
     (Scope.system, "sbt.Configurations.System"),
-    (Scope.Default, "")
+    (Scope.Default, ""),
   )
 
   private val mavenScopeAndScope = List(
@@ -24,14 +24,14 @@ object ScopeSpec extends Properties {
     ("provided", Scope.provided),
     ("runtime", Scope.runtime),
     ("system", Scope.system),
-    ("", Scope.default)
+    ("", Scope.default),
   )
 
   override def tests: List[Test] = List(
     example("test scope render", testRender),
     property("test scope renderWithPrefix", testRenderWithPrefix),
     example("test scope parse (valid)", testParseValid),
-    property("test scope parse (invalid)", testParseInvalid)
+    property("test scope parse (invalid)", testParseInvalid),
   )
 
   def testRender: Result = Result.all(for {
@@ -46,7 +46,7 @@ object ScopeSpec extends Properties {
         case (scope, expected) =>
           Scope.renderNonCompileWithPrefix(prefix, scope) ====
             (if (scope === Scope.Default || scope === Scope.Compile) "" else s"$prefix$expected")
-      }
+      },
     )
   }
 
@@ -55,7 +55,7 @@ object ScopeSpec extends Properties {
       mavenScopeAndScope.map {
         case (mavenScope, scope) =>
           Scope.parse(mavenScope) ==== scope.asRight[String]
-      }
+      },
     )
 
   def testParseInvalid: Property = for {

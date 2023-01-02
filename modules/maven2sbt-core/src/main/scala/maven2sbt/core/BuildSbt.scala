@@ -66,9 +66,7 @@ object BuildSbt {
           settings.version.map(version => toFieldValue(prefix, propsName, version)).toList ++
           settings.scalaVersion.map(scalaVersion => toFieldValue(prefix, propsName, scalaVersion)).toList ++
           settings.artifactId.map(artifactId => toFieldValue(prefix, propsName, artifactId)).toList ++
-          renderListOfFieldValue(prefix, settings.repositories, indentSize)(repo =>
-            repo.render(propsName),
-          ).toList ++
+          renderListOfFieldValue(prefix, settings.repositories, indentSize)(repo => repo.render(propsName)).toList ++
           renderListOfFieldValue(prefix, settings.dependencies, indentSize)(dependency =>
             ReferencedRender[Dependency].render(propsName, libsName, libs, dependency),
           ).toList

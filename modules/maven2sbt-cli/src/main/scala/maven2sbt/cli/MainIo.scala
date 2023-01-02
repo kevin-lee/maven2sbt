@@ -62,8 +62,8 @@ trait MainIo[A] extends IOApp {
                            ConsoleEffect[IO].putErrStrLn(Maven2SbtError.render(err)) *>
                              IO.pure(ExitCode.Error),
                          _.fold(IO.pure(ExitCode.Success))(msg =>
-                           ConsoleEffect[IO].putStrLn(msg) *> IO.pure(ExitCode.Success)
-                         )
+                           ConsoleEffect[IO].putStrLn(msg) *> IO.pure(ExitCode.Success),
+                         ),
                        )
     } yield exitCode
   }

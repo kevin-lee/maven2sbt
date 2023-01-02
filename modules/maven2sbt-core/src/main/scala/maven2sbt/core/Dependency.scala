@@ -12,7 +12,7 @@ object Dependency extends DependencyPlus {
     artifactId: ArtifactId,
     version: Version,
     scope: Scope,
-    exclusions: List[Exclusion]
+    exclusions: List[Exclusion],
   ) extends Dependency
 
   final case class Java(
@@ -20,7 +20,7 @@ object Dependency extends DependencyPlus {
     artifactId: ArtifactId,
     version: Version,
     scope: Scope,
-    exclusions: List[Exclusion]
+    exclusions: List[Exclusion],
   ) extends Dependency
 
   def scala(
@@ -28,7 +28,7 @@ object Dependency extends DependencyPlus {
     artifactId: ArtifactId,
     version: Version,
     scope: Scope,
-    exclusions: List[Exclusion]
+    exclusions: List[Exclusion],
   ): Dependency = Scala(groupId, artifactId, version, scope, exclusions)
 
   def java(
@@ -36,7 +36,7 @@ object Dependency extends DependencyPlus {
     artifactId: ArtifactId,
     version: Version,
     scope: Scope,
-    exclusions: List[Exclusion]
+    exclusions: List[Exclusion],
   ): Dependency = Java(groupId, artifactId, version, scope, exclusions)
 
   implicit final class DependencyOps(private val dependency: Dependency) extends AnyVal {

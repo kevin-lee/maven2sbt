@@ -8,15 +8,15 @@ object PropSpec extends Properties {
 
   override def tests: List[Test] = List(
     property("test Prop.fromMavenProperty", PropSpec.testFromMavenProperty),
-    property("test Prop.render(prop)", PropSpec.testRender)
+    property("test Prop.render(prop)", PropSpec.testRender),
   )
 
   def testFromMavenProperty: Property =
     for {
-      _       <- Gen
+      _               <- Gen
                            .string(
                              Gens.genCharByRange(TestUtils.NonWhitespaceCharRange),
-                             Range.linear(1, 10)
+                             Range.linear(1, 10),
                            )
                            .map(Props.PropsName.apply)
                            .log("propsName")
@@ -37,7 +37,7 @@ object PropSpec extends Properties {
     propsName     <- Gen
                        .string(
                          Gens.genCharByRange(TestUtils.NonWhitespaceCharRange),
-                         Range.linear(1, 10)
+                         Range.linear(1, 10),
                        )
                        .map(Props.PropsName.apply)
                        .log("propsName")
@@ -51,8 +51,8 @@ object PropSpec extends Properties {
             RenderedString.noQuotesRequired(
               s"""val ${expectedProp
                   .name
-                  .propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}"""
-            )
+                  .propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}""",
+            ),
           )
       }
     val prop              = M2sProp.fromMavenProperty(input)

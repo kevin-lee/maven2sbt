@@ -17,7 +17,7 @@ object Gens {
       range.map {
         case (from, to) =>
           (to + 1 - from) -> Gen.char(from.toChar, to.toChar)
-      }
+      },
     )
 
   def genGroupId: Gen[GroupId] = Gen.string(Gen.alphaNum, Range.linear(1, 10)).map(GroupId.apply)
@@ -88,7 +88,7 @@ object Gens {
       Gen
         .string(
           Gen.frequency1(70 -> Gen.element1('.', '-'), 30 -> Gens.genCharByRange(TestUtils.ExpectedNonLetters)),
-          Range.singleton(1)
+          Range.singleton(1),
         )
         .list(Range.singleton(nameList.length - 1))
         .map(_.toVector)
@@ -119,7 +119,7 @@ object Gens {
         Gen
           .string(
             Gen.frequency1(70 -> Gen.element1('.', '-'), 30 -> Gens.genCharByRange(TestUtils.ExpectedNonLetters)),
-            Range.singleton(1)
+            Range.singleton(1),
           )
           .list(Range.singleton(nameList.length - 1))
           .map(_.toVector)
@@ -137,7 +137,7 @@ object Gens {
         Gen
           .string(
             Gen.frequency1(70 -> Gen.element1('.', '-'), 30 -> Gens.genCharByRange(TestUtils.ExpectedNonLetters)),
-            Range.singleton(1)
+            Range.singleton(1),
           )
           .list(Range.singleton(nameList.length - 1))
           .map(_.toVector)
@@ -162,7 +162,7 @@ object Gens {
       value <- Gen.string(Gens.genCharByRange(TestUtils.NonWhitespaceCharRange), Range.linear(1, 50))
     } yield (
       MavenProperty(MavenProperty.Name(key), MavenProperty.Value(value)),
-      Prop(Prop.PropName(expectedKey), Prop.PropValue(value))
+      Prop(Prop.PropName(expectedKey), Prop.PropValue(value)),
     )
 
   def genRenderedStringFromValueWithPropsAndQuoted: Gen[(RenderedString, String)] =
@@ -179,7 +179,7 @@ object Gens {
       (_, valueWithExpectedProp) = Random
                                      .shuffle(nameValuePairs)
                                      .foldLeft(
-                                       List.empty[((MavenProperty.Name, String), (M2sProp.PropName, String))]
+                                       List.empty[((MavenProperty.Name, String), (M2sProp.PropName, String))],
                                      ) {
                                        case (acc, ((mavenPropName, propName), value)) =>
                                          ((mavenPropName, value), (propName, value)) :: acc
@@ -194,9 +194,9 @@ object Gens {
                                      .mkString
     } yield (
       RenderedString.withProps(
-        valueWithProps
+        valueWithProps,
       ),
-      s"""s"$valueWithProps""""
+      s"""s"$valueWithProps"""",
     )
 
   def genRenderedStringWithOnlyPropNameAndQuoted: Gen[(RenderedString, String)] =
@@ -204,9 +204,9 @@ object Gens {
       (_, propName) <- Gens.genMavenPropertyNameWithPropNamePair
     } yield (
       RenderedString.withProps(
-        s"$${${propName.propName}}"
+        s"$${${propName.propName}}",
       ),
-      propName.propName
+      propName.propName,
     )
 
   def genRenderedStringWithNoPropNameAndQuoted: Gen[(RenderedString, String)] =
@@ -218,7 +218,7 @@ object Gens {
     Gen.frequency1(
       30 -> genRenderedStringFromValueWithPropsAndQuoted,
       30 -> genRenderedStringWithOnlyPropNameAndQuoted,
-      30 -> genRenderedStringWithNoPropNameAndQuoted
+      30 -> genRenderedStringWithNoPropNameAndQuoted,
     )
 
   def genScope: Gen[Scope] =
@@ -272,9 +272,9 @@ object Gens {
     } yield (
       Libs.LibValName(
         StringUtils
-          .capitalizeAfterIgnoringNonAlphaNumUnderscore(dependency.artifactId.value)
+          .capitalizeAfterIgnoringNonAlphaNumUnderscore(dependency.artifactId.value),
       ),
-      dependency
+      dependency,
     )
 
 }

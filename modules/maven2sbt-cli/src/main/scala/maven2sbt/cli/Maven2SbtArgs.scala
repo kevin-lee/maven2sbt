@@ -18,7 +18,7 @@ object Maven2SbtArgs {
     libsName: Libs.LibsName,
     out: File,
     overwrite: Overwrite,
-    pomPath: File
+    pomPath: File,
   ) extends Maven2SbtArgs
 
   final case class PrintArgs(
@@ -26,7 +26,7 @@ object Maven2SbtArgs {
     scalaBinaryVersionName: Option[ScalaBinaryVersion.Name],
     propsName: Props.PropsName,
     libsName: Libs.LibsName,
-    pomPath: File
+    pomPath: File,
   ) extends Maven2SbtArgs
 
   def fileArgs(
@@ -36,7 +36,7 @@ object Maven2SbtArgs {
     libsName: Libs.LibsName,
     out: File,
     overwrite: Overwrite,
-    pomPath: File
+    pomPath: File,
   ): Maven2SbtArgs =
     FileArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, out, overwrite, pomPath)
 
@@ -45,7 +45,7 @@ object Maven2SbtArgs {
     scalaBinaryVersionName: Option[ScalaBinaryVersion.Name],
     propsName: Props.PropsName,
     libsName: Libs.LibsName,
-    pomPath: File
+    pomPath: File,
   ): Maven2SbtArgs =
     PrintArgs(scalaVersion, scalaBinaryVersionName, propsName, libsName, pomPath)
 

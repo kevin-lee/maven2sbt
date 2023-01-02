@@ -12,7 +12,7 @@ object ProjectInfoSpec extends Properties {
 
   override def tests: List[Test] = List(
     property("test from", testFrom),
-    property("test from with <parent> elem and it may have the missing groupId in pom.xml", testFromWithParent)
+    property("test from with <parent> elem and it may have the missing groupId in pom.xml", testFromWithParent),
   )
 
   def testFrom: Property = for {
@@ -50,7 +50,7 @@ object ProjectInfoSpec extends Properties {
     parentGroupId: GroupId,
     groupId: Option[GroupId],
     artifactId: ArtifactId,
-    version: Version
+    version: Version,
   ): Elem = {
     <project>
       <parent>

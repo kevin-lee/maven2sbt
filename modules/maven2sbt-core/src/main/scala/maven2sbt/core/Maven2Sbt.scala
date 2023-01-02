@@ -17,21 +17,21 @@ trait Maven2Sbt[F[*]] {
     scalaVersion: ScalaVersion,
     propsName: Props.PropsName,
     scalaBinaryVersionName: Option[ScalaBinaryVersion.Name],
-    pom: => Elem
+    pom: => Elem,
   ): F[Either[Maven2SbtError, BuildSbt]]
 
   def buildSbtFromPomFile(
     scalaVersion: ScalaVersion,
     propsName: Props.PropsName,
     scalaBinaryVersionName: Option[ScalaBinaryVersion.Name],
-    file: File
+    file: File,
   ): F[Either[Maven2SbtError, BuildSbt]]
 
   def buildSbtFromInputStream(
     scalaVersion: ScalaVersion,
     propsName: Props.PropsName,
     scalaBinaryVersionName: Option[ScalaBinaryVersion.Name],
-    pom: InputStream
+    pom: InputStream,
   ): F[Either[Maven2SbtError, BuildSbt]]
 }
 
@@ -46,7 +46,7 @@ object Maven2Sbt {
       scalaVersion: ScalaVersion,
       propsName: Props.PropsName,
       scalaBinaryVersionName: Option[ScalaBinaryVersion.Name],
-      pomElem: => Elem
+      pomElem: => Elem,
     ): F[Either[Maven2SbtError, BuildSbt]] =
       for {
         pom               <- effectOf(pomElem)
@@ -65,9 +65,9 @@ object Maven2Sbt {
                                    projectInfo.version.some,
                                    scalaVersion.some,
                                    List.empty[Repository],
-                                   List.empty[Dependency]
-                                 )
-                               )
+                                   List.empty[Dependency],
+                                 ),
+                               ),
                              )
         projectSettings   <- pureOf(
                                BuildSbt.ProjectSettings(
@@ -77,9 +77,9 @@ object Maven2Sbt {
                                    none[Version],
                                    none[ScalaVersion],
                                    repositories.toList,
-                                   dependencies.toList
-                                 )
-                               )
+                                   dependencies.toList,
+                                 ),
+                               ),
                              )
         buildSbtData      <- effectOf(
                                BuildSbt(
@@ -87,8 +87,8 @@ object Maven2Sbt {
                                  thisBuildSettings,
                                  projectSettings,
                                  props.toList,
-                                 libs
-                               )
+                                 libs,
+                               ),
                              )
       } yield buildSbtData.asRight
 
@@ -97,7 +97,7 @@ object Maven2Sbt {
       scalaVersion: ScalaVersion,
       propsName: Props.PropsName,
       scalaBinaryVersionName: Option[ScalaBinaryVersion.Name],
-      file: File
+      file: File,
     ): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         pomFile        <- Option(file).filter(_.exists()).toRight(Maven2SbtError.pomFileNotExist(file)).eitherT[F]
@@ -112,7 +112,7 @@ object Maven2Sbt {
       scalaVersion: ScalaVersion,
       propsName: Props.PropsName,
       scalaBinaryVersionName: Option[ScalaBinaryVersion.Name],
-      pom: InputStream
+      pom: InputStream,
     ): F[Either[Maven2SbtError, BuildSbt]] =
       (for {
         inputStream    <- Option(pom).toRight(Maven2SbtError.noPomInputStream).eitherT[F]
