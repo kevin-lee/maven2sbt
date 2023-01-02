@@ -73,7 +73,19 @@ trait DependencyPlus { self =>
         val groupId    = (exclusion \ "groupId").text
         val artifactId = (exclusion \ "artifactId").text
 
-        Exclusion(GroupId(groupId), ArtifactId(artifactId))
+        scalaBinaryVersionName match {
+          case Some(scalaBinaryVersionName) =>
+            val suffix = s"_$${${scalaBinaryVersionName.value}}"
+            if (artifactId.endsWith(suffix)) {
+              Exclusion.scala(GroupId(groupId), ArtifactId(artifactId.substring(0, artifactId.length - suffix.length)))
+            } else {
+              Exclusion.java(GroupId(groupId), ArtifactId(artifactId))
+
+            }
+          case None =>
+            Exclusion.java(GroupId(groupId), ArtifactId(artifactId))
+        }
+
       }.toList
 
       scalaBinaryVersionName match {

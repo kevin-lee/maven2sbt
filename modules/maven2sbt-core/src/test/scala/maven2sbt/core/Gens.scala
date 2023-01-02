@@ -226,9 +226,10 @@ object Gens {
 
   def genExclusion: Gen[Exclusion] =
     for {
-      groupId    <- genGroupId
-      artifactId <- genArtifactId
-    } yield Exclusion(groupId, artifactId)
+      groupId              <- genGroupId
+      artifactId           <- genArtifactId
+      exclusionConstructor <- Gen.element1(Exclusion.scala _, Exclusion.java _)
+    } yield exclusionConstructor(groupId, artifactId)
 
   def genDependency: Gen[Dependency] =
     for {
