@@ -2,9 +2,8 @@ package maven2sbt.cli
 
 import cats.effect.*
 import cats.syntax.all.*
-import effectie.core.ConsoleEffect
+import effectie.core.ConsoleFx
 import effectie.instances.ce3.fx.ioFx
-import effectie.instances.console.consoleEffectF
 import maven2sbt.cli.Maven2SbtArgsParser.ArgParseFailureResult
 import maven2sbt.core.Maven2SbtError
 import pirate.{Command, Prefs}
@@ -59,10 +58,9 @@ trait MainIo[A] extends IOApp {
       errorOrResult <- codeOrA.fold(exitCodeToEither, runApp)
       exitCode      <- errorOrResult.fold(
                          err =>
-                           ConsoleEffect[IO].putErrStrLn(Maven2SbtError.render(err)) *>
+                           ConsoleFx[IO].putErrStrLn(Maven2SbtError.render(err)) *>
                              IO.pure(ExitCode.Error),
-                         _.fold(IO.pure(ExitCode.Success))(msg =>
-                           ConsoleEffect[IO].putStrLn(msg) *> IO.pure(ExitCode.Success),
+                         _.fold(IO.pure(ExitCode.Success))(msg => ConsoleFx[IO].putStrLn(msg) *> IO.pure(ExitCode.Success),
                          ),
                        )
     } yield exitCode
