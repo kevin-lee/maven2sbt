@@ -125,21 +125,21 @@ lazy val props =
     val ProjectScalaVersion = Scala2Version
 
     val CatsVersion       = "2.9.0"
-    val CatsEffectVersion = "3.4.7"
+    val CatsEffectVersion = "3.4.8"
 
     val HedgehogVersion = "0.10.1"
 
 //    val canEqualVersion = "0.1.0"
 
-    val EffectieVersion = "2.0.0-beta6"
-    val LoggerFVersion  = "2.0.0-beta9"
+    val EffectieVersion = "2.0.0-beta9"
+    val LoggerFVersion  = "2.0.0-beta12"
 
     val PirateVersion = "7797fb3884bdfdda7751d8f75accf622b30a53ed"
     val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$PirateVersion")
 
     val ScalaXml2Version = "2.1.0"
 
-    val ExtrasVersion = "0.31.0"
+    val ExtrasVersion = "0.38.0"
 
   }
 
