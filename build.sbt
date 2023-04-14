@@ -120,7 +120,7 @@ lazy val props =
     val ExecutableScriptName = RepoName
 
     val Scala2Version       = "2.13.10"
-    val DottyVersion        = "3.2.1"
+    val DottyVersion        = "3.2.2"
     val CrossScalaVersions  = List("2.12.17", Scala2Version, DottyVersion).distinct
     val ProjectScalaVersion = Scala2Version
 

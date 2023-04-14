@@ -9,7 +9,7 @@ on:
 
 env:
   GH_JAVA_VERSION: "adopt@1.11"
-  CLI_SCALA_VERSION: "3.2.1"
+  CLI_SCALA_VERSION: "3.2.2"
   CLI_SCALA_BINARY_VERSION: "3"
   GRAALVM_JAVA_VERSION: "adopt@1.11"
   GRAALVM_BIN_DIR_NAME: "native-image"
