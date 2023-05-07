@@ -125,7 +125,7 @@ lazy val props =
     val ProjectScalaVersion = Scala2Version
 
     val CatsVersion       = "2.9.0"
-    val CatsEffectVersion = "3.4.8"
+    val CatsEffectVersion = "3.4.10"
 
     val HedgehogVersion = "0.10.1"
 
@@ -139,7 +139,7 @@ lazy val props =
 
     val ScalaXml2Version = "2.1.0"
 
-    val ExtrasVersion = "0.38.0"
+    val ExtrasVersion = "0.39.0"
 
   }
 
