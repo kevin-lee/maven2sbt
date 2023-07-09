@@ -211,7 +211,6 @@ def module(projectName: String): Project = {
   Project(projectName, file(s"modules/$prefixedName"))
     .settings(
       name := prefixedName,
-      testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
       libraryDependencies ++= libs.hedgehogLibs,
       scalacOptions := scalacOptionsPostProcess(scalaVersion.value, scalacOptions.value).distinct,
       scalafixConfig := (
