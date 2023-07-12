@@ -96,7 +96,7 @@ trait DependencyPlus { self =>
               GroupId(groupId),
               ArtifactId(artifactId.substring(0, artifactId.length - suffix.length)),
               Version(version),
-              Option(scope).fold(Scope.default)(Scope.parseUnsafe),
+              Option(scope).fold(Scope.default)(Scope.parse),
               exclusions,
             )
           } else {
@@ -104,7 +104,7 @@ trait DependencyPlus { self =>
               GroupId(groupId),
               ArtifactId(artifactId),
               Version(version),
-              Option(scope).fold(Scope.default)(Scope.parseUnsafe),
+              Option(scope).fold(Scope.default)(Scope.parse),
               exclusions,
             )
           }
@@ -113,7 +113,7 @@ trait DependencyPlus { self =>
             GroupId(groupId),
             ArtifactId(artifactId),
             Version(version),
-            Option(scope).fold(Scope.default)(Scope.parseUnsafe),
+            Option(scope).fold(Scope.default)(Scope.parse),
             exclusions,
           )
 
@@ -136,7 +136,7 @@ trait DependencyPlus { self =>
           val versionStr    = version.render(propsName).toQuotedString
           RenderedString.noQuotesRequired(
             s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope
-                .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
+                .renderNonCompileWithPrefix(" % ", scope, propsName)}${Render[List[Exclusion]]
                 .render(propsName, exclusions)
                 .toQuotedString}""",
           )
@@ -148,7 +148,7 @@ trait DependencyPlus { self =>
           val versionStr    = version.render(propsName).toQuotedString
           RenderedString.noQuotesRequired(
             s"""$groupIdStr % $artifactIdStr % $versionStr${Scope
-                .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
+                .renderNonCompileWithPrefix(" % ", scope, propsName)}${Render[List[Exclusion]]
                 .render(propsName, exclusions)
                 .toQuotedString}""",
           )
@@ -168,7 +168,7 @@ trait DependencyPlus { self =>
                 (_, _, libVersion, Scope.Compile | Scope.Default, libExclusions),
                 (_, _, version, scope, exclusions),
               ) if version.value.isBlank || libVersion === version =>
-            if ((scope === Scope.Compile || scope === Scope.Default)) {
+            if (scope === Scope.Compile || scope === Scope.Default) {
               if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
                 RenderedString.noQuotesRequired(s"${libsName.value}.${libValName.value}")
               else if (libExclusions.isEmpty)
@@ -180,12 +180,12 @@ trait DependencyPlus { self =>
             } else {
               if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
                 RenderedString.noQuotesRequired(
-                  s"""${libsName.value}.${libValName.value}${Scope.renderNonCompileWithPrefix(" % ", scope)}""",
+                  s"""${libsName.value}.${libValName.value}${Scope.renderNonCompileWithPrefix(" % ", scope, propsName)}""",
                 )
               else if (libExclusions.isEmpty)
                 RenderedString.noQuotesRequired(
                   s"${libsName.value}.${libValName.value}${Scope
-                      .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}",
+                      .renderNonCompileWithPrefix(" % ", scope, propsName)}${Render[List[Exclusion]].render(propsName, exclusions).toQuotedString}",
                 )
               else
                 renderWithoutLibs(propsName, dependency)
