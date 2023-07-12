@@ -19,7 +19,7 @@ Just run the following one in the terminal then it installs maven2sbt GraalVM Na
 :::tip Recommended
 
 ```shell
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-macos.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/kevin-lee/maven2sbt/main/.scripts/install-graal-macos.sh)"
 ```
 :::
 
@@ -32,7 +32,7 @@ Just run the following one in the terminal then it installs maven2sbt GraalVM Na
 :::tip Recommended
 
 ```shell
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install-graal-ubuntu.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/kevin-lee/maven2sbt/main/.scripts/install-graal-ubuntu.sh)"
 ```
 
 :::
@@ -40,23 +40,23 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main
 ### Linux / macOS (JVM)
 #### Use `curl`
 ```shell
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install.sh)" 
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/kevin-lee/maven2sbt/main/.scripts/install.sh)" 
 ```
 ***
 
 #### Or use `wget`
 ```shell
-bash -c "$(wget -O- https://raw.githubusercontent.com/Kevin-Lee/maven2sbt/main/.scripts/install.sh)" 
+bash -c "$(wget -O- https://raw.githubusercontent.com/kevin-lee/maven2sbt/main/.scripts/install.sh)" 
 ```
 ***
 
 #### Or do it manually (not recommended)
   
-Download [maven2sbt-cli-1.4.0.zip](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.4.0/maven2sbt-cli-1.4.0.zip) and unzip it.
+Download [maven2sbt-cli-1.5.0.zip](https://github.com/kevin-lee/maven2sbt/releases/download/v1.5.0/maven2sbt-cli-1.5.0.zip) and unzip it.
   
 Add an alias for convenience to `~/.zshrc` or `~/.bashrc` or `~/.bash_profile` or the run commands file for your shell. 
 ```shell
-alias maven2sbt='/path/to/maven2sbt-cli-1.4.0/bin/maven2sbt'
+alias maven2sbt='/path/to/maven2sbt-cli-1.5.0/bin/maven2sbt'
 ```
 
 
@@ -67,10 +67,10 @@ alias maven2sbt='/path/to/maven2sbt-cli-1.4.0/bin/maven2sbt'
 Download maven2sbt-cli-windows-latest.exe blow. Sorry, there's no installation script for Windows yet.
 
 :::tip Recommended
-Download: [maven2sbt-cli-windows-latest.exe](https://github.com/Kevin-Lee/maven2sbt/releases/download/v1.4.0/maven2sbt-cli-windows-latest.exe)
+Download: [maven2sbt-cli-windows-latest.exe](https://github.com/kevin-lee/maven2sbt/releases/download/v1.5.0/maven2sbt-cli-windows-latest.exe)
 :::
 
 #### Java Package (JVM)
-Download and unzip the `maven2sbt-cli-1.4.0.zip` just like Linux or macOS.
+Download and unzip the `maven2sbt-cli-1.5.0.zip` just like Linux or macOS.
 
-You can run `maven2sbt-cli-1.4.0/bin/maven2sbt.bat` file but it hasn't been tested.
+You can run `maven2sbt-cli-1.5.0/bin/maven2sbt.bat` file but it hasn't been tested.
