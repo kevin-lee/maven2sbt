@@ -2,7 +2,7 @@ package maven2sbt.core
 
 import cats.Show
 import cats.kernel.Eq
-import cats.syntax.all._
+import cats.syntax.all.*
 
 /** @author Kevin Lee
   * @since 2019-04-21
@@ -16,6 +16,7 @@ object Scope {
   case object Runtime extends Scope
   case object System extends Scope
   case object Default extends Scope
+  final case class Unknown(value: String) extends Scope
 
   def compile: Scope  = Compile
   def test: Scope     = Test
@@ -23,6 +24,8 @@ object Scope {
   def runtime: Scope  = Runtime
   def system: Scope   = System
   def default: Scope  = Default
+
+  def unknown(value: String): Scope = Unknown(value)
 
   def all: List[Scope] = List(compile, test, provided, runtime, system)
 
@@ -42,17 +45,32 @@ object Scope {
     case System => "sbt.Configurations.System"
 
     case Default => ""
+
+    case Unknown(value) => value
   }
 
-  def renderNonCompileWithPrefix(prefix: String, scope: Scope): String =
+  def renderNonCompileWithPrefix(prefix: String, scope: Scope, propsName: Props.PropsName): String =
     if (scope === Scope.compile) {
       ""
     } else {
-      val rendered = render(scope)
-      if (rendered.isEmpty)
-        ""
-      else
-        s"$prefix$rendered"
+      scope match {
+        case Scope.Unknown(_) =>
+          val rendered = render(scope)
+          if (rendered.isEmpty) ""
+          else {
+            val renderedString = StringUtils.renderWithProps(propsName, rendered).toQuotedString
+            if (renderedString.isEmpty)
+              ""
+            else
+              s"$prefix$renderedString"
+          }
+        case Scope.Compile | Scope.Test | Scope.Provided | Scope.Runtime | Scope.System | Scope.Default =>
+          val rendered = render(scope)
+          if (rendered.isEmpty)
+            ""
+          else
+            s"$prefix$rendered"
+      }
     }
 
   def renderToMaven(scope: Scope): String = scope match {
@@ -67,24 +85,24 @@ object Scope {
     case System => "system"
 
     case Default => ""
+
+    case Unknown(value) => value
   }
 
-  def parse(scope: String): Either[String, Scope] = scope match {
-    case "compile" => compile.asRight[String]
+  def parse(scope: String): Scope = scope match {
+    case "compile" => compile
 
-    case "test" => test.asRight[String]
+    case "test" => test
 
-    case "provided" => provided.asRight[String]
+    case "provided" => provided
 
-    case "runtime" => runtime.asRight[String]
+    case "runtime" => runtime
 
-    case "system" => system.asRight[String]
+    case "system" => system
 
-    case "" => default.asRight[String]
+    case "" => default
 
-    case _ => s"Unsupported scope: $scope".asLeft[Scope]
+    case unknownScope => unknown(unknownScope)
   }
-
-  def parseUnsafe(scope: String): Scope = parse(scope).fold(sys.error, identity)
 
 }

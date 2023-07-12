@@ -59,7 +59,7 @@ trait LibsPlus {
         libValName,
         RenderedString.noQuotesRequired(
           s"""$groupIdStr %% $artifactIdStr % $versionStr${Scope
-              .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
+              .renderNonCompileWithPrefix(" % ", scope, propsName)}${Render[List[Exclusion]]
               .render(propsName, exclusions)
               .toQuotedString}""",
         ),
@@ -72,7 +72,7 @@ trait LibsPlus {
         libValName,
         RenderedString.noQuotesRequired(
           s"""$groupIdStr % $artifactIdStr % $versionStr${Scope
-              .renderNonCompileWithPrefix(" % ", scope)}${Render[List[Exclusion]]
+              .renderNonCompileWithPrefix(" % ", scope, propsName)}${Render[List[Exclusion]]
               .render(propsName, exclusions)
               .toQuotedString}""",
         ),

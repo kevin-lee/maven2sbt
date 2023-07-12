@@ -43,7 +43,7 @@ object DependencySpec extends Properties {
     val expected                                                                        =
       RenderedString.noQuotesRequired(
         s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope
-            .renderNonCompileWithPrefix(" % ", scope)}${Exclusion
+            .renderNonCompileWithPrefix(" % ", scope, propsName)}${Exclusion
             .renderExclusions(propsName, exclusions)
             .toQuotedString}""",
       )
@@ -85,7 +85,7 @@ object DependencySpec extends Properties {
     val expected                                                                        =
       RenderedString.noQuotesRequired(
         s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope
-            .renderNonCompileWithPrefix(" % ", scope)}${Exclusion
+            .renderNonCompileWithPrefix(" % ", scope, propsName)}${Exclusion
             .renderExclusions(propsName, exclusions)
             .toQuotedString}""",
       )
@@ -109,12 +109,12 @@ object DependencySpec extends Properties {
     val libs     = Libs(List((Libs.LibValName("myLib"), myLib)))
     val expected = RenderedString.noQuotesRequired(
       if (myLib.scope === Scope.compile || myLib.scope === Scope.default) {
-        s"""${libsName.value}.myLib${Scope.renderNonCompileWithPrefix(" % ", scope)}${Exclusion
+        s"""${libsName.value}.myLib${Scope.renderNonCompileWithPrefix(" % ", scope, propsName)}${Exclusion
             .renderExclusions(propsName, myLib.exclusions.diff(exclusions))
             .toQuotedString}"""
       } else {
         s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope
-            .renderNonCompileWithPrefix(" % ", scope)}${Exclusion
+            .renderNonCompileWithPrefix(" % ", scope, propsName)}${Exclusion
             .renderExclusions(propsName, exclusions)
             .toQuotedString}"""
       },
@@ -143,7 +143,7 @@ object DependencySpec extends Properties {
     val expected                                                                        =
       RenderedString.noQuotesRequired(
         s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope
-            .renderNonCompileWithPrefix(" % ", scope)}${Exclusion
+            .renderNonCompileWithPrefix(" % ", scope, propsName)}${Exclusion
             .renderExclusions(propsName, exclusions)
             .toQuotedString}""",
       )
@@ -196,7 +196,7 @@ object DependencySpec extends Properties {
     val libs     = Libs(List((Libs.LibValName("myLib"), myLib)))
     val expected = RenderedString.noQuotesRequired(
       s""""$groupId" ${if (dependency.isScalaLib) "%%" else "%"} "$artifactId" % "$version"${Scope
-          .renderNonCompileWithPrefix(" % ", scope)}${Exclusion
+          .renderNonCompileWithPrefix(" % ", scope, propsName)}${Exclusion
           .renderExclusions(propsName, exclusions)
           .toQuotedString}""",
     )
