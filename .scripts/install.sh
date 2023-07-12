@@ -4,10 +4,10 @@ set -eu
 
 app_executable_name=maven2sbt
 app_name=maven2sbt-cli
-app_version=${1:-1.4.0}
+app_version=${1:-1.5.0}
 versioned_app_name="${app_name}-${app_version}"
 app_zip_file="${versioned_app_name}.zip"
-download_url="https://github.com/Kevin-Lee/maven2sbt/releases/download/v${app_version}/${app_zip_file}"
+download_url="https://github.com/kevin-lee/maven2sbt/releases/download/v${app_version}/${app_zip_file}"
 
 usr_local_path="/usr/local"
 opt_location="${usr_local_path}/opt"
