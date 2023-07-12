@@ -17,6 +17,9 @@ ThisBuild / scmInfo :=
     s"https://github.com/${props.GitHubUsername}/${props.RepoName}.git",
   ).some
 ThisBuild / licenses := List("MIT" -> url("http://opensource.org/licenses/MIT"))
+
+ThisBuild / resolvers += "sonatype-snapshots" at s"https://${props.SonatypeCredentialHost}/content/repositories/snapshots"
+
 ThisBuild / useAggressiveScalacOptions := true
 
 ThisBuild / scalafixConfig := (
@@ -42,6 +45,7 @@ lazy val maven2sbt = (project in file("."))
     docusaurBuildDir := docusaurDir.value / "build",
     /* } Website */
   )
+  .settings(mavenCentralPublishSettings)
   .settings(noPublish)
   .aggregate(core, cli)
 
@@ -118,6 +122,9 @@ lazy val props =
     val GitHubUsername       = "Kevin-Lee"
     val RepoName             = "maven2sbt"
     val ExecutableScriptName = RepoName
+
+    val SonatypeCredentialHost = "s01.oss.sonatype.org"
+    val SonatypeRepository = s"https://$SonatypeCredentialHost/service/local"
 
     val Scala2Version       = "2.13.10"
     val DottyVersion        = "3.2.2"
@@ -205,6 +212,13 @@ def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[St
   } else {
     "-Xsource:3" +: options.filterNot(_ == "UTF-8")
   }
+
+lazy val mavenCentralPublishSettings: SettingsDefinition = List(
+  /* Publish to Maven Central { */
+  sonatypeCredentialHost := props.SonatypeCredentialHost,
+  sonatypeRepository     := props.SonatypeRepository,
+  /* } Publish to Maven Central */
+)
 
 def module(projectName: String): Project = {
   val prefixedName = prefixedProjectName(projectName)
