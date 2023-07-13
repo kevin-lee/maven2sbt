@@ -9,7 +9,7 @@
   <packaging>jar</packaging>
 
   <name>J8Plus</name>
-  <url>https://github.com/Kevin-Lee/j8plus</url>
+  <url>https://github.com/kevin-lee/j8plus</url>
 
   <properties>
     <group.id>io.kevinlee</group.id>
@@ -40,9 +40,9 @@
   </repositories>
 
   <scm>
-    <connection>scm:git:git@kevin-lee-github:Kevin-Lee/j8plus.git</connection>
-    <developerConnection>scm:git:git@kevin-lee-github:Kevin-Lee/j8plus.git</developerConnection>
-    <url>https://github.com/Kevin-Lee/j8plus</url>
+    <connection>scm:git:git@kevin-lee-github:kevin-lee/j8plus.git</connection>
+    <developerConnection>scm:git:git@kevin-lee-github:kevin-lee/j8plus.git</developerConnection>
+    <url>https://github.com/kevin-lee/j8plus</url>
     <tag>HEAD</tag>
   </scm>
 
