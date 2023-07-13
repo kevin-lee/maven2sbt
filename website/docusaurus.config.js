@@ -15,7 +15,7 @@ const websiteConfig = {
   url: 'https://maven2sbt.kevinly.dev',
   baseUrl: '/',
   favicon: 'img/favicon.png',
-  organizationName: 'Kevin-Lee', // Usually your GitHub org/user name.
+  organizationName: 'kevin-lee', // Usually your GitHub org/user name.
   projectName: 'maven2sbt', // Usually your repo name.
   themeConfig: {
     prism: {
@@ -37,7 +37,7 @@ const websiteConfig = {
           position: 'left',
         },
         {
-          href: 'https://github.com/Kevin-Lee/maven2sbt',
+          href: 'https://github.com/kevin-lee/maven2sbt',
           label: 'GitHub',
           position: 'right',
         },
@@ -64,7 +64,7 @@ const websiteConfig = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/Kevin-Lee/maven2sbt',
+              href: 'https://github.com/kevin-lee/maven2sbt',
             },
             {
               label: 'Blog',
@@ -77,7 +77,7 @@ const websiteConfig = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} maven2sbt written by <a href="https://github.com/Kevin-Lee" target="_blank"><b>Kevin Lee</b></a>,.The website built with Docusaurus.<br>Some icons made by <a href="https://www.flaticon.com/free-icon/file_1126880" title="prettycons">prettycons</a> and <a href="https://www.flaticon.com/authors/smartline" title="Smartline">Smartline</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>`,
+      copyright: `Copyright © ${new Date().getFullYear()} maven2sbt written by <a href="https://github.com/kevin-lee" target="_blank"><b>Kevin Lee</b></a>,.The website built with Docusaurus.<br>Some icons made by <a href="https://www.flaticon.com/free-icon/file_1126880" title="prettycons">prettycons</a> and <a href="https://www.flaticon.com/authors/smartline" title="Smartline">Smartline</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>`,
     },
   },
   presets: [

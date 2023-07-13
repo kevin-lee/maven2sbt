@@ -119,7 +119,7 @@ val removeDottyIncompatible: ModuleID => Boolean =
 lazy val props =
   new {
 
-    val GitHubUsername       = "Kevin-Lee"
+    val GitHubUsername       = "kevin-lee"
     val RepoName             = "maven2sbt"
     val ExecutableScriptName = RepoName
 
@@ -141,7 +141,7 @@ lazy val props =
     val EffectieVersion = "2.0.0-beta9"
     val LoggerFVersion  = "2.0.0-beta12"
 
-    val PirateVersion = "7797fb3884bdfdda7751d8f75accf622b30a53ed"
+    val PirateVersion = "a3415ad22371820a8c03b62ce9d3e4f467575681"
     val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$PirateVersion")
 
     val ScalaXml2Version = "2.1.0"
