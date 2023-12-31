@@ -127,8 +127,8 @@ lazy val props =
     val Scala2Version       = "2.13.10"
     val Scala3Version       = "3.2.2"
     val CrossScalaVersions  = List("2.12.17", Scala2Version, Scala3Version).distinct
-    val ProjectScalaVersion = Scala2Version
-//    val ProjectScalaVersion = Scala3Version
+//    val ProjectScalaVersion = Scala2Version
+    val ProjectScalaVersion = Scala3Version
 
     val CatsVersion       = "2.9.0"
     val CatsEffectVersion = "3.5.2"
@@ -145,7 +145,7 @@ lazy val props =
 
     val ScalaXml2Version = "2.1.0"
 
-    val Refined4sVersion = "0.7.0"
+    val Refined4sVersion = "0.8.0"
 
     val ExtrasVersion = "0.44.0"
 
@@ -211,7 +211,7 @@ def libraryDependenciesPostProcess(
 
 def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[String] =
   if (scalaVersion.startsWith("3.")) {
-    options
+    options ++ List("-explain")
 //    scala3cLanguageOptions ++
 //      options.filterNot(o =>
 //        o == "-language:dynamics,existentials,higherKinds,reflectiveCalls,experimental.macros,implicitConversions" || o == "UTF-8",
