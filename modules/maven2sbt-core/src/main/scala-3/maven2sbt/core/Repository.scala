@@ -1,8 +1,11 @@
 package maven2sbt.core
 
-import Repository._
+import Repository.*
 import cats.Show
-import cats.syntax.all._
+import cats.syntax.all.*
+
+import refined4s.*
+import refined4s.modules.cats.derivation.*
 
 import scala.xml.Elem
 
@@ -13,44 +16,13 @@ final case class Repository(id: Option[RepoId], name: Option[RepoName], url: Rep
 
 object Repository extends RepositoryPlus {
 
-  type RepoId = RepoId.RepoId
-  object RepoId {
-    opaque type RepoId = String
-    def apply(repoId: String): RepoId = repoId
+  type RepoId = RepoId.Type
+  object RepoId extends Newtype[String], CatsEqShow[String]
 
-    def unapply(repoId: RepoId): Option[String] =
-      repoId.value.some
+  type RepoName = RepoName.Type
+  object RepoName extends Newtype[String], CatsEqShow[String]
 
-    given repoIdCanEqual: CanEqual[RepoId, RepoId] = CanEqual.derived
-
-    extension (repoId: RepoId) def value: String = repoId
-
-    given show: Show[RepoId] = _.value
-  }
-
-  type RepoName = RepoName.RepoName
-  object RepoName {
-    opaque type RepoName = String
-    def apply(repoName: String): RepoName = repoName
-
-    given repoNameCanEqual: CanEqual[RepoName, RepoName] = CanEqual.derived
-
-    def unapply(repoName: RepoName): Option[String] =
-      repoName.value.some
-
-    extension (repoName: RepoName) def value: String = repoName
-
-    given show: Show[RepoName] = _.value
-  }
-
-  type RepoUrl = RepoUrl.RepoUrl
-  object RepoUrl {
-    opaque type RepoUrl = String
-    def apply(repoUrl: String): RepoUrl = repoUrl
-
-    given repoUrlCanEqual: CanEqual[RepoUrl, RepoUrl] = CanEqual.derived
-
-    extension (repoUrl: RepoUrl) def value: String = repoUrl
-  }
+  type RepoUrl = RepoUrl.Type
+  object RepoUrl extends Newtype[String], CatsEqShow[String]
 
 }
