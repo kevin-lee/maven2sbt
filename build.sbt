@@ -55,7 +55,7 @@ lazy val core = module("core")
     libraryDependencies ++= {
       val scalaV = scalaVersion.value
       if (scalaV.startsWith("3"))
-        List(libs.catsLib, libs.scalaXml)
+        List(libs.catsLib, libs.scalaXml) ++ libs.refined4s
       else
         List(libs.newTypeLib, libs.catsLib, libs.scalaXml)
     },
@@ -145,6 +145,8 @@ lazy val props =
 
     val ScalaXml2Version = "2.1.0"
 
+    val Refined4sVersion = "0.7.0"
+
     val ExtrasVersion = "0.44.0"
 
   }
@@ -175,6 +177,11 @@ lazy val libs =
     )
 
     lazy val newTypeLib = "io.estatico" %% "newtype" % "0.4.4"
+
+    lazy val refined4s = List(
+      "io.kevinlee" %% "refined4s-core" % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-cats" % props.Refined4sVersion,
+    )
 
     lazy val extrasCats    = "io.kevinlee" %% "extras-cats"     % props.ExtrasVersion
     lazy val extrasScalaIo = "io.kevinlee" %% "extras-scala-io" % props.ExtrasVersion
