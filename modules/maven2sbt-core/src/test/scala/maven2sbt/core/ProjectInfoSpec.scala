@@ -2,6 +2,7 @@ package maven2sbt.core
 
 import hedgehog.*
 import hedgehog.runner.*
+import maven2sbt.core.data.*
 
 import scala.xml.*
 

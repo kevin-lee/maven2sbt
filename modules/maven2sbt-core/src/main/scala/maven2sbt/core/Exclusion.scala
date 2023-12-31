@@ -4,6 +4,8 @@ import StringUtils.*
 import cats.*
 import cats.syntax.show.*
 
+import maven2sbt.core.data.*
+
 /** @author Kevin Lee
   * @since 2019-04-22
   */

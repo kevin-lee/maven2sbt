@@ -1,6 +1,7 @@
 package maven2sbt.cli
 
-import maven2sbt.core.{Libs, Props, ScalaBinaryVersion, ScalaVersion}
+import maven2sbt.core.{Libs, Props}
+import maven2sbt.core.data.{ScalaBinaryVersion, ScalaVersion}
 
 import java.io.File
 

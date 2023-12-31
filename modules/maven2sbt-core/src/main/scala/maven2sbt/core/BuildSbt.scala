@@ -4,6 +4,7 @@ import BuildSbt.*
 import cats.syntax.all.*
 import just.fp.Named
 import maven2sbt.core.syntax.render.*
+import maven2sbt.core.data.*
 
 /** @author Kevin Lee
   * @since 2020-01-29

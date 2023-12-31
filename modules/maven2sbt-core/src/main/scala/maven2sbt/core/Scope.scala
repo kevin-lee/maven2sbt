@@ -4,6 +4,8 @@ import cats.Show
 import cats.kernel.Eq
 import cats.syntax.all.*
 
+import maven2sbt.core.data.*
+
 /** @author Kevin Lee
   * @since 2019-04-21
   */

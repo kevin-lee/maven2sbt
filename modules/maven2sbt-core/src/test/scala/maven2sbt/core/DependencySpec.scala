@@ -3,6 +3,7 @@ package maven2sbt.core
 import cats.syntax.all.*
 import hedgehog.*
 import hedgehog.runner.*
+import maven2sbt.core.data.*
 
 import scala.xml.Elem
 

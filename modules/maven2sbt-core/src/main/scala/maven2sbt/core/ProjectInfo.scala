@@ -2,6 +2,8 @@ package maven2sbt.core
 
 import cats.Show
 
+import maven2sbt.core.data.*
+
 import scala.language.postfixOps
 import scala.xml.Elem
 

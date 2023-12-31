@@ -1,4 +1,4 @@
-package maven2sbt
+package maven2sbt.core
 
 import just.fp.Named
 
@@ -7,7 +7,7 @@ import cats.*
 /** @author Kevin Lee
   * @since 2019-04-22
   */
-package object core {
+object data {
 
   type GroupId = GroupId.GroupId
   object GroupId {

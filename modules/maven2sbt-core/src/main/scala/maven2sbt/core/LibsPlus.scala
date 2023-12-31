@@ -3,6 +3,8 @@ package maven2sbt.core
 import cats.Show
 import cats.syntax.show.*
 
+import maven2sbt.core.data.*
+
 import scala.xml.Node
 
 import Libs.*

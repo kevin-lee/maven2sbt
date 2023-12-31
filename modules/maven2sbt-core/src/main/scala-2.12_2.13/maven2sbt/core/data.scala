@@ -1,4 +1,4 @@
-package maven2sbt
+package maven2sbt.core
 
 import cats.*
 import io.estatico.newtype.macros.*
@@ -8,7 +8,7 @@ import just.fp.Named
 /** @author Kevin Lee
   * @since 2019-04-22
   */
-package object core {
+object data {
 
   @newtype case class GroupId(value: String)
 
