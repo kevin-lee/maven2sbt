@@ -1,5 +1,6 @@
 package maven2sbt.core
 
+import maven2sbt.core.data.*
 final case class Prop(name: Prop.PropName, value: Prop.PropValue)
 
 object Prop {

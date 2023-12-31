@@ -6,6 +6,8 @@ import effectie.core.*
 import effectie.syntax.fx.*
 import extras.cats.syntax.all.*
 
+import maven2sbt.core.data.*
+
 import java.io.{File, InputStream}
 import scala.xml.*
 

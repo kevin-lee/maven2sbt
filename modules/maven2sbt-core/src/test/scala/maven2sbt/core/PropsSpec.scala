@@ -3,6 +3,7 @@ package maven2sbt.core
 import hedgehog.*
 import hedgehog.runner.*
 import maven2sbt.core.Prop as M2sProp
+import maven2sbt.core.data.*
 
 /** @author Kevin Lee
   * @since 2020-12-13
@@ -24,9 +25,8 @@ object PropsSpec extends Properties {
       case (mavenProperty, expectedProp) =>
         (
           mavenProperty,
-          s"""val ${expectedProp
-              .name
-              .propName} = ${StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString}""",
+          s"""val ${expectedProp.name.propName} = """ +
+            StringUtils.renderWithProps(propsName, expectedProp.value.propValue).toQuotedString,
         )
     }.unzip
     val indent                 = " " * indentSize

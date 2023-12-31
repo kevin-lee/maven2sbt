@@ -3,6 +3,7 @@ package maven2sbt.core
 import cats.syntax.all.*
 import hedgehog.*
 import hedgehog.runner.*
+import maven2sbt.core.data.*
 
 /** @author Kevin Lee
   * @since 2020-09-05

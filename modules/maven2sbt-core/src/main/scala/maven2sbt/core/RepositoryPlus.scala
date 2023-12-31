@@ -4,6 +4,7 @@ import cats.Show
 import cats.syntax.all.none
 import just.fp.Named
 import maven2sbt.core.Repository.{RepoId, RepoName, RepoUrl}
+import maven2sbt.core.data.*
 
 import scala.xml.Elem
 

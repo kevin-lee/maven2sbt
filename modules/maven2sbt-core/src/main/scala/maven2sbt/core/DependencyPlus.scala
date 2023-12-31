@@ -4,6 +4,8 @@ import cats.Show
 import cats.syntax.all.*
 import just.fp.Named
 
+import maven2sbt.core.data.*
+
 import scala.language.postfixOps
 import scala.xml.Node
 
@@ -180,7 +182,8 @@ trait DependencyPlus { self =>
             } else {
               if (libExclusions.length === exclusions.length && libExclusions.diff(exclusions).isEmpty)
                 RenderedString.noQuotesRequired(
-                  s"""${libsName.value}.${libValName.value}${Scope.renderNonCompileWithPrefix(" % ", scope, propsName)}""",
+                  s"""${libsName.value}.${libValName.value}${Scope
+                      .renderNonCompileWithPrefix(" % ", scope, propsName)}""",
                 )
               else if (libExclusions.isEmpty)
                 RenderedString.noQuotesRequired(

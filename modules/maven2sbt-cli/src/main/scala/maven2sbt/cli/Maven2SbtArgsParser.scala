@@ -5,7 +5,8 @@ import Scalaz.*
 import pirate.*
 import Pirate.*
 import cats.Show
-import maven2sbt.core.{Libs, Props, ScalaBinaryVersion, ScalaVersion}
+import maven2sbt.core.{Libs, Props}
+import maven2sbt.core.data.{ScalaBinaryVersion, ScalaVersion}
 import maven2sbt.info.Maven2SbtBuildInfo
 
 import java.io.File

@@ -3,6 +3,7 @@ package maven2sbt.core
 import hedgehog.*
 import hedgehog.runner.*
 import maven2sbt.core.Prop as M2sProp
+import maven2sbt.core.data.*
 
 object PropSpec extends Properties {
 

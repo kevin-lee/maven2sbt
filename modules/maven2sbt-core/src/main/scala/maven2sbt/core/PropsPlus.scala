@@ -1,6 +1,7 @@
 package maven2sbt.core
 
 import maven2sbt.core.Props.PropsName
+import maven2sbt.core.data.*
 
 /** @author Kevin Lee
   * @since 2021-03-10
