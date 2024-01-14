@@ -137,8 +137,8 @@ lazy val props =
 
 //    val canEqualVersion = "0.1.0"
 
-    val EffectieVersion = "2.0.0-beta13"
-    val LoggerFVersion  = "2.0.0-beta23"
+    val EffectieVersion = "2.0.0-beta14"
+    val LoggerFVersion  = "2.0.0-beta24"
 
     val PirateVersion = "faff703b67fd10199098e806a3f6858982823461"
     val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$PirateVersion")
