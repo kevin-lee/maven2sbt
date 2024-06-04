@@ -7,7 +7,7 @@ addSbtPlugin("org.scoverage"   % "sbt-coveralls"       % "1.3.5")
 addSbtPlugin("com.github.sbt"  % "sbt-native-packager" % "1.9.11")
 addSbtPlugin("org.scalameta"   % "sbt-native-image"    % "0.3.0")
 
-val sbtDevOopsVersion = "3.0.0"
+val sbtDevOopsVersion = "3.1.0"
 addSbtPlugin("io.kevinlee" % "sbt-devoops-scala"     % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-sbt-extra" % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-github"    % sbtDevOopsVersion)
