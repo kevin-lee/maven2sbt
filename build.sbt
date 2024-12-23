@@ -35,7 +35,7 @@ lazy val maven2sbt = (project in file("."))
     /* GitHub Release { */
     devOopsPackagedArtifacts := List(
       s"modules/${props.RepoName}-cli/target/universal/${name.value}*.zip",
-      s"modules/${props.RepoName}-cli/target/native-image/maven2sbt-cli-*",
+      s"modules/${props.RepoName}-cli/target/native-image/${name.value}-cli-*",
     ),
     /* } GitHub Release */
     /* Website { */

@@ -142,10 +142,15 @@ jobs:
 
   graalvm-gh-release:
     needs: gh-release
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os.value }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
+        os:
+          - { name: "Ubuntu 22.04",           value: "ubuntu-22.04", bin-suffix: "-ubuntu" }
+          - { name: "macOS 13",               value: "macos-13",     bin-suffix: "-macos-13" }
+          - { name: "macOS 14 Apple Silicon", value: "macos-14",     bin-suffix: "-macos-14-arm64" }
+          - { name: "macOS 15 Apple Silicon", value: "macos-15",     bin-suffix: "-macos-15-arm64" }
         run-binary: [maven2sbt-cli]
     steps:
       - uses: actions/checkout@v2.3.4
@@ -172,6 +177,7 @@ jobs:
           CURRENT_BRANCH_NAME: ${{ github.ref }}
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
+          APP_BIN_NAME: ${{ matrix.run-binary }}${{ matrix.os.bin-suffix }}
         run: |
           sbt \
             -J-XX:MaxMetaspaceSize=1024m \
@@ -186,7 +192,8 @@ jobs:
           ls -lGh modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
           sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --help"
 
-          mv modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }}-${{ matrix.os }}
+          echo "mv modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/$APP_BIN_NAME"
+          mv modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/$APP_BIN_NAME
 
           sbt \
             -J-XX:MaxMetaspaceSize=1024m \

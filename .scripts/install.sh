@@ -9,7 +9,7 @@ versioned_app_name="${app_name}-${app_version}"
 app_zip_file="${versioned_app_name}.zip"
 download_url="https://github.com/kevin-lee/maven2sbt/releases/download/v${app_version}/${app_zip_file}"
 
-usr_local_path="/usr/local"
+usr_local_path=$HOME
 opt_location="${usr_local_path}/opt"
 app_location="${opt_location}/${app_name}"
 installed_app_bin_path="${app_location}/bin/${app_executable_name}"
@@ -37,6 +37,8 @@ curl -Lo $app_zip_file $download_url
 unzip $app_zip_file || { echo "maven2sbt version ${app_version} doesn't seem to exist." && rm $app_zip_file && false ; }
 
 mkdir -p $opt_location
+mkdir -p $usr_local_bin_path
+
 rm -R $app_location || true
 mv $versioned_app_name $app_location
 
