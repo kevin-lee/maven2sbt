@@ -19,18 +19,16 @@ env:
 jobs:
 
   graalvm_build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os.value }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        run-binary: [maven2sbt-cli, maven2sbt-cli.exe]
-        exclude:
-          - os: ubuntu-latest
-            run-binary: maven2sbt-cli.exe
-          - os: macos-latest
-            run-binary: maven2sbt-cli.exe
-          - os: windows-latest
-            run-binary: maven2sbt-cli
+        # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
+        os:
+          - { name: "Ubuntu 22.04",           value: "ubuntu-22.04", bin-suffix: "-ubuntu" }
+          - { name: "macOS 13",               value: "macos-13",     bin-suffix: "-macos-13" }
+          - { name: "macOS 14 Apple Silicon", value: "macos-14",     bin-suffix: "-macos-14-arm64" }
+          - { name: "macOS 15 Apple Silicon", value: "macos-15",     bin-suffix: "-macos-15-arm64" }
+        run-binary: [maven2sbt-cli]
     steps:
 
       - uses: actions/checkout@v2.3.4
@@ -53,6 +51,7 @@ jobs:
           CURRENT_BRANCH_NAME: ${{ github.ref }}
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
+          APP_BIN_NAME: ${{ matrix.run-binary }}${{ matrix.os.bin-suffix }}
         run: |
           sbt \
             -J-Xmx2048m \
@@ -61,21 +60,30 @@ jobs:
             test \
             nativeImage
 
+          echo "rm -f modules/${{ env.PROJECT_NAME }}-*/target/scala-*/*.jar"
           rm -f modules/${{ env.PROJECT_NAME }}-*/target/scala-*/*.jar
 
+          echo "ls -lGh modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/"
           ls -lGh modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
 
-          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --version"
-          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} --help"
-          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} print --help"
-          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} file --help"
+          echo "mv modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/$APP_BIN_NAME"
+          mv modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/${{ matrix.run-binary }} modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/$APP_BIN_NAME
+
+          echo "ls -lGh modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/"
+          ls -lGh modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/
+          
+          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/$APP_BIN_NAME --version"
+          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/$APP_BIN_NAME --help"
+          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/$APP_BIN_NAME print --help"
+          sh -c "modules/${{ env.PROJECT_NAME }}-cli/target/${{ env.GRAALVM_BIN_DIR_NAME }}/$APP_BIN_NAME file --help"
 
   graalvm_build_windows:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
-        run-binary: [maven2sbt-cli]
+        # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
+        os: [windows-2019]
+        run-binary: [maven2sbt-cli.exe]
     steps:
       - name: Configure git
         run: "git config --global core.autocrlf false"

@@ -5,7 +5,7 @@ set -eu
 app_executable_name=maven2sbt
 app_name=maven2sbt-cli
 app_version=${1:-1.5.0}
-app_package_file="${app_name}-ubuntu-latest"
+app_package_file="${app_name}-ubuntu"
 download_url="https://github.com/kevin-lee/maven2sbt/releases/download/v${app_version}/${app_package_file}"
 
 usr_local_path=${HOME}
@@ -35,11 +35,13 @@ curl -Lo $app_package_file $download_url
 ls -l $app_package_file || { echo "maven2sbt version ${app_version} doesn't seem to exist." && false ; }
 chmod ug+x $app_package_file
 
+mkdir -p $opt_location
+mkdir -p $usr_local_bin_path
+
 rm -R $app_location || true
 mkdir -p $app_location
 mv $app_package_file $installed_app_bin_path
 
-mkdir -p $usr_local_bin_path
 echo ""
 { rm $app_bin_path && { echo "The existing $app_bin_path was found so it was removed." ; } } || { echo "No existing $app_bin_path was found. It's OK. Please ignore the 'No such file or directory' message." ; }
 echo ""
