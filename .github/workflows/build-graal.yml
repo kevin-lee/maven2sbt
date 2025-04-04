@@ -12,7 +12,8 @@ on:
 env:
   CLI_SCALA_VERSION: "3.2.2"
   CLI_SCALA_BINARY_VERSION: "3"
-  GRAALVM_JAVA_VERSION: "adopt@1.11"
+  GRAALVM_JAVA_VERSION: "11"
+  GRAALVM_JAVA_DISTRIBUTION: "temurin"
   GRAALVM_BIN_DIR_NAME: "native-image"
   PROJECT_NAME: "maven2sbt"
 
@@ -32,19 +33,12 @@ jobs:
     steps:
 
       - uses: actions/checkout@v2.3.4
-      - uses: olafurpg/setup-scala@v10
+      - uses: actions/setup-java@v4
         with:
           java-version: ${{ env.GRAALVM_JAVA_VERSION }}
-      - name: Cache SBT
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.cache/coursier
-            ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-
+          distribution: ${{ env.GRAALVM_JAVA_DISTRIBUTION }}
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
 
       - name: "GraalVM Build for Scala ${{ env.CLI_SCALA_VERSION }} - ${{ github.run_number }}"
         env:
@@ -89,20 +83,14 @@ jobs:
         run: "git config --global core.autocrlf false"
         shell: bash
       - uses: actions/checkout@v2.3.4
-      - uses: olafurpg/setup-scala@v10
+      - uses: actions/setup-java@v4
         with:
           java-version: ${{ env.GRAALVM_JAVA_VERSION }}
+          distribution: ${{ env.GRAALVM_JAVA_DISTRIBUTION }}
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+
       - uses: ilammy/msvc-dev-cmd@v1
-      - name: Cache SBT
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.cache/coursier
-            ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-${{ env.CLI_SCALA_BINARY_VERSION }}-
 
       - name: "GraalVM Build for Scala ${{ env.CLI_SCALA_VERSION }} - ${{ github.run_number }}"
         shell: bash
