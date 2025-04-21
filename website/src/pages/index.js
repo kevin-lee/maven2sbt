@@ -60,6 +60,11 @@ function Home() {
       description="Convert Maven's pom.xml into build.sbt">
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
+          <img
+            src="https://hits.sh/github.com/kevin-lee/maven2sbt.svg"
+            style={{ display: 'none' }}
+            alt="hit counter"
+          />
           <img src={`${useBaseUrl('img/')}/poster.png`} alt="Project Logo" />
           <h1 className="hero__title">{siteConfig.title}</h1>
           <p className="hero__subtitle"><div dangerouslySetInnerHTML={{__html: siteConfig.tagline}} /></p>
