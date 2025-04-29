@@ -2,7 +2,6 @@ package maven2sbt.core
 
 import refined4s.*
 
-import scala.xml.Elem
 import StringUtils.*
 
 /** @author Kevin Lee
