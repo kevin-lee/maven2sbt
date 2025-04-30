@@ -21,9 +21,9 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.12.17", binary-version: "2.12", java-version: "11", java-distribution: "temurin", report: "" }
-          - { name: "Scala 2", version: "2.13.10", binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "report" }
-          - { name: "Scala 3", version: "3.2.2",   binary-version: "3",    java-version: "11", java-distribution: "temurin", report: "" }
+          - { name: "Scala 2", version: "2.12.18", binary-version: "2.12", java-version: "11", java-distribution: "temurin", report: "" }
+          - { name: "Scala 2", version: "2.13.16", binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "report" }
+          - { name: "Scala 3", version: "3.3.4",   binary-version: "3",    java-version: "11", java-distribution: "temurin", report: "" }
 
     steps:
       - uses: actions/checkout@v2

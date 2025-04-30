@@ -7,8 +7,6 @@ import cats.syntax.all.*
 import refined4s.*
 import refined4s.modules.cats.derivation.*
 
-import scala.xml.Elem
-
 /** @author Kevin Lee
   * @since 2019-04-21
   */

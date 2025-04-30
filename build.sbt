@@ -124,28 +124,28 @@ lazy val props =
     val SonatypeCredentialHost = "s01.oss.sonatype.org"
     val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
 
-    val Scala2Version       = "2.13.10"
-    val Scala3Version       = "3.2.2"
-    val CrossScalaVersions  = List("2.12.17", Scala2Version, Scala3Version).distinct
+    val Scala2Version       = "2.13.16"
+    val Scala3Version       = "3.3.4"
+    val CrossScalaVersions  = List("2.12.18", Scala2Version, Scala3Version).distinct
 //    val ProjectScalaVersion = Scala2Version
     val ProjectScalaVersion = Scala3Version
 
     val CatsVersion       = "2.9.0"
     val CatsEffectVersion = "3.5.2"
 
-    val HedgehogVersion = "0.10.1"
+    val HedgehogVersion = "0.12.0"
 
 //    val canEqualVersion = "0.1.0"
 
-    val EffectieVersion = "2.0.0-beta14"
-    val LoggerFVersion  = "2.0.0-beta24"
+    val EffectieVersion = "2.0.0"
+    val LoggerFVersion  = "2.1.18"
 
-    val PirateVersion = "faff703b67fd10199098e806a3f6858982823461"
+    val PirateVersion = "87e833d963a577b421d1c60b07fb9b8db2163f60"
     val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$PirateVersion")
 
     val ScalaXml2Version = "2.1.0"
 
-    val Refined4sVersion = "0.8.0"
+    val Refined4sVersion = "1.1.0"
 
     val ExtrasVersion = "0.44.0"
 
