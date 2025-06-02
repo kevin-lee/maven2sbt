@@ -18,8 +18,6 @@ ThisBuild / scmInfo      :=
   ).some
 ThisBuild / licenses     := List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
-ThisBuild / resolvers += "sonatype-snapshots" at s"https://${props.SonatypeCredentialHost}/content/repositories/snapshots"
-
 ThisBuild / scalafixConfig := (
   if (scalaVersion.value.startsWith("3"))
     ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
@@ -43,14 +41,12 @@ lazy val maven2sbt = (project in file("."))
     docusaurBuildDir         := docusaurDir.value / "build",
     /* } Website */
   )
-  .settings(mavenCentralPublishSettings)
   .settings(noPublish)
   .aggregate(core, cli)
 
 lazy val core = module("core")
   .enablePlugins(BuildInfoPlugin)
   .settings(
-//    resolvers += Resolver.sonatypeRepo("snapshots"),
     crossScalaVersions  := props.CrossScalaVersions,
     libraryDependencies ++= {
       val scalaV = scalaVersion.value
@@ -223,13 +219,6 @@ def scalacOptionsPostProcess(scalaVersion: String, options: Seq[String]): Seq[St
     "-Xsource:3" +: "-P:kind-projector:underscore-placeholders" +:
       options.filterNot(_ == "-Xlint:package-object-classes")
   }
-
-lazy val mavenCentralPublishSettings: SettingsDefinition = List(
-  /* Publish to Maven Central { */
-  sonatypeCredentialHost := props.SonatypeCredentialHost,
-  sonatypeRepository     := props.SonatypeRepository,
-  /* } Publish to Maven Central */
-)
 
 def module(projectName: String): Project = {
   val prefixedName = prefixedProjectName(projectName)
