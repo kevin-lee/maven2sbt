@@ -117,9 +117,6 @@ lazy val props =
     val RepoName             = "maven2sbt"
     val ExecutableScriptName = RepoName
 
-    val SonatypeCredentialHost = "s01.oss.sonatype.org"
-    val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
-
     val Scala2Version       = "2.13.16"
     val Scala3Version       = "3.3.4"
     val CrossScalaVersions  = List("2.12.18", Scala2Version, Scala3Version).distinct
