@@ -76,7 +76,7 @@ jobs:
     strategy:
       matrix:
         # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
-        os: [windows-2019]
+        os: [windows-2025, windows-2022]
         run-binary: [maven2sbt-cli.exe]
     steps:
       - name: Configure git
