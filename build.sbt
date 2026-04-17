@@ -133,7 +133,7 @@ lazy val props =
     val EffectieVersion = "2.0.0"
     val LoggerFVersion  = "2.1.18"
 
-    val PirateVersion = "87e833d963a577b421d1c60b07fb9b8db2163f60"
+    val PirateVersion = "2993d850bf3b92c558bed6d41aa3298217dc87ef"
     val pirateUri     = uri(s"https://github.com/$GitHubUsername/pirate.git#$PirateVersion")
 
     val ScalaXml2Version = "2.1.0"
