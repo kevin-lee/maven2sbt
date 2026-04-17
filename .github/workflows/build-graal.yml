@@ -25,11 +25,12 @@ jobs:
       matrix:
         # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
         os:
-          - { name: "Ubuntu 22.04",           value: "ubuntu-22.04", bin-suffix: "-ubuntu" }
-          - { name: "macOS 13",               value: "macos-13",     bin-suffix: "-macos-13" }
-          - { name: "macOS 14 Apple Silicon", value: "macos-14",     bin-suffix: "-macos-14-arm64" }
-          - { name: "macOS 15 Apple Silicon", value: "macos-15",     bin-suffix: "-macos-15-arm64" }
-        run-binary: [maven2sbt-cli]
+          - { name: "Ubuntu 22.04 x64",       value: "ubuntu-22.04",     bin-suffix: "-ubuntu-22.04"     }
+          - { name: "Ubuntu 22.04 arm64",     value: "ubuntu-22.04-arm", bin-suffix: "-ubuntu-22.04-arm" }
+          - { name: "macOS 15 Intel",         value: "macos-15-intel",   bin-suffix: "-macos-15-intel"   }
+          - { name: "macOS 15 Apple Silicon", value: "macOS-15",         bin-suffix: "-macos-15-arm64"   }
+          - { name: "macOS 26 Apple Silicon", value: "macOS-26",         bin-suffix: "-macOS-26-arm64"   }
+        run-binary: [ maven2sbt-cli ]
     steps:
 
       - uses: actions/checkout@v4
@@ -76,8 +77,8 @@ jobs:
     strategy:
       matrix:
         # https://github.com/actions/runner-images?tab=readme-ov-file#available-images
-        os: [windows-2025, windows-2022]
-        run-binary: [maven2sbt-cli.exe]
+        os: [ windows-2025, windows-2022 ]
+        run-binary: [ maven2sbt-cli.exe ]
     steps:
       - name: Configure git
         run: "git config --global core.autocrlf false"
