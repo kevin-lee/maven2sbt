@@ -1,15 +1,28 @@
+import {themes as prismThemes} from 'prism-react-renderer';
+import type {Config} from '@docusaurus/types';
+import type * as Preset from '@docusaurus/preset-classic';
+
+// import LatestVersion from '@types/commonTypes';
+
 const algoliaConfig = require('./algolia.config.json');
 const googleAnalyticsConfig = require('./google-analytics.config.json');
 
-const isEmptyObject = obj => {
-  for (field in obj) return false;
-  return true;
-};
+const lightCodeTheme = prismThemes.nightOwlLight;
+const darkCodeTheme = prismThemes.nightOwl;
+
+const isEmptyObject = (obj: object) => Object.keys(obj).length === 0;
 
 const isSearchable = !isEmptyObject(algoliaConfig);
 const hasGoogleAnalytics = !isEmptyObject(googleAnalyticsConfig);
 
-const websiteConfig = {
+// import LatestVersionImported from './latestVersion.json';
+// const latestVersionFound = LatestVersionImported as LatestVersion;
+
+const gtag = hasGoogleAnalytics ? { 'gtag': googleAnalyticsConfig } : null;
+
+
+
+const config: Config = {
   title: 'maven2sbt',
   tagline: 'Convert Maven&apos;s <code class="front-code">pom.xml</code> into <code class="front-code">build.sbt</code>',
   url: 'https://maven2sbt.kevinly.dev',
@@ -19,8 +32,8 @@ const websiteConfig = {
   projectName: 'maven2sbt', // Usually your repo name.
   themeConfig: {
     prism: {
-      theme: require('prism-react-renderer/themes/nightOwlLight'),
-      darkTheme: require('prism-react-renderer/themes/palenight'),
+      theme: lightCodeTheme,
+      darkTheme: darkCodeTheme,
       additionalLanguages: [ 'java', 'scala'],
     },
     navbar: {
@@ -85,24 +98,24 @@ const websiteConfig = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve('./sidebars.ts'),
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-      },
+        ...gtag,
+      } satisfies Preset.Options,
     ],
   ],
   plugins: [
-    require.resolve('docusaurus-lunr-search'),
+    require.resolve('@easyops-cn/docusaurus-search-local'),
   ],
 };
 
 if (isSearchable) {
-  websiteConfig['themeConfig']['algolia'] = algoliaConfig;
-}
-if (hasGoogleAnalytics) {
-  websiteConfig['themeConfig']['gtag'] = googleAnalyticsConfig;
+  config['themeConfig']['algolia'] = algoliaConfig;
 }
 
-module.exports = websiteConfig;
+
+
+export default config;
